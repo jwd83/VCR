@@ -1,11 +1,9 @@
-<h1>
-    <a href="a.php">Audio Books</a> | 
-    <a href="b.php">Books</a> | 
-    <a href="e.php">Emulation</a> | 
-    <a href="m.php">Music</a> |
-    <a href="v.php">Videos</a>
-</h1>
-<hr>
+<?php
+
+include "theme-top.html";
+?>
+
+
 <?php
 
 
@@ -297,6 +295,8 @@ function endScriptTimer() {
     echo "This process used " . rutime($ru, $rustart, "utime") . " ms for its computations.<br>\n";
     echo "It spent " . rutime($ru, $rustart, "stime") . " ms in system calls.<br>\n";
     echo '<b>Total Execution Time:</b> '.$time_elapsed_secs.' seconds';
+
+    include "theme-bottom.html";
 
 
 }
