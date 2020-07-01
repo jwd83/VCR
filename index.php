@@ -7,7 +7,7 @@ $dump_path = '';
 $feature = "none";
 
 if(!isset($_REQUEST['c'])) {
-    drawHeader("&ldquo;Stay Awhile and Listen&rdquo;");
+    drawHeader("Stay Awhile and Listen");
 
     echo "<h1>Please enjoy your stay and DM requests</h1>";
 } else {
