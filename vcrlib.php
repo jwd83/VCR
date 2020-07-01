@@ -33,17 +33,30 @@ function drawHeader($banner = false)
     include "theme-top.html";
     if ($banner !== false) 
     {
-
-        # code...
-        echo '
+        ?>
 <!-- Header - set the background image for the header in the line below -->
-<header class="py-5 bg-image-full" style="background-image: url(\'/gd/black-pearl.jpg\');">
+<header class="py-5 bg-image-full" style="background-image: url('/gd/black-pearl.jpg');">
 <div class="container">
-<h1 style="color:#fff; margin-bottom: 30px; margin-top: 30px; font-size: 5em;opacity: .7;   -webkit-text-stroke: 3px black; font-style: italic; font-family: serif;"> &ldquo;'.$banner.'&rdquo;</h1>
+<h1 style="
+    color:#fff;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    font-size: 5em;
+    opacity: 0.7;
+    -webkit-text-stroke: 3px black;
+    font-style: italic;
+    font-family: serif;
+    font-weight: bolder;
+
+    ">
+
+    &ldquo;<?= $banner ?>&rdquo;
+</h1>
 </div>
 <!-- <img class="img-fluid d-block mx-auto" src="/gd/pirate-symbol.jpg" alt="" style="opacity: 0"> -->
 </header>
-';
+
+        <?php
     }
     
     echo 
@@ -57,7 +70,8 @@ function drawHeader($banner = false)
 
 function strToHex($string){
     $hex='';
-    for ($i=0; $i < strlen($string); $i++){
+    for ($i=0;
+        $i < strlen($string); $i++){
         $hex .= dechex(ord($string[$i]));
     }
     return $hex;
