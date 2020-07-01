@@ -2,7 +2,6 @@
 
 include dirname(__FILE__) . "vcrlib.php";
 
-dumpPath("Books");
+echo "Please enjoy your stay";
 
 endScriptTimer();
-
