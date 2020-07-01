@@ -4,7 +4,7 @@
 
 ### sshd_config
 
-change "GatewayPorts no" to "GatewayPorts yes"
+change "GatewayPorts no" to "GatewayPorts yes", it may need to be uncommented
 
 ### add VCR user
 
