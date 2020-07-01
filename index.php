@@ -49,11 +49,11 @@ if(!isset($_REQUEST['c'])) {
         switch($_REQUEST['c']){
             case 'a':
             case 'm':
-    $src = '/gd/' . hexToStr($_REQUEST['file']);
-    echo '<h2>Attempting to play '.$src.'</h2>';
-    echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
-    echo '<a href="'.$src.'">copy me</a><br><br><br>';
-    echo '
+                $src = '/gd/' . hexToStr($_REQUEST['file']);
+                echo '<h2>Attempting to play '.$src.'</h2>';
+                echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
+                echo '<a href="'.$src.'">copy me</a><br><br><br>';
+                echo '
 <audio autoplay controls>
 <source src="'.$src.'">
 Your browser does not support the audio element.

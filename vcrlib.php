@@ -1,13 +1,5 @@
 <?php
 
-include "theme-top.html";
-?>
-
-
-<?php
-
-
-
 # track runtime
 $start = microtime(true);
 $rustart = getrusage();
@@ -35,6 +27,33 @@ $white_list = [
     "Books\\"
 ];
 $excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
+
+function drawHeader($banner = false) 
+{
+    include "theme-top.html";
+    if ($banner !== false) 
+    {
+
+        # code...
+        echo '
+<!-- Header - set the background image for the header in the line below -->
+<header class="py-5 bg-image-full" style="background-image: url(\'/gd/black-pearl.jpg\');">
+<div class="container">
+<h1 style="color:#fff; margin-bottom: 30px; margin-top: 30px; font-size: 5em;opacity: .7;   -webkit-text-stroke: 3px black; font-style: italic; font-family: serif;"> &ldquo;'.$banner.'&rdquo;</h1>
+</div>
+<!-- <img class="img-fluid d-block mx-auto" src="/gd/pirate-symbol.jpg" alt="" style="opacity: 0"> -->
+</header>
+';
+    }
+    
+    echo 
+    '
+    <!-- Content section -->
+    <section class="py-5">
+    <div class="container">
+    ';
+}
+
 
 function strToHex($string){
     $hex='';
@@ -176,7 +195,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             echo substr($path,  strlen($base_path)-2);
             echo ' <a href="'.$path.'">[direct link]</a> ';
             if($optional_feature != 'none') {
-                echo ' <a href="'.$optional_reference.'.php?file='.strToHex($path).'">['.$optional_feature.']</a> ';
+                echo ' <a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a> ';
             }
             echo "<br>\n";
         }
@@ -283,7 +302,9 @@ function rutime($ru, $rus, $index) {
      -  ($rus["ru_$index.tv_sec"]*1000 + intval($rus["ru_$index.tv_usec"]/1000));
 }
 
-function endScriptTimer() {
+
+
+function drawFooter() {
     global $start, $rustart;
 
     echo "<hr>";
