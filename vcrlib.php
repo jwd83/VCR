@@ -20,6 +20,7 @@ $rustart = getrusage();
 $extensions = [
     ".avi", 
     ".flac",
+    ".m4b", // uncommon audio format
     ".mkv", 
     ".mp3", 
     ".mp4", 
@@ -30,7 +31,11 @@ $extensions = [
 
     ".whitelistme"
 ];
-$white_list = ["Emulation + ROMs\\" ,"D&D\\", "Books\\"];
+$white_list = [
+    "Emulation + ROMs\\" ,
+    "D&D\\", 
+    "Books\\"
+];
 $excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
 
 function strToHex($string){
@@ -60,6 +65,12 @@ function endsWith($haystack, $needle)
     return (substr($haystack, -$length) === $needle);
 }
 
+function startsWith ($string, $startString) 
+{ 
+    $len = strlen($startString); 
+    return (substr($string, 0, $len) === $startString); 
+} 
+
 function getDirContents($dir, &$results = array()) {
     $files = scandir($dir);
 
@@ -81,7 +92,8 @@ function getDirContents($dir, &$results = array()) {
     return $results;
 }
 
-function dumpPath($base_path) {
+
+function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
     global $extensions, $white_list, $excludes;
 
     echo "<h1>$base_path</h1>";
@@ -113,26 +125,38 @@ function dumpPath($base_path) {
         {
             if (endsWith(strtolower($path), strtolower($ext))) 
             {
-                $matched++;
                 $valid = 1;
             }
         }
 
         // check if it's in a whitelisted path
+        // foreach($white_list as $wl) 
+        // {
+        //     if (strpos(strtolower($path), strtolower($wl)) !== false) {
+        //         $matched++;
+        //         $valid = 1;
+        //     }
+        // }
 
 
+        // check if the start of a path matches the whitelist
         foreach($white_list as $wl) 
         {
-            if (strpos(strtolower($path), strtolower($wl)) !== false) {
-                $matched++;
+            if (startsWith(strtolower($path), strtolower($wl))) 
+            {
                 $valid = 1;
             }
         }
 
+        // if there is a query set forget everything we just did and check against the query
+        if($query != 'none') {
+            $valid = 0;
+            if (strpos(strtolower($path), strtolower($query)) !== false) {
+                $valid = 1;
+            }
+        }
 
         // check that it's not in an excluded path
-
-
         foreach($excludes as $exclude) 
         {
             if (strpos(strtolower($path), strtolower($exclude)) !== false) {
@@ -150,14 +174,15 @@ function dumpPath($base_path) {
 
         if($valid === 1) 
         {
-            echo '
-<a href="v.php?file='.strToHex($path).'">[v]</a>
-<a href="'.$path.'">'.$path.'</a>
-<br>
-';
+            $matched++;
+            echo substr($path,  strlen($base_path)-2);
+            echo ' <a href="'.$path.'">[direct link]</a> ';
+            if($optional_feature != 'none') {
+                echo ' <a href="'.$optional_reference.'.php?file='.strToHex($path).'">['.$optional_feature.']</a> ';
+            }
+            echo "<br>\n";
         }
     }
-
     echo "<hr><div>$matched matched of $total files searched, $skipped of $excluded excluded</div>";
 }
 
