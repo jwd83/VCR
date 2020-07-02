@@ -1,5 +1,7 @@
 # VCR
 
+A wamp script to share your local files online.
+
 ## Features
 
 * Autoplay your collection of audio and video files where supported by your browser.
