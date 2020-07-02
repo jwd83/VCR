@@ -10,6 +10,8 @@ A wamp script to share your local files online.
 
 ## TODO
 
+### Switch to https from http. Lets encrypt or self signed
+
 ### Next / Previous buttons
 
 Now that autoplay is working add next and previous button
