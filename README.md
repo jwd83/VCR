@@ -1,12 +1,23 @@
 # VCR
 
+## Features
+
+* Autoplay your collection of audio and video files where supported by your browser.
+* Download shared files remotely. 
+
 ## TODO
 
 ### Next / Previous buttons
 
 Now that autoplay is working add next and previous button
 
-### Audio/Audio Book - Pre-cache next track when listening to current one
+### Audio/Audio Book
+
+Pre-cache next track when listening to current one
+
+### Schedule video reencodes
+
+Setup a background daemon to do video re-encodes to a browser friendly format
 
 ## Setup Notes
 
