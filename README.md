@@ -1,6 +1,14 @@
 # VCR
 
-## Notes
+## TODO
+
+### Next / Previous buttons
+
+Now that autoplay is working add next and previous button
+
+### Audio/Audio Book - Pre-cache next track when listening to current one
+
+## Setup Notes
 
 ### sshd_config
 
@@ -12,7 +20,4 @@ While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the lik
 
 htpasswd "c:\wamp64\gdlogins" user_name_here
 
-## Next / Previous buttons
-
-Now that autoplay is working add next and previous button
 
