@@ -67,7 +67,7 @@ Your browser does not support the audio element.
                 echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
                 echo '<a href="'.$src.'">copy me</a><br><br><br>';
                 echo '
-<video controls width=800 autoplay>
+<video controls width=800 autoplay id="player" class="player">
 <source src="'.$src.'">
 </video>
 
@@ -106,7 +106,7 @@ Search:
 drawFooter();
 
 if(isset($_REQUEST['file']) && isset($_REQUEST['c'])) {
-    if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm') {
+    if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm' || $_REQUEST['c'] = 'v') {
 
         $next_file_to_play = getNextFile($dump_path, $_REQUEST['file']);
 
@@ -123,8 +123,8 @@ window.location.href = "/gd/?c=<?= $_REQUEST['c']; ?>&file=<?= $next_file_to_pla
 });
 </script>
 
-
 <?php
 
     }
+
 }

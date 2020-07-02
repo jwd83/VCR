@@ -134,13 +134,14 @@ function getNextFile($base_path, $current_file) {
     $hit_checks = 0;
 
     foreach($files as $file) {
+        $path = substr(trim($file), 3);
+
         $hit_checks++;
         if($hit == 1) {
-            return strToHex($file);
+            return strToHex($path);
         }
         else
         {
-            $path = substr(trim($file), 3);
             if(strToHex($path) == $current_file) {
                 $hit = 1;
                 // echo "match found.<br>\n";
