@@ -162,6 +162,9 @@ function getButtons($base_path, $current_file) {
             if($hit == 1) {
                 $button_array['previous'] = strToHex($prev_file);
                 $button_array['next'] = strToHex($path);
+
+                $button_array['previous_raw'] = $prev_file;
+                $button_array['next_raw'] = str_replace('\\', '/', $path);
                 return $button_array;
 
             }

@@ -71,17 +71,18 @@ if(!isset($_REQUEST['c'])) {
 </h3>
 
 ';
+        
 
+        $src = '/gd/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
 
         switch($_REQUEST['c']){
             case 'a':
             case 'm':
-                $src = '/gd/' . hexToStr($_REQUEST['file']);
                 echo '<h2>Attempting to play '.$src.'</h2>';
                 echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
                 echo '<a href="'.$src.'">copy me</a><br><br><br>';
                 echo '
-<audio autoplay controls id="player" class="player">
+<audio autoplay controls id="player" class="player" preload="auto">
 <source src="'.$src.'">
 Your browser does not support the audio element.
 </audio>
@@ -90,7 +91,6 @@ Your browser does not support the audio element.
                 break;
 
             case 'v':
-                $src = '/gd/' . hexToStr($_REQUEST['file']);
 
                 echo '<h2>Attempting to play '.$src.'</h2>';
                 echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
@@ -152,6 +152,24 @@ $(\"#player\").bind(
 );
 
 ";
+
+        # preload the next song
+        if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm') {
+            $jquery_code_to_run .= '
+
+setTimeout(
+    function() 
+    {
+        $("body").append(
+            \'<audio src="/gd/'. $buttons['next_raw'] . '" preload="auto">\'
+        );
+    }, 
+    10000
+);
+
+
+            ';
+        }
     }
 }
 
@@ -182,3 +200,5 @@ $( document ).ready
 );
 
 </script>
+
+
