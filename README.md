@@ -1,5 +1,5 @@
 # VCR
-# oediV ytiC reviR
+# oǝpᴉɅ ʎʇᴉϽ ɹǝʌᴉꓤ
 
 A wamp script to share your local files online.
 
