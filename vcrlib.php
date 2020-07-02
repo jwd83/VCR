@@ -123,6 +123,27 @@ function getDirContents($dir, &$results = array()) {
     return $results;
 }
 
+function echoCell($str) {
+//     echo '
+
+// <td>
+//   <span class="text-overflow-dynamic-container">
+//     <span class="text-overflow-dynamic-ellipsis" title="'.htmlentities($str).'">
+//       '.$str.'
+//     </span>
+//   </span>
+
+// </td>
+// ';   
+ echo '
+
+<td>
+      '.$str.'
+
+</td>
+';
+}
+
 function getButtons($base_path, $current_file) {
 
     $hit = 0;
@@ -163,7 +184,7 @@ function getButtons($base_path, $current_file) {
 function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
     global $extensions, $white_list, $excludes;
 
-    echo "<h1>$base_path</h1>";
+    echo "<h1>$base_path</h1>\n<table>\n";
 
     $base_path = dirname(__FILE__) . $base_path;
 
@@ -235,15 +256,17 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
         if($valid === 1) 
         {
             $matched++;
-            echo substr($path,  strlen($base_path)-2);
-            echo ' <a href="'.$path.'">[direct link]</a> ';
+
+            echo "<tr>\n";
+            echoCell('<a href="'.$path.'">[direct]</a>');
             if($optional_feature != 'none') {
-                echo ' <a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a> ';
+                echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
             }
-            echo "<br>\n";
+            echoCell(substr($path,  strlen($base_path)-2));
+            echo "</tr>\n";
         }
     }
-    echo "<hr><div>$matched matched of $total files searched, $skipped of $excluded excluded</div>";
+    echo "</table><hr><div>$matched matched of $total files searched, $skipped of $excluded excluded</div>";
 }
 
 function refreshList() {
