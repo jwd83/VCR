@@ -17,7 +17,7 @@ Pre-cache next track when listening to current one
 
 ### Schedule video reencodes
 
-Setup a background daemon to do video re-encodes to a browser friendly format
+Setup a background daemon to do video reencodes to a browser friendly format
 
 ## Setup Notes
 
