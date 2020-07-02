@@ -123,32 +123,40 @@ function getDirContents($dir, &$results = array()) {
     return $results;
 }
 
-function getNextFile($base_path, $current_file) {
-
-
-    // echo "base_path = $base_path<br>\ncurrent_file = $current_file<br>current_file_str = ".hexToStr($current_file)."\n";
-
-    $files = getDirContents($base_path);
+function getButtons($base_path, $current_file) {
 
     $hit = 0;
     $hit_checks = 0;
+    $prev_file = "";
+    $button_array = array();
+
+    $button_array['previous'] = "";
+    $button_array['next'] = "";
+
+    $files = getDirContents($base_path);
 
     foreach($files as $file) {
-        $path = substr(trim($file), 3);
+        if(!is_dir($file)) {
+            $path = substr(trim($file), 3);
+            if($hit == 1) {
+                $button_array['previous'] = strToHex($prev_file);
+                $button_array['next'] = strToHex($path);
+                return $button_array;
 
-        $hit_checks++;
-        if($hit == 1) {
-            return strToHex($path);
-        }
-        else
-        {
-            if(strToHex($path) == $current_file) {
-                $hit = 1;
-                // echo "match found.<br>\n";
             }
+            else
+            {
+                if(strToHex($path) == $current_file) {
+                    $hit = 1;
+                } else {
+                    $prev_file = $path;
+                }
+            }            
         }
+
     }
-    // echo "no matches of $hit_checks.<br>\n";
+
+    return $button_array;
 }
 
 
@@ -357,3 +365,16 @@ function drawFooter() {
 
 }
 
+function buildPlaybackLink($file_in_hex, $type = "") {
+
+    # determine type
+    if(strlen($type) == 0) {
+        if(isset($_REQUEST['c'])) {
+            $type = $_REQUEST['c'];
+        }
+
+    }
+
+    # filename must already be in hex format
+    return "/gd/?c=" . $type . "&file=".$file_in_hex;
+}

@@ -6,6 +6,12 @@ $search_type = '';
 $dump_path = '';
 $feature = "none";
 
+$jquery_code_to_run = "";
+$buttons = array();
+$next_file_to_play = "";
+
+
+
 if(!isset($_REQUEST['c'])) {
     drawHeader("Stay Awhile and Listen");
 
@@ -42,10 +48,31 @@ if(!isset($_REQUEST['c'])) {
 
 
     }
+
+
+    // if a media file is requested look up the files for it's forward & back buttons
+    if(isset($_REQUEST['file']) && isset($_REQUEST['c'])) {
+        if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm' || $_REQUEST['c'] = 'v') {
+
+            $buttons = getButtons($dump_path, $_REQUEST['file']);
+            $next_file_to_play = $buttons['next'];
+        }
+    }
+
     drawHeader($dump_path);
 
     # player switch
     if(isset($_REQUEST['file'])) {
+        echo '
+
+<h3>
+    <a href="'.buildPlaybackLink($buttons['previous']).'">⏮️Previous</a> | 
+    <a href="'.buildPlaybackLink($buttons['next']).'">Next⏭</a>
+</h3>
+
+';
+
+
         switch($_REQUEST['c']){
             case 'a':
             case 'm':
@@ -58,11 +85,13 @@ if(!isset($_REQUEST['c'])) {
 <source src="'.$src.'">
 Your browser does not support the audio element.
 </audio>
+<!-- Preload the next song -->
 ';
                 break;
 
             case 'v':
                 $src = '/gd/' . hexToStr($_REQUEST['file']);
+
                 echo '<h2>Attempting to play '.$src.'</h2>';
                 echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
                 echo '<a href="'.$src.'">copy me</a><br><br><br>';
@@ -108,23 +137,48 @@ drawFooter();
 if(isset($_REQUEST['file']) && isset($_REQUEST['c'])) {
     if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm' || $_REQUEST['c'] = 'v') {
 
-        $next_file_to_play = getNextFile($dump_path, $_REQUEST['file']);
+
+        // autoplay code
+
+        $jquery_code_to_run .= "
+
+// autoplay binding
+
+$(\"#player\").bind(
+    'ended', 
+    function() {
+         window.location.href = \"".buildPlaybackLink($buttons['next'])."\";
+     }
+);
+
+";
+    }
+}
+
+
 
     ?>
+
+<!-- Our jquery block -->
+
 <script>
-$( document ).ready(function() {
-    // alert("autoplay is setting up");
-$("#player").bind('ended', function(){
-// done playing
-// alert("Player stopped");
-window.location.href = "/gd/?c=<?= $_REQUEST['c']; ?>&file=<?= $next_file_to_play; ?>";
+$( document ).ready
+(
+    function() 
+    {
+        // --------------------------------------------------------------------
+        // Begin $jquery_code_to_run
+        // --------------------------------------------------------------------
 
-});
-});
-</script>
+<?= $jquery_code_to_run ?>
 
-<?php
+        // --------------------------------------------------------------------
+        // End $jquery_code_to_run
+        // --------------------------------------------------------------------
+
+
 
     }
+);
 
-}
+</script>
