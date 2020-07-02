@@ -54,7 +54,7 @@ if(!isset($_REQUEST['c'])) {
                 echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
                 echo '<a href="'.$src.'">copy me</a><br><br><br>';
                 echo '
-<audio autoplay controls>
+<audio autoplay controls id="player" class="player">
 <source src="'.$src.'">
 Your browser does not support the audio element.
 </audio>
@@ -70,13 +70,14 @@ Your browser does not support the audio element.
 <video controls width=800 autoplay>
 <source src="'.$src.'">
 </video>
-<hr>
-';            
+
+';
             break;
         }
     }
 
     echo '
+<hr>
 Search: 
 <form method="GET">
 <input type="hidden" name="c" value="'.$search_type.'">
@@ -103,3 +104,27 @@ Search:
 }
 
 drawFooter();
+
+if(isset($_REQUEST['file']) && isset($_REQUEST['c'])) {
+    if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm') {
+
+        $next_file_to_play = getNextFile($dump_path, $_REQUEST['file']);
+
+    ?>
+<script>
+$( document ).ready(function() {
+    // alert("autoplay is setting up");
+$("#player").bind('ended', function(){
+// done playing
+// alert("Player stopped");
+window.location.href = "/gd/?c=<?= $_REQUEST['c']; ?>&file=<?= $next_file_to_play; ?>";
+
+});
+});
+</script>
+
+
+<?php
+
+    }
+}

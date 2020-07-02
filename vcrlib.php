@@ -123,6 +123,33 @@ function getDirContents($dir, &$results = array()) {
     return $results;
 }
 
+function getNextFile($base_path, $current_file) {
+
+
+    // echo "base_path = $base_path<br>\ncurrent_file = $current_file<br>current_file_str = ".hexToStr($current_file)."\n";
+
+    $files = getDirContents($base_path);
+
+    $hit = 0;
+    $hit_checks = 0;
+
+    foreach($files as $file) {
+        $hit_checks++;
+        if($hit == 1) {
+            return strToHex($file);
+        }
+        else
+        {
+            $path = substr(trim($file), 3);
+            if(strToHex($path) == $current_file) {
+                $hit = 1;
+                // echo "match found.<br>\n";
+            }
+        }
+    }
+    // echo "no matches of $hit_checks.<br>\n";
+}
+
 
 function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
     global $extensions, $white_list, $excludes;
@@ -148,57 +175,50 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
         $total++;
         $valid = 0;
 
-        $path = substr(trim($file), 3);
+        if(!is_dir($file)) {
 
-        // check for a valid file extension
+            $path = substr(trim($file), 3);
 
-        foreach($extensions as $ext) 
-        {
-            if (endsWith(strtolower($path), strtolower($ext))) 
+            // check for a valid file extension
+
+            foreach($extensions as $ext) 
             {
-                $valid = 1;
+                if (endsWith(strtolower($path), strtolower($ext))) 
+                {
+                    $valid = 1;
+                }
             }
-        }
 
-        // check if it's in a whitelisted path
-        // foreach($white_list as $wl) 
-        // {
-        //     if (strpos(strtolower($path), strtolower($wl)) !== false) {
-        //         $matched++;
-        //         $valid = 1;
-        //     }
-        // }
-
-
-        // check if the start of a path matches the whitelist
-        foreach($white_list as $wl) 
-        {
-            if (startsWith(strtolower($path), strtolower($wl))) 
+            // check if the start of a path matches the whitelist
+            foreach($white_list as $wl) 
             {
-                $valid = 1;
+                if (startsWith(strtolower($path), strtolower($wl))) 
+                {
+                    $valid = 1;
+                }
             }
-        }
 
-        // if there is a query set forget everything we just did and check against the query
-        if($query != 'none') {
-            $valid = 0;
-            if (strpos(strtolower($path), strtolower($query)) !== false) {
-                $valid = 1;
+            // if there is a query set forget everything we just did and check against the query
+            if($query != 'none') {
+                $valid = 0;
+                if (strpos(strtolower($path), strtolower($query)) !== false) {
+                    $valid = 1;
+                }
             }
-        }
 
-        // check that it's not in an excluded path
-        foreach($excludes as $exclude) 
-        {
-            if (strpos(strtolower($path), strtolower($exclude)) !== false) {
-                $excluded++;
-                if($valid == 1) {
-                    $matched--;
-                    $skipped++;
+            // check that it's not in an excluded path
+            foreach($excludes as $exclude) 
+            {
+                if (strpos(strtolower($path), strtolower($exclude)) !== false) {
+                    $excluded++;
+                    if($valid == 1) {
+                        $matched--;
+                        $skipped++;
+
+                    }
+                    $valid = 0;
 
                 }
-                $valid = 0;
-
             }
         }
 
