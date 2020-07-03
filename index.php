@@ -1,8 +1,56 @@
 <?php
 
+//                        /$$     /$$     /$$                              
+//                       | $$    | $$    |__/                              
+//   /$$$$$$$  /$$$$$$  /$$$$$$ /$$$$$$   /$$ /$$$$$$$   /$$$$$$   /$$$$$$$
+//  /$$_____/ /$$__  $$|_  $$_/|_  $$_/  | $$| $$__  $$ /$$__  $$ /$$_____/
+// |  $$$$$$ | $$$$$$$$  | $$    | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$ 
+//  \____  $$| $$_____/  | $$ /$$| $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
+//  /$$$$$$$/|  $$$$$$$  |  $$$$/|  $$$$/| $$| $$  | $$|  $$$$$$$ /$$$$$$$/
+// |_______/  \_______/   \___/   \___/  |__/|__/  |__/ \____  $$|_______/ 
+//                                                      /$$  \ $$          
+//                                                     |  $$$$$$/          
+//                                                      \______/           
+
+
 # track runtime
 $start = microtime(true);
 $rustart = getrusage();
+
+$suggestions["m"] = ["daft", "radiohead","Eilish" ];
+
+$search_type = '';
+$dump_path = '';
+$feature = "none";
+
+$jquery_code_to_run = "";
+$buttons = array();
+$next_file_to_play = "";
+
+
+// $path_list_html = "list.html";
+$extensions = [
+    ".avi", 
+    ".flac",
+    ".m4b", // uncommon audio format
+    ".mkv", 
+    ".mp3", 
+    ".mp4", 
+    ".ogg", 
+    ".iso", 
+    ".smc",
+    ".wma",
+
+    ".whitelistme"
+];
+$white_list = [
+    "Emulation + ROMs\\" ,
+    "D&D\\", 
+    "Books\\"
+];
+$excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
+
+
 
 //  /$$         /$$                   /$$
 // | $$        | $$                  | $$
@@ -166,28 +214,6 @@ EOL );
 // |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/ 
 
 # settings
-
-// $path_list_html = "list.html";
-$extensions = [
-    ".avi", 
-    ".flac",
-    ".m4b", // uncommon audio format
-    ".mkv", 
-    ".mp3", 
-    ".mp4", 
-    ".ogg", 
-    ".iso", 
-    ".smc",
-    ".wma",
-
-    ".whitelistme"
-];
-$white_list = [
-    "Emulation + ROMs\\" ,
-    "D&D\\", 
-    "Books\\"
-];
-$excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
 
 function drawHeader($banner = false) 
 {
@@ -567,16 +593,6 @@ function buildPlaybackLink($file_in_hex, $type = "") {
     return "/gd/?c=" . $type . "&file=".$file_in_hex;
 }
 
-$suggestions["m"] = ["daft", "radiohead","Eilish" ];
-
-$search_type = '';
-$dump_path = '';
-$feature = "none";
-
-$jquery_code_to_run = "";
-$buttons = array();
-$next_file_to_play = "";
-
 
 // showSuggestions($category ){
 //     $sugs = $GLOBALS['suggestions'];
@@ -587,7 +603,19 @@ $next_file_to_play = "";
 
 
                                                   
-
+//                          /$$          
+//                         |__/          
+//  /$$$$$$/$$$$   /$$$$$$  /$$ /$$$$$$$ 
+// | $$_  $$_  $$ |____  $$| $$| $$__  $$
+// | $$ \ $$ \ $$  /$$$$$$$| $$| $$  \ $$
+// | $$ | $$ | $$ /$$__  $$| $$| $$  | $$
+// | $$ | $$ | $$|  $$$$$$$| $$| $$  | $$
+// |__/ |__/ |__/ \_______/|__/|__/  |__/
+                                      
+                                      
+# our page will begin rendering here. 
+# see if we are on the homepage otherwise 
+# generate a page based on the [c] category                                      
 
 if(!isset($_REQUEST['c'])) {
     drawHeader("Stay Awhile and Listen");
