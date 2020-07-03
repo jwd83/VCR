@@ -7,18 +7,12 @@ A wamp script to share your local files online.
 
 * Autoplay your collection of audio and video files where supported by your browser.
 * Download shared files remotely. 
+* Next and Previous buttons while in watch or listen mode
+* Precache next file to speed up track switching in listen mode (pre-caching starts after 10s on a listen page)
 
 ## TODO
 
 ### Switch to https from http. Lets encrypt or self signed
-
-### Next / Previous buttons
-
-Now that autoplay is working add next and previous button
-
-### Audio/Audio Book
-
-Pre-cache next track when listening to current one
 
 ### Schedule video reencodes
 
