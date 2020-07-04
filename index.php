@@ -12,12 +12,15 @@
 //                                                     |  $$$$$$/          
 //                                                      \______/           
 
+define("URL_BASE", "/gd/");
+
 
 # track runtime
 $start = microtime(true);
 $rustart = getrusage();
 
 $suggestions["m"] = ["daft", "radiohead","Eilish" ];
+$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "Attack on Titan", "BATMAN", "marvel", "avenger"];
 
 $search_type = '';
 $dump_path = '';
@@ -36,6 +39,7 @@ $extensions = [
     ".mkv", 
     ".mp3", 
     ".mp4", 
+    ".m4v", 
     ".ogg", 
     ".iso", 
     ".smc",
@@ -224,6 +228,9 @@ function drawHeader($banner = false)
         ?>
 <!-- Header - set the background image for the header in the line below -->
 <header class="py-5 bg-image-full" style="background-image: url('/gd/black-pearl.jpg');">
+
+
+
 <div class="container">
 <h1 style="
     color:#fff;
@@ -602,6 +609,13 @@ function buildPlaybackLink($file_in_hex, $type = "") {
 // }
 
 
+function showSuggestions($category) {
+    global $suggestions;
+    foreach($suggestions[$category] as $q) { 
+        echo '<li><a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>';
+    }
+}
+
                                                   
 //                          /$$          
 //                         |__/          
@@ -620,7 +634,12 @@ function buildPlaybackLink($file_in_hex, $type = "") {
 if(!isset($_REQUEST['c'])) {
     drawHeader("Stay Awhile and Listen");
 
-    echo "<h1>Please enjoy your stay and DM requests</h1>";
+    echo "<h1>Please enjoy your stay and DM requests</h1>\n";
+    echo "<h2>Suggestions to get started</h2>\n";
+    echo "<h4>Music Suggestions</h4>\n";
+    showSuggestions("m");
+    echo "<h4>Movies+TV</h4>\n";
+    showSuggestions("v");
 
 } else {
     # config switch
