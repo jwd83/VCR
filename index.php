@@ -19,8 +19,8 @@ define("URL_BASE", "/gd/");
 $start = microtime(true);
 $rustart = getrusage();
 
-$suggestions["m"] = ["daft", "radiohead","Eilish" ];
-$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "Attack on Titan", "BATMAN", "marvel", "avenger"];
+$suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili" ];
+$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "Attack on Titan", "BATMAN", "marvel", "avenger", "outlander"];
 
 $search_type = '';
 $dump_path = '';
