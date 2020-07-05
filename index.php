@@ -1,4 +1,10 @@
 <?php
+// 
+// shout outs to all my homies in VA
+// 
+// ascii art from patorjk.com
+// 
+// http://patorjk.com/software/taag/#p=display&c=c%2B%2B&f=Big%20Money-ne&t=begins
 
 //                        /$$     /$$     /$$                              
 //                       | $$    | $$    |__/                              
@@ -19,6 +25,8 @@ define("URL_BASE", "/gd/");
 $start = microtime(true);
 $rustart = getrusage();
 
+
+$suggestions["a"] = ["plato", "sagan", "darwin", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"];
 $suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili" ];
 $suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "Attack on Titan", "BATMAN", "marvel", "avenger", "outlander"];
 
@@ -382,7 +390,7 @@ function getButtons($base_path, $current_file) {
 function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
     global $extensions, $white_list, $excludes;
 
-    echo "<h1>$base_path</h1>\n<table>\n";
+    echo "<h1>$base_path Results</h1>\n<table>\n";
 
     $base_path = dirname(__FILE__) . $base_path;
 
@@ -625,8 +633,30 @@ function showSuggestions($category) {
 // | $$ | $$ | $$ /$$__  $$| $$| $$  | $$
 // | $$ | $$ | $$|  $$$$$$$| $$| $$  | $$
 // |__/ |__/ |__/ \_______/|__/|__/  |__/
-                                      
-                                      
+//                                          
+//                                          
+//    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$ 
+//   /$$__  $$ |____  $$ /$$__  $$ /$$__  $$
+//  | $$  \ $$  /$$$$$$$| $$  \ $$| $$$$$$$$
+//  | $$  | $$ /$$__  $$| $$  | $$| $$_____/
+//  | $$$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
+//  | $$____/  \_______/ \____  $$ \_______/
+//  | $$                 /$$  \ $$          
+//  | $$                |  $$$$$$/          
+//  |__/                 \______/         
+// 
+//   /$$                           /$$                    
+//  | $$                          |__/                    
+//  | $$$$$$$   /$$$$$$   /$$$$$$  /$$ /$$$$$$$   /$$$$$$$
+//  | $$__  $$ /$$__  $$ /$$__  $$| $$| $$__  $$ /$$_____/
+//  | $$  \ $$| $$$$$$$$| $$  \ $$| $$| $$  \ $$|  $$$$$$ 
+//  | $$  | $$| $$_____/| $$  | $$| $$| $$  | $$ \____  $$
+//  | $$$$$$$/|  $$$$$$$|  $$$$$$$| $$| $$  | $$ /$$$$$$$/
+//  |_______/  \_______/ \____  $$|__/|__/  |__/|_______/ 
+//                       /$$  \ $$                        
+//                      |  $$$$$$/                        
+//                       \______/                         
+
 # our page will begin rendering here. 
 # see if we are on the homepage otherwise 
 # generate a page based on the [c] category                                      
@@ -669,9 +699,6 @@ if(!isset($_REQUEST['c'])) {
             $dump_path = 'Emulation + ROMs';
             # no $feature
             break;
-        
-
-
     }
 
 
@@ -685,6 +712,7 @@ if(!isset($_REQUEST['c'])) {
     }
 
     drawHeader($dump_path);
+
 
     # player switch
     if(isset($_REQUEST['file'])) {
@@ -742,6 +770,14 @@ Search:
 <a href="./?c='.$search_type.'&all=1">[All Files]</a>
 <hr>
 ';
+
+
+
+    if(isset($suggestions[$search_type])) {
+        echo "<h2>Sample Searches</h2>\n";
+        showSuggestions($search_type);
+    }
+
 
     # if there is a valid dump path list our files
     if(strlen($dump_path) > 1) {
@@ -801,7 +837,7 @@ setTimeout(
 
 
 
-    ?>
+?>
 
 <!-- Our jquery block -->
 
