@@ -1,5 +1,9 @@
 # V C R
+
 # oǝpᴉɅ ʎʇᴉϽ ɹǝʌᴉꓤ
+
+![VCR](https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Flag_of_Edward_England.svg/640px-Flag_of_Edward_England.svg.png)
+
 
 A wamp script to share your local files online.
 
