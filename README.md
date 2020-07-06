@@ -20,10 +20,6 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 
 ### Switch to https from http. Lets encrypt or self signed
 
-### Schedule video reencodes
-
-Created a reencode queue that goes to mp4 container in a browser friendly codec.
-
 ## Setup Notes
 
 ### sshd_config
