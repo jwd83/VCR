@@ -4,7 +4,7 @@
 
 A PHP script for WAMP to share your local files online along with a Python daemon to manage html video reencode requests.
 
-![VCR](https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Flag_of_Edward_England.svg/640px-Flag_of_Edward_England.svg.png)
+![VCR](https://cdn.mos.cms.futurecdn.net/w48feV8za6DRPBSuvyvpPB-1200-80.jpg)
 
 ## Features
 
