@@ -24,9 +24,10 @@ def get_next_file():
 
 
 def main():
+    print("Reading the queue...")
+
     while True:
 
-        print("Reading the queue...")
         input_src = get_next_file()
 
         if(input_src != ""):
@@ -55,8 +56,12 @@ def main():
             # run command
             os.system(command)
 
+            print("Reading the queue")
+
         # wait to check the file again
         time.sleep(3)
+        # print(".",end =" ")
+        # print(".")
 
 if __name__ == "__main__":
     main()
