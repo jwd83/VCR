@@ -22,7 +22,6 @@ define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("FFMPEG_PATH", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
 define("PSEXEC_PATH", "G:\\psexec.exe -d ");
-define("BAT_PATH", "G:\\run.bat");
 define("QUEUE_PATH", "G:\\queue.txt");
 
 
@@ -34,7 +33,7 @@ $rustart = getrusage();
 
 $suggestions["a"] = ["plato", "sagan", "darwin", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"];
 $suggestions["e"] = [".iso", ".smc" ];
-$suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili" ];
+$suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili", "prydz"];
 $suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "attack on titan", "batman", "marvel", "avenger", "outlander", "workaholic"];
 
 $search_type = '';
@@ -68,6 +67,9 @@ $white_list = [
     "Books\\"
 ];
 $excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
+
+# default to not show next and prev buttons
+$show_prev_next = false;
 
 
 
@@ -245,13 +247,6 @@ EOL );
 
 function writeFileToQueue($src) {
     file_put_contents(QUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
-}
-
-function writeAndRunBatFile($command) {
-    echo "<!--$command-->";
-    file_put_contents(BAT_PATH, $command, FILE_APPEND);
-    // echo "Running  $command in ".BAT_PATH;
-    shell_exec(BAT_PATH);
 }
 
 function reencodeVideo($src) {
@@ -679,6 +674,283 @@ function showSuggestions($category) {
     }
 }
 
+function page_index() {
+    drawHeader("Stay Awhile and Listen");
+
+    echo "<h1>Please enjoy your stay and DM requests</h1>\n";
+    echo "<h2>Suggestions to get started</h2>\n";
+    echo "<h4>Audio Books</h4>\n";
+    showSuggestions("a");
+    echo "<h4>Music Suggestions</h4>\n";
+    showSuggestions("m");
+    echo "<h4>Movies+TV</h4>\n";
+    showSuggestions("v");
+}
+
+function page_html5_queue() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
+    if(isset($_REQUEST['file'])) {
+        reencodeVideoHTML($_REQUEST['file']);
+        $_REQUEST['file'] .= strToHex(".html.mp4");
+    }
+    $search_type = 'v';
+    $dump_path = 'Movies+TV';
+    $feature = 'watch';
+
+
+    drawHeader($dump_path);
+}
+
+function pageContainerSwap() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    if(isset($_REQUEST['file'])) {
+        reencodeVideo($_REQUEST['file']);
+        $_REQUEST['file'] .= strToHex(".re.mp4");
+    }
+    $search_type = 'v';
+    $dump_path = 'Movies+TV';
+    $feature = 'watch';
+
+
+    drawHeader($dump_path);
+
+
+                    // reencodeVideo($src);
+
+}
+
+function pageVideoPlayer() {
+
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $search_type = 'v';
+    $dump_path = 'Movies+TV';
+    $feature = 'watch';
+
+    drawHeader($dump_path);
+
+    if(isset($_REQUEST['file'])) {
+        $show_prev_next = true;
+        solveButtons();
+        drawButtons();
+        drawVideoPlayer();
+        addAutoplayJquery();
+
+    }
+    drawSearchBox();
+    drawSearchResults();
+    drawFooter(); 
+}
+
+function pageAudioBook() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $search_type = 'a';
+    $dump_path = 'Audio Books';
+    $feature = 'listen';    
+    $show_prev_next = true;    
+
+    drawHeader($dump_path);
+
+    if(isset($_REQUEST['file'])) {
+        $show_prev_next = true;
+        solveButtons();
+        drawButtons();
+        drawAudioPlayer();
+        addAutoplayJquery();
+        addPrecacheJquery();
+
+    }
+    drawSearchBox();
+    drawSearchResults();
+    drawFooter();  
+}
+
+function pageMusicPlayer() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $search_type = 'm';
+    $dump_path = 'Music';
+    $feature = 'listen';   
+    $show_prev_next = true; 
+
+    drawHeader($dump_path);
+
+    if(isset($_REQUEST['file'])) {
+        $show_prev_next = true;
+        solveButtons();
+        drawButtons();
+        drawAudioPlayer();
+        addAutoplayJquery();
+        addPrecacheJquery();
+    }
+    drawSearchBox();
+    drawSearchResults();
+    drawFooter();
+}
+
+function pageBooks(){
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $search_type = 'b';
+    $dump_path = 'Books';
+
+
+    drawHeader($dump_path);
+    drawSearchBox();
+    drawSearchResults();
+    drawFooter();    
+}
+
+function pageEmulation(){
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $search_type = 'e';
+    $dump_path = 'Emulation + ROMs';
+
+    drawHeader($dump_path);
+    drawSearchBox();
+    drawSearchResults();
+    drawFooter();
+
+}
+
+function solveButtons() {
+    global $buttons, $next_file_to_play, $dump_path;
+    
+    if(isset($_REQUEST['file'])) {
+        $buttons = getButtons($dump_path, $_REQUEST['file']);
+        $next_file_to_play = $buttons['next'];
+    }
+}
+
+function addAutoplayJquery() {
+    global $jquery_code_to_run, $buttons;
+    $jquery_code_to_run .= "
+// autoplay binding
+$(\"#player\").bind(
+    'ended', 
+    function() {
+         window.location.href = \"".buildPlaybackLink($buttons['next'])."\";
+     }
+);
+
+";
+}
+
+
+function addPrecacheJquery() {
+    global $jquery_code_to_run, $buttons;
+
+    $jquery_code_to_run .= '
+
+setTimeout(
+    function() 
+    {
+        $("body").append(
+            \'<audio src="/gd/'. $buttons['next_raw'] . '" preload="auto">\'
+        );
+    }, 
+    10000
+);
+';
+}
+
+function drawButtons() {
+    global $show_prev_next,  $buttons;
+
+    if($show_prev_next) {
+        echo '
+
+<h3>
+    <a href="'.buildPlaybackLink($buttons['previous']).'">⏮️Previous</a> | 
+    <a href="'.buildPlaybackLink($buttons['next']).'">Next⏭</a>
+</h3>
+
+';
+    }
+}
+
+function drawAudioPlayer() {
+    global $src;
+
+    echo '
+
+<h2>Attempting to play '.$src.'</h2>
+For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
+<br>
+<a href="'.$src.'">copy my direct link</a><br>
+<br>
+<br>
+<audio autoplay controls id="player" class="player" preload="auto">
+<source src="'.$src.'">
+Your browser does not support the audio element.
+</audio>
+<!-- Preload the next song -->
+';
+
+
+}
+
+function drawVideoPlayer() {
+    global $src;
+
+    echo '
+<h2>Attempting to play '.$src.'</h2>
+For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
+<br>
+<a href="'.$src.'">copy my direct link</a><br>
+<br>
+<br>
+<video controls width=800 autoplay id="player" class="player">
+<source src="'.$src.'">
+Your browser does not support the video element.
+</video>
+
+';
+
+}
+
+function drawSearchBox() {
+    global $search_type, $suggestions;
+    echo '
+<hr>
+Search: 
+<form method="GET">
+<input type="hidden" name="c" value="'.$search_type.'">
+<input type="text" name="q">
+<input type="submit">
+</form>
+<br>
+<a href="./?c='.$search_type.'&all=1">[All Files]</a>
+<hr>
+';
+
+
+    if(isset($suggestions[$search_type])) {
+        echo "<h2>Sample Searches</h2>\n";
+        showSuggestions($search_type);
+    }
+}
+
+function drawSearchResults() {
+    global $dump_path, $feature, $search_type;
+    # if there is a valid dump path list our files
+    if(strlen($dump_path) > 1) {
+
+        if(isset($_REQUEST['q'])) {
+            dumpPath($dump_path, $feature, $search_type, $_REQUEST['q']);
+
+        }
+
+        if(isset($_REQUEST['all'])) {
+            dumpPath($dump_path, $feature, $search_type);    
+        }
+    }
+}
+
+
                                                   
 //                          /$$          
 //                         |__/          
@@ -716,233 +988,67 @@ function showSuggestions($category) {
 # see if we are on the homepage otherwise 
 # generate a page based on the [c] category                                      
 
-$show_prev_next = false;
+
 
 if(!isset($_REQUEST['c'])) {
-    drawHeader("Stay Awhile and Listen");
-
-    echo "<h1>Please enjoy your stay and DM requests</h1>\n";
-    echo "<h2>Suggestions to get started</h2>\n";
-    echo "<h4>Audio Books</h4>\n";
-    showSuggestions("a");
-    echo "<h4>Music Suggestions</h4>\n";
-    showSuggestions("m");
-    echo "<h4>Movies+TV</h4>\n";
-    showSuggestions("v");
-
+    page_index();
 } else {
     # config switch
-    switch($_REQUEST['c']){
-        case '5':
-            if(isset($_REQUEST['file'])) {
-                reencodeVideoHTML($_REQUEST['file']);
-                $_REQUEST['file'] .= strToHex(".html.mp4");
-            }
-            $search_type = 'v';
-            $dump_path = 'Movies+TV';
-            $feature = 'watch';
-            break;        
-        case 'r':
-            if(isset($_REQUEST['file'])) {
-                reencodeVideo($_REQUEST['file']);
-                $_REQUEST['file'] .= strToHex(".re.mp4");
-            }
-            $search_type = 'v';
-            $dump_path = 'Movies+TV';
-            $feature = 'watch';
-            break;
-        case 'v':
-            $search_type = 'v';
-            $dump_path = 'Movies+TV';
-            $feature = 'watch';
-            $show_prev_next = true;
-            break;
-        case 'a':
-            $search_type = 'a';
-            $dump_path = 'Audio Books';
-            $feature = 'listen';    
-            $show_prev_next = true;    
-            break;
-        case 'm':
-            $search_type = 'm';
-            $dump_path = 'Music';
-            $feature = 'listen';   
-            $show_prev_next = true;   
-            break;
-        case 'b':
-            $search_type = 'b';
-            $dump_path = 'Books';
-            # no $feature
-            break;
-        case 'e':
-            $search_type = 'e';
-            $dump_path = 'Emulation + ROMs';
-            # no $feature
-            break;
-    }
 
-
-    // if a media file is requested look up the files for it's forward & back buttons
-    if(isset($_REQUEST['file']) && isset($_REQUEST['c'])) {
-        if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm' || $_REQUEST['c'] = 'v') {
-
-            $buttons = getButtons($dump_path, $_REQUEST['file']);
-            $next_file_to_play = $buttons['next'];
-        }
-    }
-
-    drawHeader($dump_path);
-
-
-    # player switch
     if(isset($_REQUEST['file'])) {
-
-        if($show_prev_next) {
-            echo '
-
-<h3>
-    <a href="'.buildPlaybackLink($buttons['previous']).'">⏮️Previous</a> | 
-    <a href="'.buildPlaybackLink($buttons['next']).'">Next⏭</a>
-</h3>
-
-';
-        }
-        
-
         $src = '/gd/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
-
-        switch($_REQUEST['c']){
-            case 'a':
-            case 'm':
-                echo '<h2>Attempting to play '.$src.'</h2>';
-                echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
-                echo '<a href="'.$src.'">copy me</a><br><br><br>';
-                echo '
-<audio autoplay controls id="player" class="player" preload="auto">
-<source src="'.$src.'">
-Your browser does not support the audio element.
-</audio>
-<!-- Preload the next song -->
-';
-                break;
-
-            case 'v':
-
-                echo '<h2>Attempting to play '.$src.'</h2>';
-                echo 'For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC: ';
-                echo '<a href="'.$src.'">copy me</a><br><br><br>';
-                echo '
-<video controls width=800 autoplay id="player" class="player">
-<source src="'.$src.'">
-</video>
-
-';
-            break;
-            case 'r':
-
-                reencodeVideo($src);
-
-            break;
-        }
     }
 
-    echo '
-<hr>
-Search: 
-<form method="GET">
-<input type="hidden" name="c" value="'.$search_type.'">
-<input type="text" name="q">
-<input type="submit">
-</form>
-<br>
-<a href="./?c='.$search_type.'&all=1">[All Files]</a>
-<hr>
-';
-
-
-
-    if(isset($suggestions[$search_type])) {
-        echo "<h2>Sample Searches</h2>\n";
-        showSuggestions($search_type);
-    }
-
-
-    # if there is a valid dump path list our files
-    if(strlen($dump_path) > 1) {
-
-        if(isset($_REQUEST['q'])) {
-            dumpPath($dump_path, $feature, $search_type, $_REQUEST['q']);
-
-        }
-
-        if(isset($_REQUEST['all'])) {
-            dumpPath($dump_path, $feature, $search_type);    
-        }
+    switch($_REQUEST['c']){
+        case '5': page_html5_queue();   break;        
+        case 'r': pageContainerSwap();  break;
+        case 'v': pageVideoPlayer();    break;
+        case 'a': pageAudioBook();      break;
+        case 'm': pageMusicPlayer();    break;
+        case 'b': pageBooks();          break;
+        case 'e': pageEmulation();      break;
     }
 }
 
-drawFooter();
 
-if(isset($_REQUEST['file']) && isset($_REQUEST['c'])) {
-    if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm' || $_REQUEST['c'] = 'v') {
-
-
-        // autoplay code
-
-        $jquery_code_to_run .= "
-
-// autoplay binding
-
-
-
-$(\"#player\").bind(
-    'ended', 
-    function() {
-         window.location.href = \"".buildPlaybackLink($buttons['next'])."\";
-     }
-);
-
-";
-
-        # preload the next song
-        if($_REQUEST['c'] == 'a' || $_REQUEST['c'] == 'm') {
-            $jquery_code_to_run .= '
-
-setTimeout(
-    function() 
-    {
-        $("body").append(
-            \'<audio src="/gd/'. $buttons['next_raw'] . '" preload="auto">\'
-        );
-    }, 
-    10000
-);
-            ';
-
-        }
-    }
-}
-
+//                                                              
+//                                                              
+//         /$$  /$$$$$$  /$$   /$$  /$$$$$$   /$$$$$$  /$$   /$$
+//        |__/ /$$__  $$| $$  | $$ /$$__  $$ /$$__  $$| $$  | $$
+//         /$$| $$  \ $$| $$  | $$| $$$$$$$$| $$  \__/| $$  | $$
+//        | $$| $$  | $$| $$  | $$| $$_____/| $$      | $$  | $$
+//        | $$|  $$$$$$$|  $$$$$$/|  $$$$$$$| $$      |  $$$$$$$
+//        | $$ \____  $$ \______/  \_______/|__/       \____  $$
+//   /$$  | $$      | $$                               /$$  | $$
+//  |  $$$$$$/      | $$                              |  $$$$$$/
+//   \______/       |__/                               \______/ 
+// 
+//   /$$                           /$$                    
+//  | $$                          |__/                    
+//  | $$$$$$$   /$$$$$$   /$$$$$$  /$$ /$$$$$$$   /$$$$$$$
+//  | $$__  $$ /$$__  $$ /$$__  $$| $$| $$__  $$ /$$_____/
+//  | $$  \ $$| $$$$$$$$| $$  \ $$| $$| $$  \ $$|  $$$$$$ 
+//  | $$  | $$| $$_____/| $$  | $$| $$| $$  | $$ \____  $$
+//  | $$$$$$$/|  $$$$$$$|  $$$$$$$| $$| $$  | $$ /$$$$$$$/
+//  |_______/  \_______/ \____  $$|__/|__/  |__/|_______/ 
+//                       /$$  \ $$                        
+//                      |  $$$$$$/                        
+//                       \______/                         
 ?>
 
 <!-- Our jquery block -->
-
 <script>
 $( document ).ready
 (
     function() 
     {
-        // --------------------------------------------------------------------
-        // Begin $jquery_code_to_run
-        // --------------------------------------------------------------------
-
+// --------------------------------------------------------------------
+// Begin $jquery_code_to_run
+// --------------------------------------------------------------------
 <?= $jquery_code_to_run ?>
-
-        // --------------------------------------------------------------------
-        // End $jquery_code_to_run
-        // --------------------------------------------------------------------
-
+// --------------------------------------------------------------------
+// End $jquery_code_to_run
+// --------------------------------------------------------------------
     }
 );
-
 </script>
