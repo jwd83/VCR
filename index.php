@@ -21,6 +21,10 @@
 define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("FFMPEG_PATH", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
+define("PSEXEC_PATH", "G:\\psexec.exe -d ");
+define("BAT_PATH", "G:\\run.bat");
+define("QUEUE_PATH", "G:\\queue.txt");
+
 
 
 # track runtime
@@ -31,7 +35,7 @@ $rustart = getrusage();
 $suggestions["a"] = ["plato", "sagan", "darwin", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"];
 $suggestions["e"] = [".iso", ".smc" ];
 $suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili" ];
-$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "attack on titan", "batman", "marvel", "avenger", "outlander"];
+$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "attack on titan", "batman", "marvel", "avenger", "outlander", "workaholic"];
 
 $search_type = '';
 $dump_path = '';
@@ -98,7 +102,7 @@ define('THEME_TOP' , <<<EOL
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Highwind's Stash</title>
+  <title>%%TITLE%%</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -239,32 +243,45 @@ EOL );
 // | $$     |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 // |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/ 
 
-function reencodeVideo($src) {
-
-    // attempt a container swap by default
-    // ffmpeg -i LostInTranslation.mkv -codec copy LostInTranslation.mp4
-
-    $src = FILESYSTEM_BASE . hexToStr($src);
-
-    if(file_exists($src)) {
-
-        $command = FFMPEG_PATH . " -i \"$src\" -codec copy \"$src.re.mp4\"";
-
-        // echo "reencodeVideo passed $src<br><br><br>\n";
-        // echo "Starting ffmpeg with:<br><br>\n\n$command<br><br>\n\n";
-        echo shell_exec($command);
-        // echo "Done.\n";
-    } else {
-        // echo "File not found";
-    }
-
-
+function writeFileToQueue($src) {
+    file_put_contents(QUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
 }
+
+function writeAndRunBatFile($command) {
+    echo "<!--$command-->";
+    file_put_contents(BAT_PATH, $command, FILE_APPEND);
+    // echo "Running  $command in ".BAT_PATH;
+    shell_exec(BAT_PATH);
+}
+
+function reencodeVideo($src) {
+    $src = FILESYSTEM_BASE . hexToStr($src);
+    if(file_exists($src)) {
+        $command = FFMPEG_PATH . " -i \"$src\" -codec copy \"$src.re.mp4\"";
+        exec($command);
+    }
+}
+
+
+function reencodeVideoHTML($src) {
+    $src = FILESYSTEM_BASE . hexToStr($src);
+    if(file_exists($src)) {
+        writeFileToQueue($src);
+    }
+}
+
 
 function drawHeader($banner = false) 
 {
     // global 
-    echo THEME_TOP;
+    $title = "Highwind's Stash";
+
+    if(isset($_REQUEST['file'])) {
+        $title = pathinfo(hexToStr($_REQUEST['file']))['basename'];
+    }
+
+    echo str_replace("%%TITLE%%", "$title", THEME_TOP) ;
+
     if ($banner !== false) 
     {
         ?>
@@ -503,7 +520,8 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                 echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
             }
             if($optional_reference == 'v') {
-                echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');   
+                echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
+                echoCell('<a href="?c=5&file='.strToHex($path).'">[5]</a>');
             }
             echoCell(substr($path,  strlen($base_path)-2));
             echo "</tr>\n";
@@ -713,11 +731,24 @@ if(!isset($_REQUEST['c'])) {
 } else {
     # config switch
     switch($_REQUEST['c']){
+        case '5':
+            if(isset($_REQUEST['file'])) {
+                reencodeVideoHTML($_REQUEST['file']);
+                $_REQUEST['file'] .= strToHex(".html.mp4");
+            }
+            $search_type = 'v';
+            $dump_path = 'Movies+TV';
+            $feature = 'watch';
+            break;        
         case 'r':
             if(isset($_REQUEST['file'])) {
                 reencodeVideo($_REQUEST['file']);
                 $_REQUEST['file'] .= strToHex(".re.mp4");
             }
+            $search_type = 'v';
+            $dump_path = 'Movies+TV';
+            $feature = 'watch';
+            break;
         case 'v':
             $search_type = 'v';
             $dump_path = 'Movies+TV';
