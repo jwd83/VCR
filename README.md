@@ -5,6 +5,7 @@ A wamp script to share your local files online.
 
 ## Features
 
+* reencode files to mp4 container (may fix playback in some browsers. new files end in .re.mp4
 * Autoplay your collection of audio and video files where supported by your browser.
 * Download shared files remotely. 
 * Next and Previous buttons while in watch or listen mode
@@ -16,7 +17,7 @@ A wamp script to share your local files online.
 
 ### Schedule video reencodes
 
-Setup a background daemon to do video reencodes to a browser friendly format
+Created a reencode queue that goes to mp4 container in a browser friendly codec.
 
 ## Setup Notes
 
