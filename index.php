@@ -716,6 +716,8 @@ function showSuggestions($category) {
 # see if we are on the homepage otherwise 
 # generate a page based on the [c] category                                      
 
+$show_prev_next = false;
+
 if(!isset($_REQUEST['c'])) {
     drawHeader("Stay Awhile and Listen");
 
@@ -753,16 +755,19 @@ if(!isset($_REQUEST['c'])) {
             $search_type = 'v';
             $dump_path = 'Movies+TV';
             $feature = 'watch';
+            $show_prev_next = true;
             break;
         case 'a':
             $search_type = 'a';
             $dump_path = 'Audio Books';
-            $feature = 'listen';        
+            $feature = 'listen';    
+            $show_prev_next = true;    
             break;
         case 'm':
             $search_type = 'm';
             $dump_path = 'Music';
-            $feature = 'listen';      
+            $feature = 'listen';   
+            $show_prev_next = true;   
             break;
         case 'b':
             $search_type = 'b';
@@ -791,7 +796,9 @@ if(!isset($_REQUEST['c'])) {
 
     # player switch
     if(isset($_REQUEST['file'])) {
-        echo '
+
+        if($show_prev_next) {
+            echo '
 
 <h3>
     <a href="'.buildPlaybackLink($buttons['previous']).'">⏮️Previous</a> | 
@@ -799,6 +806,7 @@ if(!isset($_REQUEST['c'])) {
 </h3>
 
 ';
+        }
         
 
         $src = '/gd/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
@@ -915,8 +923,6 @@ setTimeout(
     }
 }
 
-
-
 ?>
 
 <!-- Our jquery block -->
@@ -936,11 +942,7 @@ $( document ).ready
         // End $jquery_code_to_run
         // --------------------------------------------------------------------
 
-
-
     }
 );
 
 </script>
-
-
