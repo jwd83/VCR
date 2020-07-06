@@ -19,6 +19,8 @@
 //                                                      \______/           
 
 define("URL_BASE", "/gd/");
+define("FILESYSTEM_BASE", 'G:\\');
+define("FFMPEG_PATH", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
 
 
 # track runtime
@@ -27,8 +29,9 @@ $rustart = getrusage();
 
 
 $suggestions["a"] = ["plato", "sagan", "darwin", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"];
+$suggestions["e"] = [".iso", ".smc" ];
 $suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili" ];
-$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "Attack on Titan", "BATMAN", "marvel", "avenger", "outlander"];
+$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "attack on titan", "batman", "marvel", "avenger", "outlander"];
 
 $search_type = '';
 $dump_path = '';
@@ -236,7 +239,27 @@ EOL );
 // | $$     |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 // |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/ 
 
-# settings
+function reencodeVideo($src) {
+
+    // attempt a container swap by default
+    // ffmpeg -i LostInTranslation.mkv -codec copy LostInTranslation.mp4
+
+    $src = FILESYSTEM_BASE . hexToStr($src);
+
+    if(file_exists($src)) {
+
+        $command = FFMPEG_PATH . " -i \"$src\" -codec copy \"$src.re.mp4\"";
+
+        // echo "reencodeVideo passed $src<br><br><br>\n";
+        // echo "Starting ffmpeg with:<br><br>\n\n$command<br><br>\n\n";
+        echo shell_exec($command);
+        // echo "Done.\n";
+    } else {
+        // echo "File not found";
+    }
+
+
+}
 
 function drawHeader($banner = false) 
 {
@@ -479,6 +502,9 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             if($optional_feature != 'none') {
                 echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
             }
+            if($optional_reference == 'v') {
+                echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');   
+            }
             echoCell(substr($path,  strlen($base_path)-2));
             echo "</tr>\n";
         }
@@ -677,6 +703,8 @@ if(!isset($_REQUEST['c'])) {
 
     echo "<h1>Please enjoy your stay and DM requests</h1>\n";
     echo "<h2>Suggestions to get started</h2>\n";
+    echo "<h4>Audio Books</h4>\n";
+    showSuggestions("a");
     echo "<h4>Music Suggestions</h4>\n";
     showSuggestions("m");
     echo "<h4>Movies+TV</h4>\n";
@@ -685,6 +713,11 @@ if(!isset($_REQUEST['c'])) {
 } else {
     # config switch
     switch($_REQUEST['c']){
+        case 'r':
+            if(isset($_REQUEST['file'])) {
+                reencodeVideo($_REQUEST['file']);
+                $_REQUEST['file'] .= strToHex(".re.mp4");
+            }
         case 'v':
             $search_type = 'v';
             $dump_path = 'Movies+TV';
@@ -765,6 +798,11 @@ Your browser does not support the audio element.
 </video>
 
 ';
+            break;
+            case 'r':
+
+                reencodeVideo($src);
+
             break;
         }
     }
