@@ -674,7 +674,7 @@ function showSuggestions($category) {
     }
 }
 
-function page_index() {
+function pageIndex() {
     drawHeader("Stay Awhile and Listen");
 
     echo "<h1>Please enjoy your stay and DM requests</h1>\n";
@@ -687,27 +687,38 @@ function page_index() {
     showSuggestions("v");
 }
 
-function page_html5_queue() {
+function pageHTML5VideoQueue() {
     global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $original_file = "";
+    $new_file = "";
+
+
     if(isset($_REQUEST['file'])) {
+
+        $original_file = hexToStr($_REQUEST['file']);
         reencodeVideoHTML($_REQUEST['file']);
         $_REQUEST['file'] .= strToHex(".html.mp4");
-    }
-    $search_type = 'v';
+        $new_file = hexToStr($_REQUEST['file']);
+        $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
+    }   
+    $search_type = 'v'; 
     $dump_path = 'Movies+TV';
     $feature = 'watch';
 
 
     drawHeader($dump_path);
+
+    echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
+
+    drawSearchBox();
+    drawFooter();     
+
 }
 
 function pageContainerSwap() {
     global $search_type, $dump_path, $feature, $show_prev_next;
 
-    if(isset($_REQUEST['file'])) {
-        reencodeVideo($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".re.mp4");
-    }
     $search_type = 'v';
     $dump_path = 'Movies+TV';
     $feature = 'watch';
@@ -715,8 +726,13 @@ function pageContainerSwap() {
 
     drawHeader($dump_path);
 
-
-                    // reencodeVideo($src);
+    if(isset($_REQUEST['file'])) {
+        reencodeVideo($_REQUEST['file']);
+        $_REQUEST['file'] .= strToHex(".re.mp4");
+    }
+    drawVideoPlayer();
+    drawSearchBox();
+    drawFooter();     
 
 }
 
@@ -991,7 +1007,7 @@ function drawSearchResults() {
 
 
 if(!isset($_REQUEST['c'])) {
-    page_index();
+    pageIndex();
 } else {
     # config switch
 
@@ -1000,13 +1016,13 @@ if(!isset($_REQUEST['c'])) {
     }
 
     switch($_REQUEST['c']){
-        case '5': page_html5_queue();   break;        
-        case 'r': pageContainerSwap();  break;
-        case 'v': pageVideoPlayer();    break;
-        case 'a': pageAudioBook();      break;
-        case 'm': pageMusicPlayer();    break;
-        case 'b': pageBooks();          break;
-        case 'e': pageEmulation();      break;
+        case '5': pageHTML5VideoQueue();    break;        
+        case 'r': pageContainerSwap();      break;
+        case 'v': pageVideoPlayer();        break;
+        case 'a': pageAudioBook();          break;
+        case 'm': pageMusicPlayer();        break;
+        case 'b': pageBooks();              break;
+        case 'e': pageEmulation();          break;
     }
 }
 
