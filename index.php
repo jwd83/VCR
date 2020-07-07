@@ -31,10 +31,68 @@ $start = microtime(true);
 $rustart = getrusage();
 
 
-$suggestions["a"] = ["plato", "sagan", "darwin", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"];
-$suggestions["e"] = [".iso", ".smc" ];
-$suggestions["m"] = ["daft", "radiohead","floyd", "eilish", "chili", "prydz"];
-$suggestions["v"] = ["shell", "robot","Are You Afraid Of The Dark" , "attack on titan", "batman", "marvel", "avenger", "outlander", "workaholic"];
+$suggestions["a"] =  array_map('strtolower', ["plato", "sagan", "darwin", "krauss", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"]);
+
+$suggestions["b"] = array_map('strtolower', [
+    "dawkins", 
+    "harris", 
+    "hawking", 
+    "krauss", 
+    "newton", 
+    "bryson", 
+    "twain", 
+    "martin", 
+    "huxley", 
+    "watterson", 
+    "sagan", 
+    "rowling", 
+    "shakespeare", 
+    "mandela",
+    "MELville",
+]);
+
+$suggestions["e"] = array_map('strtolower', [".iso", ".smc" ]);
+$suggestions["m"] = array_map('strtolower', [
+"daft",
+"radiohead",
+"floyd",
+"eilish",
+"chili",
+"prydz",
+"quest",
+"adele",
+"beastie",
+"Blue Sky Black Death",
+"jazz",
+"queen",
+"Depeche Mode",
+"Dragonforce",
+"Eagles",
+"Eric Johnson",
+"Final Fantasy",
+"Foo Fighters",
+"Jewel",
+"Hendrix",
+"Zeppelin",
+"Tool",
+"Tyler",
+"Glitch Mob",
+"eminem",
+
+
+
+]);
+$suggestions["v"] = array_map('strtolower', [
+"shell",
+"robot",
+"Are You Afraid Of The Dark" ,
+"attack on titan",
+"batman",
+"marvel",
+"avenger",
+"outlander",
+"workaholic",
+]);
 
 $search_type = '';
 $dump_path = '';
@@ -244,6 +302,12 @@ EOL );
 // | $$     | $$  | $$| $$  | $$| $$        | $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
 // | $$     |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 // |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/ 
+
+function human_filesize($bytes, $decimals = 2) {
+  $sz = 'BKMGTP';
+  $factor = floor((strlen($bytes) - 1) / 3);
+  return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+}
 
 function writeFileToQueue($src) {
     file_put_contents(QUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
@@ -515,9 +579,17 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                 echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
             }
             if($optional_reference == 'v') {
-                echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
-                echoCell('<a href="?c=5&file='.strToHex($path).'">[5]</a>');
+
+                if(endsWith($path, "html.mp4")) {
+                    echocell('-');
+                    echocell('-');
+                } else {
+                    echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
+                    echoCell('<a href="?c=5&file='.strToHex($path).'">[5]</a>');
+                }
+
             }
+            echoCell(human_filesize(filesize($path)));
             echoCell(substr($path,  strlen($base_path)-2));
             echo "</tr>\n";
         }
@@ -669,8 +741,12 @@ function buildPlaybackLink($file_in_hex, $type = "") {
 
 function showSuggestions($category) {
     global $suggestions;
+
+
+    sort($suggestions[$category]);
     foreach($suggestions[$category] as $q) { 
-        echo '<li><a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>';
+
+        echo '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
     }
 }
 
@@ -681,6 +757,8 @@ function pageIndex() {
     echo "<h2>Suggestions to get started</h2>\n";
     echo "<h4>Audio Books</h4>\n";
     showSuggestions("a");
+    echo "<h4>Books</h4>\n";
+    showSuggestions("b");    
     echo "<h4>Music Suggestions</h4>\n";
     showSuggestions("m");
     echo "<h4>Movies+TV</h4>\n";
