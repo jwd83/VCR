@@ -92,6 +92,17 @@ $suggestions["v"] = array_map('strtolower', [
 "avenger",
 "outlander",
 "workaholic",
+"furious",
+"thrones",
+"Hellsing",
+"thrones",
+"His Dark Materials",
+"Hunter x Hunter",
+"Game of Thrones - Season"
+
+
+
+ 
 ]);
 
 $search_type = '';
@@ -220,6 +231,9 @@ define('THEME_TOP' , <<<EOL
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="./?c=q">q</a>
+          </li>    
           <li class="nav-item active">
             <a class="nav-link" href="/gd/">Home
               <span class="sr-only">(current)</span>
@@ -362,7 +376,7 @@ function drawHeader($banner = false)
     font-weight: bolder;
 
     ">
-
+ 
     &ldquo;<?= $banner ?>&rdquo;
 </h1>
 </div>
@@ -861,6 +875,15 @@ function pageAudioBook() {
     drawFooter();  
 }
 
+
+function pageShowQueue() {
+    drawHeader("Contents of queue.txt");
+    echo "\n<pre>\n";
+    include "queue.txt";
+    echo "\n</pre>\n";
+    drawFooter();  
+}
+
 function pageMusicPlayer() {
     global $search_type, $dump_path, $feature, $show_prev_next;
 
@@ -1095,12 +1118,13 @@ if(!isset($_REQUEST['c'])) {
 
     switch($_REQUEST['c']){
         case '5': pageHTML5VideoQueue();    break;        
-        case 'r': pageContainerSwap();      break;
-        case 'v': pageVideoPlayer();        break;
         case 'a': pageAudioBook();          break;
-        case 'm': pageMusicPlayer();        break;
         case 'b': pageBooks();              break;
         case 'e': pageEmulation();          break;
+        case 'm': pageMusicPlayer();        break;
+        case 'q': pageShowQueue();          break;
+        case 'r': pageContainerSwap();      break;
+        case 'v': pageVideoPlayer();        break;
     }
 }
 
