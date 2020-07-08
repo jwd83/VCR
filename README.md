@@ -15,6 +15,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Download shared files remotely. 
 * Next and Previous buttons while in watch or listen mode
 * Precache next file to speed up track switching in listen mode (pre-caching starts after 10s on a listen page)
+* Randomly selected background image for header in settings. Can use single list element for static
 
 ## TODO
 
