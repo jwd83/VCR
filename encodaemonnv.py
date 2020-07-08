@@ -61,7 +61,7 @@ def main():
             command += " -n "
 
             # specify output file
-            command += "\"" + input_src + ".nvenc.mp4\""
+            command += "\"" + input_src + ".h265.mp4\""
 
             # print the command that will be executed
             print(command)
