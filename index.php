@@ -1022,6 +1022,10 @@ Your browser does not support the audio element.
 function drawVideoPlayer() {
     global $src;
 
+    $t = 0;
+
+    if(isset($_REQUEST['t'])) $t = (int) $_REQUEST['t'];
+
     echo '
 <h2>Attempting to play '.$src.'</h2>
 For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
@@ -1030,7 +1034,7 @@ For best results view in Chrome. If your browser is unable to play this file you
 <br>
 <br>
 <video controls width=800 autoplay id="player" class="player">
-<source src="'.$src.'">
+<source src="'.$src.'#t='.$t.'">
 Your browser does not support the video element.
 </video>
 
