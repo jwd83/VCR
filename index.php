@@ -30,6 +30,7 @@ define("QUEUE_PATH", "G:\\queue.txt");
 $start = microtime(true);
 $rustart = getrusage();
 
+$backgrounds = ["black-pearl.jpg", "motoko.jpg", "daftpunk.jpg", "radiohead.jpg", "pinkfloyd.jpg"];
 
 $suggestions["a"] =  array_map('strtolower', ["plato", "sagan", "darwin", "krauss", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"]);
 
@@ -51,7 +52,7 @@ $suggestions["b"] = array_map('strtolower', [
     "MELville",
 ]);
 
-$suggestions["e"] = array_map('strtolower', [".iso", ".smc" ]);
+$suggestions["e"] = array_map('strtolower', [".iso", "final fantasy", "ps2" ]);
 $suggestions["m"] = array_map('strtolower', [
 "daft",
 "radiohead",
@@ -346,8 +347,11 @@ function reencodeVideoHTML($src) {
 
 function drawHeader($banner = false) 
 {
+    global $backgrounds;
     // global 
     $title = "Highwind's Stash";
+
+    
 
     if(isset($_REQUEST['file'])) {
         $title = pathinfo(hexToStr($_REQUEST['file']))['basename'];
@@ -359,7 +363,7 @@ function drawHeader($banner = false)
     {
         ?>
 <!-- Header - set the background image for the header in the line below -->
-<header class="py-5 bg-image-full" style="background-image: url('/gd/black-pearl.jpg');">
+<header class="py-5 bg-image-full" style="background-image: url('/gd/<?= $backgrounds[array_rand ($backgrounds)]; ?>');">
 
 
 
@@ -777,6 +781,8 @@ function pageIndex() {
     showSuggestions("m");
     echo "<h4>Movies+TV</h4>\n";
     showSuggestions("v");
+
+    drawFooter();
 }
 
 function pageHTML5VideoQueue() {
