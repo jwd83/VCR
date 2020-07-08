@@ -23,6 +23,7 @@ define("FILESYSTEM_BASE", 'G:\\');
 define("FFMPEG_PATH", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
 define("PSEXEC_PATH", "G:\\psexec.exe -d ");
 define("QUEUE_PATH", "G:\\queue.txt");
+define("NQUEUE_PATH", "G:\\nqueue.txt");
 
 
 
@@ -100,6 +101,7 @@ $suggestions["v"] = array_map('strtolower', [
 "His Dark Materials",
 "Hunter x Hunter",
 "Game of Thrones - Season",
+"Ralph",
 ".html.mp4",
 
 
@@ -329,6 +331,10 @@ function writeFileToQueue($src) {
     file_put_contents(QUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
 }
 
+function writeFileToNVENCQueue($src) {
+    file_put_contents(NQUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
+}
+
 function reencodeVideo($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
@@ -342,6 +348,14 @@ function reencodeVideoHTML($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
         writeFileToQueue($src);
+    }
+}
+
+
+function reencodeVideoNVENC($src) {
+    $src = FILESYSTEM_BASE . hexToStr($src);
+    if(file_exists($src)) {
+        writeFileToNVENCQueue($src);
     }
 }
 
@@ -519,7 +533,21 @@ function getButtons($base_path, $current_file) {
 function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
     global $extensions, $white_list, $excludes;
 
-    echo "<h1>$base_path Results</h1>\n<table>\n";
+    echo "<h1>$base_path Results</h1>\n";
+
+    if($_REQUEST['c'] == 'v') {
+        echo "
+<hr>
+<h3>Notes</h3>
+[r] replace container with mp4.<br>
+[5] reencode html5 safe video (h264/aac/mp4). new files generated end in .html.mp4<br>
+[n] reencode using nvenc. new files generated end in .nvenc.mp4<br>
+<hr>
+";
+    }
+
+
+    echo "<table>\n";
 
     $base_path = dirname(__FILE__) . $base_path;
 
@@ -602,9 +630,11 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                 if(endsWith($path, "html.mp4")) {
                     echocell('-');
                     echocell('-');
+                    echocell('-');
                 } else {
                     echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
                     echoCell('<a href="?c=5&file='.strToHex($path).'">[5]</a>');
+                    echoCell('<a href="?c=n&file='.strToHex($path).'">[n]</a>');
                 }
 
             }
@@ -788,6 +818,36 @@ function pageIndex() {
     drawFooter();
 }
 
+
+function pageNVENCVideoQueue() {
+        global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $original_file = "";
+    $new_file = "";
+
+
+    if(isset($_REQUEST['file'])) {
+
+        $original_file = hexToStr($_REQUEST['file']);
+        reencodeVideoNVENC($_REQUEST['file']);
+        $_REQUEST['file'] .= strToHex(".nvenc.mp4");
+        $new_file = hexToStr($_REQUEST['file']);
+        $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
+    }   
+    $search_type = 'v'; 
+    $dump_path = 'Movies+TV';
+    $feature = 'watch';
+
+
+    drawHeader($dump_path);
+
+    echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
+
+    drawSearchBox();
+    drawFooter();     
+
+}
+
 function pageHTML5VideoQueue() {
     global $search_type, $dump_path, $feature, $show_prev_next;
 
@@ -886,10 +946,16 @@ function pageAudioBook() {
 
 
 function pageShowQueue() {
-    drawHeader("Contents of queue.txt");
-    echo "\n<pre>\n";
+    drawHeader("Contents of queue files");
+    echo "<h2>queue.txt</h2>\n<pre>\n";
     include "queue.txt";
     echo "\n</pre>\n";
+
+    echo "<h2>nqueue.txt</h2>\n<pre>\n";
+    include "nqueue.txt";
+    echo "\n</pre>\n";
+
+
     drawFooter();  
 }
 
@@ -1135,6 +1201,7 @@ if(!isset($_REQUEST['c'])) {
         case 'b': pageBooks();              break;
         case 'e': pageEmulation();          break;
         case 'm': pageMusicPlayer();        break;
+        case 'n': pageNVENCVideoQueue();    break;
         case 'q': pageShowQueue();          break;
         case 'r': pageContainerSwap();      break;
         case 'v': pageVideoPlayer();        break;
