@@ -30,7 +30,7 @@ define("QUEUE_PATH", "G:\\queue.txt");
 $start = microtime(true);
 $rustart = getrusage();
 
-$backgrounds = ["black-pearl.jpg", "motoko.jpg", "daftpunk.jpg", "radiohead.jpg", "pinkfloyd.jpg"];
+$backgrounds = ["black-pearl.jpg", "motoko.jpg", "daftpunk.jpg", "radiohead.jpg", "pinkfloyd.jpg", "darwin.jpg"];
 
 $suggestions["a"] =  array_map('strtolower', ["plato", "sagan", "darwin", "krauss", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"]);
 
@@ -99,7 +99,8 @@ $suggestions["v"] = array_map('strtolower', [
 "thrones",
 "His Dark Materials",
 "Hunter x Hunter",
-"Game of Thrones - Season"
+"Game of Thrones - Season",
+".html.mp4",
 
 
 
