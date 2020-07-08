@@ -399,7 +399,6 @@ function drawHeader($banner = false)
     &ldquo;<?= $banner ?>&rdquo;
 </h1>
 </div>
-<!-- <img class="img-fluid d-block mx-auto" src="/gd/pirate-symbol.jpg" alt="" style="opacity: 0"> -->
 </header>
 
         <?php
