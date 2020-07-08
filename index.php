@@ -540,8 +540,8 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 <hr>
 <h3>Notes</h3>
 [r] replace container with mp4.<br>
-[5] reencode html5 safe video (h264/aac/mp4). new files generated end in .html.mp4<br>
-[n] reencode using nvenc. new files generated end in .nvenc.mp4<br>
+[5] reencode html5 safe h264/aac/mp4. new files generated end in .html.mp4<br>
+[n] reencode using HEVC h265/aac/mp4. new files generated end in .h265.mp4<br>
 <hr>
 ";
     }
@@ -623,11 +623,22 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             echo "<tr>\n";
             echoCell('<a href="'.$path.'">[direct]</a>');
             if($optional_feature != 'none') {
-                echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
+                if($optional_reference == 'v') {
+                    if(endsWith($path, "h265.mp4")) {
+                        echocell('-');
+                    } else {
+                        echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
+                    }
+
+
+                } else {
+
+                    echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
+                }
             }
             if($optional_reference == 'v') {
 
-                if(endsWith($path, "html.mp4")) {
+                if(endsWith($path, "html.mp4") || endsWith($path, "h265.mp4")) {
                     echocell('-');
                     echocell('-');
                     echocell('-');
@@ -830,7 +841,7 @@ function pageNVENCVideoQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeVideoNVENC($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".nvenc.mp4");
+        $_REQUEST['file'] .= strToHex(".h265.mp4");
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
     }   
