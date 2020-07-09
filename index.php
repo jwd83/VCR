@@ -33,7 +33,30 @@ $rustart = getrusage();
 
 $backgrounds = ["black-pearl.jpg", "motoko.jpg", "daftpunk.jpg", "radiohead.jpg", "pinkfloyd.jpg", "darwin.jpg", "vcr.jpg"];
 
-$suggestions["a"] =  array_map('strtolower', ["plato", "sagan", "darwin", "krauss", "martin", "tyson", "pinker", "dawkins", "harris", "tzu", "Dalai"]);
+$suggestions["a"] =  array_map('strtolower', [
+"Armstrong",
+"Bryson",
+"Coyne",
+"Dalai",
+"darwin",
+"dawkins",
+"Franz",
+"Gibson",
+"harris",
+"Hitchens",
+"Jillette",
+"krauss",
+"martin",
+"pinker",
+"plato",
+"Russell",
+"sagan",
+"Stephenson",
+"Strathern",
+"tyson",
+"tzu",
+
+]);
 
 $suggestions["b"] = array_map('strtolower', [
     "dawkins", 
