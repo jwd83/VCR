@@ -126,6 +126,9 @@ $suggestions["v"] = array_map('strtolower', [
 "Game of Thrones - Season",
 "Ralph",
 ".html.mp4",
+".h265.mp4",
+
+
 
 
 
@@ -155,12 +158,12 @@ $extensions = [
     ".smc",
     ".wma",
 
-    ".whitelistme"
+    ".whitelistme" // example
 ];
 $white_list = [
     "Emulation + ROMs\\" ,
-    "D&D\\", 
-    "Books\\"
+    // "D&D\\", 
+    // "Books\\"
 ];
 $excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
 
@@ -561,9 +564,11 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
         echo "
 <hr>
 <h3>Notes</h3>
-[r] replace container with mp4.<br>
-[5] reencode html5 safe h264/aac/mp4. new files generated end in .html.mp4<br>
-[n] reencode using HEVC h265/aac/mp4. new files generated end in .h265.mp4<br>
+[direct] direct link to the video file. download or copy link address.<br>
+[watch] place file in an html5 video tag player. your mileage may vary.<br>
+[r] replace container with mp4. lossless but may not play in html5 video player.<br>
+[h264] reencode using h264 video &amp; AAC audio. This is an html5 &lt;video&gt; tag safe format. reencoded files generated end in .html.mp4<br>
+[h265] reencode using HEVC h265/aac/mp4. new files generated end in .h265.mp4<br>
 <hr>
 ";
     }
@@ -666,8 +671,8 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                     echocell('-');
                 } else {
                     echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
-                    echoCell('<a href="?c=5&file='.strToHex($path).'">[5]</a>');
-                    echoCell('<a href="?c=n&file='.strToHex($path).'">[n]</a>');
+                    echoCell('<a href="?c=5&file='.strToHex($path).'">[h264]</a>');
+                    echoCell('<a href="?c=n&file='.strToHex($path).'">[h265]</a>');
                 }
 
             }
