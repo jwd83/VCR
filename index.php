@@ -108,30 +108,25 @@ $suggestions["m"] = array_map('strtolower', [
 
 ]);
 $suggestions["v"] = array_map('strtolower', [
-"shell",
-"robot",
+".h265.mp4",
+".html.mp4",
 "Are You Afraid Of The Dark" ,
 "attack on titan",
-"batman",
-"marvel",
 "avenger",
-"outlander",
-"workaholic",
+"batman",
 "furious",
-"thrones",
+"Game of Thrones - Season",
 "Hellsing",
-"thrones",
 "His Dark Materials",
 "Hunter x Hunter",
-"Game of Thrones - Season",
+"marvel",
+"outlander",
 "Ralph",
-".html.mp4",
-".h265.mp4",
-
-
-
-
-
+"robot",
+"shell",
+"star wars",
+"thrones",
+"workaholic",
  
 ]);
 
