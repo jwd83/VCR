@@ -20,7 +20,8 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 
 ## TODO
 
-### Switch to https from http. Lets encrypt or self signed
+* Switch to https from http. Lets encrypt or self signed
+* Add reencode audio file to html5 safe audio format
 
 ## Setup Notes
 
