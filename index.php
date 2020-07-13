@@ -980,11 +980,11 @@ function pageAudioBook() {
 
 function pageShowQueue() {
     drawHeader("Contents of queue files");
-    echo "<h2>queue.txt</h2>\n<pre>\n";
+    echo "<h2>H264</h2>\n<pre>\n";
     include "queue.txt";
     echo "\n</pre>\n";
 
-    echo "<h2>nqueue.txt</h2>\n<pre>\n";
+    echo "<h2>H265</h2>\n<pre>\n";
     include "nqueue.txt";
     echo "\n</pre>\n";
 
