@@ -110,6 +110,7 @@ $suggestions["m"] = array_map('strtolower', [
 $suggestions["v"] = array_map('strtolower', [
 ".h265.mp4",
 ".html.mp4",
+"Ascent of Man",
 "Are You Afraid Of The Dark" ,
 "attack on titan",
 "avenger",
