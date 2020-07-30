@@ -73,7 +73,7 @@ def process_h264():
         command += " -n "
 
         # specify output file
-        command += "\"" + input_src + ".html.mp4\""
+        command += "\"" + input_src + ".h264.mp4\""
 
         # print the command that will be executed
         print(command)

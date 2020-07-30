@@ -20,10 +20,9 @@
 
 define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
-define("FFMPEG_PATH", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
-define("PSEXEC_PATH", "G:\\psexec.exe -d ");
-define("QUEUE_PATH", "G:\\queue.txt");
-define("NQUEUE_PATH", "G:\\nqueue.txt");
+define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
+define("PATH_H264_QUEUE", "G:\\queue.txt");
+define("PATH_H265_QUEUE", "G:\\nqueue.txt");
 
 
 
@@ -109,7 +108,7 @@ $suggestions["m"] = array_map('strtolower', [
 ]);
 $suggestions["v"] = array_map('strtolower', [
 ".h265.mp4",
-".html.mp4",
+".h264.mp4",
 "Ascent of Man",
 "Are You Afraid Of The Dark" ,
 "attack on titan",
@@ -350,17 +349,17 @@ function human_filesize($bytes, $decimals = 2) {
 }
 
 function writeFileToQueue($src) {
-    file_put_contents(QUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
+    file_put_contents(PATH_H264_QUEUE, $src . PHP_EOL, FILE_APPEND);
 }
 
 function writeFileToNVENCQueue($src) {
-    file_put_contents(NQUEUE_PATH, $src . PHP_EOL, FILE_APPEND);
+    file_put_contents(PATH_H265_QUEUE, $src . PHP_EOL, FILE_APPEND);
 }
 
 function reencodeVideo($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
-        $command = FFMPEG_PATH . " -i \"$src\" -codec copy \"$src.re.mp4\"";
+        $command = PATH_FFMPEG . " -i \"$src\" -codec copy \"$src.re.mp4\"";
         exec($command);
     }
 }
@@ -563,7 +562,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 [direct] direct link to the video file. download or copy link address.<br>
 [watch] place file in an html5 video tag player. your mileage may vary.<br>
 [r] replace container with mp4. lossless but may not play in html5 video player.<br>
-[h264] reencode using h264 video &amp; AAC audio. This is an html5 &lt;video&gt; tag safe format. reencoded files generated end in .html.mp4<br>
+[h264] reencode using h264 video &amp; AAC audio. This is an html5 &lt;video&gt; tag safe format. reencoded files generated end in .h264.mp4<br>
 [h265] reencode using HEVC h265/aac/mp4. new files generated end in .h265.mp4<br>
 <hr>
 ";
@@ -661,7 +660,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             }
             if($optional_reference == 'v') {
 
-                if(endsWith($path, "html.mp4") || endsWith($path, "h265.mp4")) {
+                if(endsWith($path, "h264.mp4") || endsWith($path, "h265.mp4")) {
                     echocell('-');
                     echocell('-');
                     echocell('-');
@@ -893,7 +892,7 @@ function pageHTML5VideoQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeVideoHTML($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".html.mp4");
+        $_REQUEST['file'] .= strToHex(".h264.mp4");
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
     }   
