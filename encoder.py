@@ -58,7 +58,14 @@ def process_m4a():
         # specify option: copy video codec (for album images)
         # ffmpeg will otherwise try to convert images/video/mjpeg data to h264 which will fail
         command += " -c:v copy "
-        
+
+        # Progressive Download (faststart option)
+        # By default the MP4 muxer writes the 'moov' atom after the audio stream ('mdat' atom) at the 
+        # end of the file. This results in the user requiring to download the file completely before
+        # playback can occur. Relocating this moov atom to the beginning of the file can facilitate 
+        # playback before the file is completely downloaded by the client.
+        # You can do this with the -movflags +faststart option:
+        command += " -movflags +faststart "
 
         # specify option: Do not overwrite output files, and exit immediately if a specified output file already exists.
         command += " -n "

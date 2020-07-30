@@ -78,7 +78,7 @@ $suggestions["b"] = array_map('strtolower', [
 
 $suggestions["e"] = array_map('strtolower', [".iso", "final fantasy", "ps2", "ogre" ]);
 $suggestions["m"] = array_map('strtolower', [
-"daft",
+"daft punk",
 "radiohead",
 "floyd",
 "eilish",
