@@ -9,8 +9,8 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 ## Features
 
 * php front end for WAMP
-* python background daemon to handle h264 and h265 video re-encoding requests
-* reencode files to mp4 container (may fix playback in some browsers. new files end in .re.mp4
+* python background daemon to handle h264 and h265 video and m4a audio reencoding requests
+* re-container video files to mp4 container (may fix playback in some browsers. new files end in .re.mp4)
 * Autoplay your collection of audio and video files where supported by your browser.
 * Download shared files remotely. 
 * Next and Previous buttons while in watch or listen mode
@@ -21,7 +21,6 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 ## TODO
 
 * Switch to https from http. Lets encrypt or self signed
-* Add reencode audio file to html5 safe audio format
 * Look into RTMP live streaming/encoding video/audio realtime.
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
