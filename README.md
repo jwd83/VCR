@@ -23,6 +23,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Switch to https from http. Lets encrypt or self signed
 * Add reencode audio file to html5 safe audio format
 * Look into RTMP live streaming/encoding video/audio realtime.
+* Pick random jpg file from /img/ to use as header image
 
 ## Setup Notes
 
