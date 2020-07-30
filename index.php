@@ -23,6 +23,7 @@ define("FILESYSTEM_BASE", 'G:\\');
 define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
 define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
 define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
+define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
 
 
 
@@ -144,6 +145,7 @@ $next_file_to_play = "";
 $extensions = [
     ".avi", 
     ".flac",
+    ".m4a",
     ".m4b", // uncommon audio format
     ".mkv", 
     ".mp3", 
@@ -353,8 +355,12 @@ function writeFileToQueue($src) {
     file_put_contents(PATH_H264_QUEUE, $src . PHP_EOL, FILE_APPEND);
 }
 
-function writeFileToNVENCQueue($src) {
+function writeFileToHEVCQueue($src) {
     file_put_contents(PATH_H265_QUEUE, $src . PHP_EOL, FILE_APPEND);
+}
+
+function writeFileToAACQueue($src) {
+    file_put_contents(PATH_M4A_QUEUE, $src . PHP_EOL, FILE_APPEND);
 }
 
 function reencodeVideo($src) {
@@ -365,7 +371,6 @@ function reencodeVideo($src) {
     }
 }
 
-
 function reencodeVideoHTML($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
@@ -374,12 +379,20 @@ function reencodeVideoHTML($src) {
 }
 
 
-function reencodeVideoNVENC($src) {
+function reencodeVideoHEVC($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
-        writeFileToNVENCQueue($src);
+        writeFileToHEVCQueue($src);
     }
 }
+
+function reencodeAudioAAC($src) {
+    $src = FILESYSTEM_BASE . hexToStr($src);
+    if(file_exists($src)) {
+        writeFileToAACQueue($src);
+    }
+}
+
 
 
 function drawHeader($banner = false) 
@@ -570,6 +583,20 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
     }
 
 
+    if($_REQUEST['c'] == 'm') {
+        echo "
+<hr>
+<h3>Notes</h3>
+[direct] direct link to the video file. download or copy link address.<br>
+[listen] place file in an html5 audio tag player. your mileage may vary.<br>
+[m4a] reencode file as a lossy AAC .m4a file.<br>
+<hr>
+";
+    }
+
+
+
+
     echo "<table>\n";
 
     $base_path = dirname(__FILE__) . $base_path;
@@ -652,15 +679,11 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                     } else {
                         echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
                     }
-
-
                 } else {
-
                     echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
                 }
             }
             if($optional_reference == 'v') {
-
                 if(endsWith($path, "h264.mp4") || endsWith($path, "h265.mp4")) {
                     echocell('-');
                     echocell('-');
@@ -670,7 +693,13 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                     echoCell('<a href="?c=5&file='.strToHex($path).'">[h264]</a>');
                     echoCell('<a href="?c=n&file='.strToHex($path).'">[h265]</a>');
                 }
-
+            }
+            if($optional_reference == 'm') {
+                if(endsWith($path, ".m4a")) {
+                    echocell('-');
+                } else {
+                    echoCell('<a href="?c=4&file='.strToHex($path).'">[m4a]</a>');
+                }
             }
             echoCell(human_filesize(filesize($path)));
             echoCell(substr($path,  strlen($base_path)-2));
@@ -852,9 +881,35 @@ function pageIndex() {
     drawFooter();
 }
 
+function pageM4AAudioQueue() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
 
-function pageNVENCVideoQueue() {
-        global $search_type, $dump_path, $feature, $show_prev_next;
+    $original_file = "";
+    $new_file = "";
+    if(isset($_REQUEST['file'])) {
+
+        $original_file = hexToStr($_REQUEST['file']);
+        reencodeAudioAAC($_REQUEST['file']);
+        $_REQUEST['file'] .= strToHex(".m4a");
+        $new_file = hexToStr($_REQUEST['file']);
+        $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
+    }   
+    $search_type = 'm'; 
+    $dump_path = 'Music';
+    $feature = 'listen';
+
+    drawHeader($dump_path);
+
+    echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
+
+    drawSearchBox();
+    drawFooter();     
+
+}
+
+
+function pageH265VideoQueue() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
 
     $original_file = "";
     $new_file = "";
@@ -863,7 +918,7 @@ function pageNVENCVideoQueue() {
     if(isset($_REQUEST['file'])) {
 
         $original_file = hexToStr($_REQUEST['file']);
-        reencodeVideoNVENC($_REQUEST['file']);
+        reencodeVideoHEVC($_REQUEST['file']);
         $_REQUEST['file'] .= strToHex(".h265.mp4");
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
@@ -882,7 +937,7 @@ function pageNVENCVideoQueue() {
 
 }
 
-function pageHTML5VideoQueue() {
+function pageH264VideoQueue() {
     global $search_type, $dump_path, $feature, $show_prev_next;
 
     $original_file = "";
@@ -1218,8 +1273,6 @@ function drawSearchResults() {
 # see if we are on the homepage otherwise 
 # generate a page based on the [c] category                                      
 
-
-
 if(!isset($_REQUEST['c'])) {
     pageIndex();
 } else {
@@ -1230,18 +1283,18 @@ if(!isset($_REQUEST['c'])) {
     }
 
     switch($_REQUEST['c']){
-        case '5': pageHTML5VideoQueue();    break;        
+        case '4': pageM4AAudioQueue();      break;
+        case '5': pageH264VideoQueue();     break;        
         case 'a': pageAudioBook();          break;
         case 'b': pageBooks();              break;
         case 'e': pageEmulation();          break;
         case 'm': pageMusicPlayer();        break;
-        case 'n': pageNVENCVideoQueue();    break;
+        case 'n': pageH265VideoQueue();     break;
         case 'q': pageShowQueue();          break;
         case 'r': pageContainerSwap();      break;
         case 'v': pageVideoPlayer();        break;
     }
 }
-
 
 //                                                              
 //                                                              

@@ -24,36 +24,59 @@ import sys
 import time
 
 PATH_FFMPEG = "C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe"
-PATH_QUEUE_H264 = "G:\\queue.txt"
-PATH_QUEUE_H265 = "G:\\nqueue.txt"
+PATH_QUEUE_H264 = "G:\\queue_h264.txt"
+PATH_QUEUE_H265 = "G:\\queue_h265.txt"
+PATH_QUEUE_M4A = "G:\\queue_m4a.txt"
 MSG_QUEUE = "Reading the queues"
 
 def queue_msg():
     print(MSG_QUEUE, end="")
 
-def next_file_h264():
-    with open(PATH_QUEUE_H264, 'r') as fin:
-        data = fin.read().splitlines(True)
-    with open(PATH_QUEUE_H264, 'w') as fout:
-        fout.writelines(data[1:])
-    if(len(data) > 0):
-        return data[0].strip()
-    else:
-        return ""
 
-def next_file_h265():
-    with open(PATH_QUEUE_H265, 'r') as fin:
+def next_file(queue_file):
+    with open(queue_file, 'r') as fin:
         data = fin.read().splitlines(True)
-    with open(PATH_QUEUE_H265, 'w') as fout:
+    with open(queue_file, 'w') as fout:
         fout.writelines(data[1:])
     if(len(data) > 0):
         return data[0].strip()
     else:
-        return ""
+        return ""    
+
+def process_m4a():
+    input_src = next_file(PATH_QUEUE_M4A)
+    if(input_src != ""):
+        command = PATH_FFMPEG 
+
+
+        # specify input file
+        command += " -i \"" + input_src + "\" "
+
+        # specify option: aac audio codec
+        command += " -c:a aac -b:a 160k "
+
+        # specify option: copy video codec (for album images)
+        # ffmpeg will otherwise try to convert images/video/mjpeg data to h264 which will fail
+        command += " -c:v copy "
+        
+
+        # specify option: Do not overwrite output files, and exit immediately if a specified output file already exists.
+        command += " -n "
+
+        # specify output file
+        command += "\"" + input_src + ".m4a\""
+
+        # print the command that will be executed
+        print(command)
+
+        # run command
+        os.system(command)
+
+        queue_msg()
 
 def process_h264():
 
-    input_src = next_file_h264()
+    input_src = next_file(PATH_QUEUE_H264)
 
     if(input_src != ""):
         print("Prepaing command...")
@@ -84,7 +107,7 @@ def process_h264():
         queue_msg()
 
 def process_h265():
-    input_src = next_file_h265()
+    input_src = next_file(PATH_QUEUE_H265)
 
     if(input_src != ""):
         # print("Prepaing command...")
@@ -130,6 +153,7 @@ def process_h265():
 def main():
     queue_msg()
     while True:
+        process_m4a()
         process_h264()
         process_h265()
         sys.stdout.write('.')
