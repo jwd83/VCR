@@ -27,6 +27,7 @@ PATH_FFMPEG = "C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmp
 PATH_QUEUE_H264 = "G:\\queue_h264.txt"
 PATH_QUEUE_H265 = "G:\\queue_h265.txt"
 PATH_QUEUE_M4A = "G:\\queue_m4a.txt"
+PATH_QUEUE_OPUS = "G:\\queue_opus.txt"
 MSG_QUEUE = "Reading the queues"
 
 def queue_msg():
@@ -42,6 +43,39 @@ def next_file(queue_file):
         return data[0].strip()
     else:
         return ""    
+
+def process_opus():
+    # https://wiki.hydrogenaud.io/index.php?title=Opus#Music_encoding_quality
+    input_src = next_file(PATH_QUEUE_OPUS)
+    if(input_src != ""):
+        command = PATH_FFMPEG 
+
+
+        # specify input file
+        command += " -i \"" + input_src + "\" "
+
+        # specify option: opus audio codec
+        command += " -c:a libopus -b:a 96k "
+
+        
+        command += " -map -0:v? "   # strip video data
+        command += " -map -0:s? "   # strip subtitles
+        command += " -map -0:d? "   # strip misc data (note: this does not appear to strip metadata)
+
+        # specify option: Do not overwrite output files, and exit immediately if a specified output file already exists.
+        command += " -n "
+
+        # specify output file
+        command += "\"" + input_src + ".opus\""
+
+        # print the command that will be executed
+        print(command)
+
+        # run command
+        os.system(command)
+
+        queue_msg()
+
 
 def process_m4a():
     input_src = next_file(PATH_QUEUE_M4A)
@@ -71,7 +105,7 @@ def process_m4a():
         command += " -n "
 
         # specify output file
-        command += "\"" + input_src + ".m4a\""
+        command += "\"" + input_src + ".aac\""
 
         # print the command that will be executed
         print(command)
@@ -138,7 +172,9 @@ def process_h265():
         # command += " -c:a aac -b:a 128k "
 
         # specify option: aac audio codec
-        command += " -acodec aac "
+        # command += " -acodec aac "
+        # specify option: copy audio track (don't reencode!)
+        command += " -c:a copy "
 
         # specify option: Do not overwrite output files, and exit immediately if a specified output file already exists.
         command += " -n "
@@ -160,6 +196,7 @@ def process_h265():
 def main():
     queue_msg()
     while True:
+        process_opus()
         process_m4a()
         process_h264()
         process_h265()

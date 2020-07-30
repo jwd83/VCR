@@ -24,6 +24,7 @@ define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\b
 define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
 define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
+define("PATH_OPUS_QUEUE", "G:\\queue_opus.txt");
 
 
 
@@ -78,6 +79,11 @@ $suggestions["b"] = array_map('strtolower', [
 
 $suggestions["e"] = array_map('strtolower', [".iso", "final fantasy", "ps2", "ogre" ]);
 $suggestions["m"] = array_map('strtolower', [
+".aac",
+".m4a",
+".opus",
+".flac",
+".mp3",
 "daft punk",
 "radiohead",
 "floyd",
@@ -144,6 +150,7 @@ $next_file_to_play = "";
 
 // $path_list_html = "list.html";
 $extensions = [
+    ".aac", 
     ".avi", 
     ".flac",
     ".m4a",
@@ -364,6 +371,10 @@ function writeFileToAACQueue($src) {
     file_put_contents(PATH_M4A_QUEUE, $src . PHP_EOL, FILE_APPEND);
 }
 
+function writeFileToOpusQueue($src) {
+    file_put_contents(PATH_OPUS_QUEUE, $src . PHP_EOL, FILE_APPEND);
+}
+
 function reencodeVideo($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
@@ -379,7 +390,6 @@ function reencodeVideoHTML($src) {
     }
 }
 
-
 function reencodeVideoHEVC($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
@@ -391,6 +401,13 @@ function reencodeAudioAAC($src) {
     $src = FILESYSTEM_BASE . hexToStr($src);
     if(file_exists($src)) {
         writeFileToAACQueue($src);
+    }
+}
+
+function reencodeAudioOpus($src) {
+    $src = FILESYSTEM_BASE . hexToStr($src);
+    if(file_exists($src)) {
+        writeFileToOpusQueue($src);
     }
 }
 
@@ -590,7 +607,8 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 <h3>Notes</h3>
 [direct] direct link to the video file. download or copy link address.<br>
 [listen] place file in an html5 audio tag player. your mileage may vary.<br>
-[m4a] reencode file as a lossy AAC .m4a file.<br>
+[opus] lossy reencode file as .opus <i>(best)</i><br>
+[aac] lossy reencode file as .aac <i>(good)</i><br>
 <hr>
 ";
     }
@@ -696,10 +714,12 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                 }
             }
             if($optional_reference == 'm') {
-                if(endsWith($path, ".m4a")) {
+                if(endsWith($path, ".m4a") || endsWith($path, ".aac") || endsWith($path, ".opus")) {
+                    echocell('-');
                     echocell('-');
                 } else {
-                    echoCell('<a href="?c=4&file='.strToHex($path).'">[m4a]</a>');
+                    echoCell('<a href="?c=o&file='.strToHex($path).'">[opus]</a>');
+                    echoCell('<a href="?c=4&file='.strToHex($path).'">[aac]</a>');
                 }
             }
             echoCell(human_filesize(filesize($path)));
@@ -891,7 +911,34 @@ function pageM4AAudioQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeAudioAAC($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".m4a");
+        $_REQUEST['file'] .= strToHex(".aac");
+        $new_file = hexToStr($_REQUEST['file']);
+        $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
+    }   
+    $search_type = 'm'; 
+    $dump_path = 'Music';
+    $feature = 'listen';
+
+    drawHeader($dump_path);
+
+    echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
+
+    drawSearchBox();
+    drawFooter();     
+
+}
+
+
+function pageOpusAudioQueue() {
+    global $search_type, $dump_path, $feature, $show_prev_next;
+
+    $original_file = "";
+    $new_file = "";
+    if(isset($_REQUEST['file'])) {
+
+        $original_file = hexToStr($_REQUEST['file']);
+        reencodeAudioOpus($_REQUEST['file']);
+        $_REQUEST['file'] .= strToHex(".opus");
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
     }   
@@ -1291,6 +1338,7 @@ if(!isset($_REQUEST['c'])) {
         case 'e': pageEmulation();          break;
         case 'm': pageMusicPlayer();        break;
         case 'n': pageH265VideoQueue();     break;
+        case 'o': pageOpusAudioQueue();     break;
         case 'q': pageShowQueue();          break;
         case 'r': pageContainerSwap();      break;
         case 'v': pageVideoPlayer();        break;
