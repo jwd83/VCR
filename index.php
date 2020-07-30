@@ -104,7 +104,7 @@ $suggestions["m"] = array_map('strtolower', [
 "Glitch Mob",
 "eminem",
 "The Cure",
-
+"alan parsons",
 
 
 ]);
@@ -129,6 +129,7 @@ $suggestions["v"] = array_map('strtolower', [
 "star wars",
 "thrones",
 "workaholic",
+"no country",
  
 ]);
 
