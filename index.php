@@ -21,8 +21,8 @@
 define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
-define("PATH_H264_QUEUE", "G:\\queue.txt");
-define("PATH_H265_QUEUE", "G:\\nqueue.txt");
+define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
+define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 
 
 
@@ -102,6 +102,7 @@ $suggestions["m"] = array_map('strtolower', [
 "Tyler",
 "Glitch Mob",
 "eminem",
+"The Cure",
 
 
 
