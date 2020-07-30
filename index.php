@@ -400,7 +400,7 @@ function drawHeader($banner = false)
     {
         ?>
 <!-- Header - set the background image for the header in the line below -->
-<header class="py-5 bg-image-full" style="background-image: url('/gd/<?= $backgrounds[array_rand ($backgrounds)]; ?>');">
+<header class="py-5 bg-image-full" style="background-image: url('/gd/img/<?= $backgrounds[array_rand ($backgrounds)]; ?>');">
 
 
 
