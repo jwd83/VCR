@@ -54,7 +54,7 @@ def next_file(queue_file):
 def process_opus():
     # https://wiki.hydrogenaud.io/index.php?title=Opus#Music_encoding_quality
     input_src = next_file(PATH_QUEUE_OPUS)
-    if(input_src != ""):
+    while(input_src != ""):
         command = PATH_FFMPEG 
 
 
@@ -82,6 +82,10 @@ def process_opus():
         os.system(command)
 
         queue_msg()
+
+        # process the next file in the queue
+        input_src = next_file(PATH_QUEUE_OPUS)
+
 
 
 def process_m4a():
