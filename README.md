@@ -25,6 +25,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
 * make audio encoding queues process until empty as they are very fast to process
+* * 96/24flac encodes to opus at about 2 minutes per second on a ryzen 3700x
 
 ## Setup Notes
 
