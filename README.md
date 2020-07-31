@@ -24,6 +24,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Look into RTMP live streaming/encoding video/audio realtime.
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
+* make audio encoding queues process until empty as they are very fast to process
 
 ## Setup Notes
 
