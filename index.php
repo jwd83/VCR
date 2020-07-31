@@ -353,6 +353,18 @@ EOL );
 // | $$     |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 // |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/ 
 
+
+
+// def new_extension(src, new_ext):
+//     filename, file_extension = os.path.splitext(src)
+//     return filename + new_ext
+
+function new_extension($src, $new_ext) {
+    $without_extension = substr($src, 0, strrpos($src, "."));
+    return $without_extension . $new_ext;
+}
+
+
 function human_filesize($bytes, $decimals = 2) {
   $sz = 'BKMGTP';
   $factor = floor((strlen($bytes) - 1) / 3);
@@ -911,7 +923,7 @@ function pageM4AAudioQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeAudioAAC($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".aac");
+        $_REQUEST['file'] =  strToHex(new_extension($original_file, ".aac"));
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
     }   
@@ -938,7 +950,7 @@ function pageOpusAudioQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeAudioOpus($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".opus");
+        $_REQUEST['file'] =  strToHex(new_extension($original_file, ".opus"));
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
     }   

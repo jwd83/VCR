@@ -30,6 +30,13 @@ PATH_QUEUE_M4A = "G:\\queue_m4a.txt"
 PATH_QUEUE_OPUS = "G:\\queue_opus.txt"
 MSG_QUEUE = "Reading the queues"
 
+
+def new_extension(src, new_ext):
+    filename, file_extension = os.path.splitext(src)
+    return filename + new_ext
+
+
+
 def queue_msg():
     print(MSG_QUEUE, end="")
 
@@ -66,7 +73,7 @@ def process_opus():
         command += " -n "
 
         # specify output file
-        command += "\"" + input_src + ".opus\""
+        command += "\"" + new_extension(input_src, ".opus") + "\""
 
         # print the command that will be executed
         print(command)
@@ -105,7 +112,7 @@ def process_m4a():
         command += " -n "
 
         # specify output file
-        command += "\"" + input_src + ".aac\""
+        command += "\"" + new_extension(input_src, ".aac") + "\""
 
         # print the command that will be executed
         print(command)
