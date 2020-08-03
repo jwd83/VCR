@@ -19,7 +19,8 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Link to timestamp in video using t= in URL
 
 ## TODO
-* remove aac audio encoding, isntead offer 128k opus option.
+* remove aac audio encoding, isntead offer 128k opus option? 
+* look at directly converting to opus on demand
 * Switch to https from http. Lets encrypt or self signed
 * Look into RTMP live streaming/encoding video/audio realtime.
 * Pick random jpg file from /img/ to use as header image
