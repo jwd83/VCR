@@ -35,27 +35,29 @@ $rustart = getrusage();
 $backgrounds = ["black-pearl.jpg", "motoko.jpg", "daftpunk.jpg", "radiohead.jpg", "pinkfloyd.jpg", "darwin.jpg", "vcr.jpg"];
 
 $suggestions["a"] =  array_map('strtolower', [
-"Armstrong",
-"Bryson",
-"Coyne",
-"Dalai",
-"darwin",
-"dawkins",
-"Franz",
-"Gibson",
-"harris",
-"Hitchens",
-"Jillette",
-"krauss",
-"martin",
-"pinker",
-"plato",
-"Russell",
-"sagan",
+"Bertrand Russell",
+"Bill Bryson",
+"Carl Sagan",
+"Charles Darwin",
+"Christopher Hitchens",
+"Ernest Cline",
+"George R.R. Martin",
+"Jerry A. Coyne",
+"Karen Armstrong",
+"Lawrence M. Krauss",
+"Penn Jillette",
+"Plato",
+"Richard Dawkins",
+"Raymond Franz",
+"Sam Harris",
+"Steven Pinker",
+"Sun Tzu",
+"William Gibson",
+
+
 "Stephenson",
 "Strathern",
 "tyson",
-"tzu",
 
 ]);
 
@@ -111,6 +113,8 @@ $suggestions["m"] = array_map('strtolower', [
 "eminem",
 "The Cure",
 "alan parsons",
+"Peter Gabriel",
+"James Taylor",
 
 
 ]);
@@ -285,10 +289,10 @@ define('THEME_TOP' , <<<EOL
             <a class="nav-link" href="./?c=e">Emulation</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./?c=m">Music</a>
+            <a class="nav-link" href="./?c=v">Movies+TV</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./?c=v">Movies+TV</a>
+            <a class="nav-link" href="./?c=m">Music</a>
           </li>
 
         </ul>
@@ -534,17 +538,6 @@ function getDirContents($dir, &$results = array()) {
 }
 
 function echoCell($str) {
-//     echo '
-
-// <td>
-//   <span class="text-overflow-dynamic-container">
-//     <span class="text-overflow-dynamic-ellipsis" title="'.htmlentities($str).'">
-//       '.$str.'
-//     </span>
-//   </span>
-
-// </td>
-// ';   
  echo '
 
 <td>
@@ -619,8 +612,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 <h3>Notes</h3>
 [direct] direct link to the video file. download or copy link address.<br>
 [listen] place file in an html5 audio tag player. your mileage may vary.<br>
-[opus] lossy reencode file as .opus <i>(best)</i><br>
-[aac] lossy reencode file as .aac <i>(good)</i><br>
+[opus] lossy reencode file as .opus<br>
 <hr>
 ";
     }
@@ -728,10 +720,10 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             if($optional_reference == 'm') {
                 if(endsWith($path, ".m4a") || endsWith($path, ".aac") || endsWith($path, ".opus")) {
                     echocell('-');
-                    echocell('-');
+                    // echocell('-');
                 } else {
                     echoCell('<a href="?c=o&file='.strToHex($path).'">[opus]</a>');
-                    echoCell('<a href="?c=4&file='.strToHex($path).'">[aac]</a>');
+                    // echoCell('<a href="?c=4&file='.strToHex($path).'">[aac]</a>');
                 }
             }
             echoCell(human_filesize(filesize($path)));
@@ -876,40 +868,71 @@ function buildPlaybackLink($file_in_hex, $type = "") {
 }
 
 
-// showSuggestions($category ){
-//     $sugs = $GLOBALS['suggestions'];
-//     foreach($sugs[$category] as $suggestion) {
-        
-//     }
-// }
-
-
-function showSuggestions($category) {
+function getSuggestions($category) {
     global $suggestions;
+
+    $sugs = '';
 
 
     sort($suggestions[$category]);
     foreach($suggestions[$category] as $q) { 
-
-        echo '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
+        $sugs .= '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
     }
+
+    return $sugs;
 }
 
 function pageIndex() {
     drawHeader("Stay Awhile and Listen");
+    echo '
 
-    echo "<h1>Please enjoy your stay and DM requests</h1>\n";
-    echo "<h2>Suggestions to get started</h2>\n";
-    echo "<h4>Audio Books</h4>\n";
-    showSuggestions("a");
-    echo "<h4>Books</h4>\n";
-    showSuggestions("b");    
-    echo "<h4>Emulation</h4>\n";
-    showSuggestions("e");    
-    echo "<h4>Music Suggestions</h4>\n";
-    showSuggestions("m");
-    echo "<h4>Movies+TV</h4>\n";
-    showSuggestions("v");
+<h1>Please enjoy your stay and DM requests</h1>
+<h2 style="margin-top: 1em;">Categories &amp; Popular Searches</h2>
+
+<div class="container">
+
+
+
+
+
+  <div class="row">
+    <div class="col-sm">
+      <h4 style="margin-top: 1em;"><a href="?c=m">Music</a></h4>
+      '.getSuggestions("m").'    
+    </div>
+    <div class="col-sm">
+      <h4 style="margin-top: 1em;"><a href="?c=v">Movies+TV</a></h4>
+      '.getSuggestions("v").'    
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm">
+      <h4 style="margin-top: 1em;"><a href="?c=a">Audio Books</a></h4>
+      '.getSuggestions("a").'
+    </div>
+    <div class="col-sm">
+      <h4 style="margin-top: 1em;"><a href="?c=b">Books</a></h4>
+      '.getSuggestions("b").'
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm">
+      <h4 style="margin-top: 1em;"><a href="?c=e">Emulation</a></h4>
+      '.getSuggestions("e").'
+    </div>
+    <div class="col-sm">
+      &nbsp;
+
+    </div>
+  </div>
+
+</div>
+
+';
+
 
     drawFooter();
 }
@@ -1274,8 +1297,8 @@ Search:
 
 
     if(isset($suggestions[$search_type])) {
-        echo "<h2>Sample Searches</h2>\n";
-        showSuggestions($search_type);
+        echo "<h2>Popular Searches</h2>\n";
+        echo getSuggestions($search_type);
     }
 }
 
