@@ -1,22 +1,22 @@
 <?php
-// 
+//
 // shout outs to all my homies in VA
-// 
+//
 // ascii art from patorjk.com
-// 
+//
 // http://patorjk.com/software/taag/#p=display&c=c%2B%2B&f=Big%20Money-ne&t=begins
-
-//                        /$$     /$$     /$$                              
-//                       | $$    | $$    |__/                              
+//
+//                        /$$     /$$     /$$
+//                       | $$    | $$    |__/
 //   /$$$$$$$  /$$$$$$  /$$$$$$ /$$$$$$   /$$ /$$$$$$$   /$$$$$$   /$$$$$$$
 //  /$$_____/ /$$__  $$|_  $$_/|_  $$_/  | $$| $$__  $$ /$$__  $$ /$$_____/
-// |  $$$$$$ | $$$$$$$$  | $$    | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$ 
+// |  $$$$$$ | $$$$$$$$  | $$    | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$
 //  \____  $$| $$_____/  | $$ /$$| $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
 //  /$$$$$$$/|  $$$$$$$  |  $$$$/|  $$$$/| $$| $$  | $$|  $$$$$$$ /$$$$$$$/
-// |_______/  \_______/   \___/   \___/  |__/|__/  |__/ \____  $$|_______/ 
-//                                                      /$$  \ $$          
-//                                                     |  $$$$$$/          
-//                                                      \______/           
+// |_______/  \_______/   \___/   \___/  |__/|__/  |__/ \____  $$|_______/
+//                                                      /$$  \ $$
+//                                                     |  $$$$$$/
+//                                                      \______/
 
 define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
@@ -26,121 +26,134 @@ define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
 define("PATH_OPUS_QUEUE", "G:\\queue_opus.txt");
 
-
-
 # track runtime
 $start = microtime(true);
 $rustart = getrusage();
 
-$backgrounds = ["black-pearl.jpg", "motoko.jpg", "daftpunk.jpg", "radiohead.jpg", "pinkfloyd.jpg", "darwin.jpg", "vcr.jpg"];
+$backgrounds = [
+  "black-pearl.jpg",
+  "motoko.jpg",
+  "daftpunk.jpg",
+  "radiohead.jpg",
+  "pinkfloyd.jpg",
+  "darwin.jpg",
+  "vcr.jpg"
+];
 
+// audio books
 $suggestions["a"] =  array_map('strtolower', [
-"Bertrand Russell",
-"Bill Bryson",
-"Carl Sagan",
-"Charles Darwin",
-"Christopher Hitchens",
-"Ernest Cline",
-"George R.R. Martin",
-"Jerry A. Coyne",
-"Karen Armstrong",
-"Lawrence M. Krauss",
-"Penn Jillette",
-"Plato",
-"Richard Dawkins",
-"Raymond Franz",
-"Sam Harris",
-"Steven Pinker",
-"Sun Tzu",
-"William Gibson",
-
-
-"Stephenson",
-"Strathern",
-"tyson",
-
+  "bertrand russell",
+  "bill bryson",
+  "carl sagan",
+  "charles darwin",
+  "christopher hitchens",
+  "ernest cline",
+  "george r.r. martin",
+  "jerry a. coyne",
+  "karen armstrong",
+  "lawrence m. krauss",
+  "neal stephenson",
+  "neil degrasse tyson",
+  "paul strathern",
+  "penn jillette",
+  "plato",
+  "richard dawkins",
+  "raymond franz",
+  "sam harris",
+  "steven pinker",
+  "sun tzu",
+  "william gibson",
 ]);
 
+// books
 $suggestions["b"] = array_map('strtolower', [
-    "dawkins", 
-    "harris", 
-    "hawking", 
-    "krauss", 
-    "newton", 
-    "bryson", 
-    "twain", 
-    "martin", 
-    "huxley", 
-    "watterson", 
-    "sagan", 
-    "rowling", 
-    "shakespeare", 
-    "mandela",
-    "MELville",
+  "bryson",
+  "dawkins",
+  "harris",
+  "hawking",
+  "huxley",
+  "krauss",
+  "mandela",
+  "martin",
+  "melville",
+  "newton",
+  "rowling",
+  "sagan",
+  "shakespeare",
+  "twain",
+  "watterson",
 ]);
 
-$suggestions["e"] = array_map('strtolower', [".iso", "final fantasy", "ps2", "ogre" ]);
+// emulation
+$suggestions["e"] = array_map('strtolower', [
+  ".iso",
+  "final fantasy",
+  "ogre",
+  "ps2",
+]);
+
+// music
 $suggestions["m"] = array_map('strtolower', [
-".aac",
-".m4a",
-".opus",
-".flac",
-".mp3",
-"daft punk",
-"radiohead",
-"floyd",
-"eilish",
-"chili",
-"prydz",
-"quest",
-"adele",
-"beastie",
-"Blue Sky Black Death",
-"jazz",
-"queen",
-"Depeche Mode",
-"Dragonforce",
-"Eagles",
-"Eric Johnson",
-"Final Fantasy",
-"Foo Fighters",
-"Jewel",
-"Hendrix",
-"Zeppelin",
-"Tool",
-"Tyler",
-"Glitch Mob",
-"eminem",
-"The Cure",
-"alan parsons",
-"Peter Gabriel",
-"James Taylor",
-
-
+  ".aac",
+  ".flac",
+  ".m4a",
+  ".mp3",
+  ".opus",
+  "adele",
+  "alan parsons",
+  "beastie",
+  "blue sky black death",
+  "chili",
+  "christopher tin",
+  "daft punk",
+  "depeche mode",
+  "dragonforce",
+  "eagles",
+  "eilish",
+  "eminem",
+  "eric johnson",
+  "final fantasy",
+  "floyd",
+  "foo fighters",
+  "glitch mob",
+  "hendrix",
+  "james taylor",
+  "jared's mixes",
+  "jazz",
+  "jewel",
+  "peter gabriel",
+  "prydz",
+  "queen",
+  "quest",
+  "radiohead",
+  "the cure",
+  "tool",
+  "tyler",
+  "zeppelin",
 ]);
+
 $suggestions["v"] = array_map('strtolower', [
-".h265.mp4",
-".h264.mp4",
-"Ascent of Man",
-"Are You Afraid Of The Dark" ,
-"attack on titan",
-"avenger",
-"batman",
-"furious",
-"Game of Thrones - Season",
-"Hellsing",
-"His Dark Materials",
-"Hunter x Hunter",
-"marvel",
-"outlander",
-"Ralph",
-"robot",
-"shell",
-"star wars",
-"thrones",
-"workaholic",
-"no country",
- 
+  ".h264.mp4",
+  ".h265.mp4",
+  "are you afraid of the dark" ,
+  "ascent of man",
+  "attack on titan",
+  "avenger",
+  "batman",
+  "furious",
+  "game of thrones - season",
+  "hellsing",
+  "his dark materials",
+  "hunter x hunter",
+  "marvel",
+  "no country",
+  "outlander",
+  "ralph",
+  "robot",
+  "shell",
+  "star wars",
+  "thrones",
+  "workaholic",
 ]);
 
 $search_type = '';
@@ -154,28 +167,35 @@ $next_file_to_play = "";
 
 // $path_list_html = "list.html";
 $extensions = [
-    ".aac", 
-    ".avi", 
-    ".flac",
-    ".m4a",
-    ".m4b", // uncommon audio format
-    ".mkv", 
-    ".mp3", 
-    ".mp4", 
-    ".m4v", 
-    ".ogg", 
-    ".iso", 
-    ".smc",
-    ".wma",
+  ".aac",
+  ".avi",
+  ".flac",
+  ".iso",
+  ".m4a",
+  ".m4b", // uncommon audio format
+  ".m4v",
+  ".mkv",
+  ".mp3",
+  ".mp4",
+  ".ogg",
+  ".opus",
+  ".smc",
+  ".wma",
 
-    ".whitelistme" // example
+  ".whitelistme" // example
 ];
+
 $white_list = [
     "Emulation + ROMs\\" ,
-    // "D&D\\", 
+    // "D&D\\",
     // "Books\\"
 ];
-$excludes = ["Backups+Temp", "Software+Utilities", "Dropbox"];
+
+$excludes = [
+  "Backups+Temp",
+  "Software+Utilities",
+  "Dropbox"
+];
 
 # default to not show next and prev buttons
 $show_prev_next = false;
@@ -190,16 +210,16 @@ $show_prev_next = false;
 // | $$  | $$  | $$ /$$| $$ | $$ | $$| $$
 // | $$  | $$  |  $$$$/| $$ | $$ | $$| $$
 // |__/  |__/   \___/  |__/ |__/ |__/|__/
-                                      
-//  /$$                                    
-// | $$                                    
-// | $$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$ 
+//
+//  /$$
+// | $$
+// | $$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$
 // | $$__  $$ |____  $$ /$$_____/ /$$__  $$
 // | $$  \ $$  /$$$$$$$|  $$$$$$ | $$$$$$$$
 // | $$  | $$ /$$__  $$ \____  $$| $$_____/
 // | $$$$$$$/|  $$$$$$$ /$$$$$$$/|  $$$$$$$
 // |_______/  \_______/|_______/  \_______/
-                                        
+
 
 define('THEME_TOP' , <<<EOL
 
@@ -222,7 +242,7 @@ define('THEME_TOP' , <<<EOL
   <link href="css/full-width-pics.css" rel="stylesheet">
 
   <!-- https://stackoverflow.com/questions/9789723/css-text-overflow-in-a-table-cell -->
-  
+
   <style>
 
 .text-overflow-dynamic-container {
@@ -273,7 +293,7 @@ define('THEME_TOP' , <<<EOL
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
             <a class="nav-link" href="./?c=q">q</a>
-          </li>    
+          </li>
           <li class="nav-item active">
             <a class="nav-link" href="/gd/">Home
               <span class="sr-only">(current)</span>
@@ -337,31 +357,25 @@ define('THEME_BOTTOM', <<<EOL
 
 EOL );
 
-//   /$$                 /$$                              
-//  | $$                | $$                              
-//  | $$$$$$$   /$$$$$$ | $$  /$$$$$$   /$$$$$$   /$$$$$$ 
+//   /$$                 /$$
+//  | $$                | $$
+//  | $$$$$$$   /$$$$$$ | $$  /$$$$$$   /$$$$$$   /$$$$$$
 //  | $$__  $$ /$$__  $$| $$ /$$__  $$ /$$__  $$ /$$__  $$
 //  | $$  \ $$| $$$$$$$$| $$| $$  \ $$| $$$$$$$$| $$  \__/
-//  | $$  | $$| $$_____/| $$| $$  | $$| $$_____/| $$      
-//  | $$  | $$|  $$$$$$$| $$| $$$$$$$/|  $$$$$$$| $$      
-//  |__/  |__/ \_______/|__/| $$____/  \_______/|__/      
-//                          | $$                          
-//                          | $$                          
-//                          |__/                          
-//   /$$$$$$                                 /$$     /$$                              
-//  /$$__  $$                               | $$    |__/                              
+//  | $$  | $$| $$_____/| $$| $$  | $$| $$_____/| $$
+//  | $$  | $$|  $$$$$$$| $$| $$$$$$$/|  $$$$$$$| $$
+//  |__/  |__/ \_______/|__/| $$____/  \_______/|__/
+//                          | $$
+//                          | $$
+//                          |__/
+//   /$$$$$$                                 /$$     /$$
+//  /$$__  $$                               | $$    |__/
 // | $$  \__//$$   /$$ /$$$$$$$   /$$$$$$$ /$$$$$$   /$$  /$$$$$$  /$$$$$$$   /$$$$$$$
 // | $$$$   | $$  | $$| $$__  $$ /$$_____/|_  $$_/  | $$ /$$__  $$| $$__  $$ /$$_____/
-// | $$_/   | $$  | $$| $$  \ $$| $$        | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$ 
+// | $$_/   | $$  | $$| $$  \ $$| $$        | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$
 // | $$     | $$  | $$| $$  | $$| $$        | $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
 // | $$     |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
-// |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/ 
-
-
-
-// def new_extension(src, new_ext):
-//     filename, file_extension = os.path.splitext(src)
-//     return filename + new_ext
+// |__/      \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/
 
 function new_extension($src, $new_ext) {
     $without_extension = substr($src, 0, strrpos($src, "."));
@@ -429,13 +443,13 @@ function reencodeAudioOpus($src) {
 
 
 
-function drawHeader($banner = false) 
+function drawHeader($banner = false)
 {
     global $backgrounds;
-    // global 
+    // global
     $title = "Highwind's Stash";
 
-    
+
 
     if(isset($_REQUEST['file'])) {
         $title = pathinfo(hexToStr($_REQUEST['file']))['basename'];
@@ -443,7 +457,7 @@ function drawHeader($banner = false)
 
     echo str_replace("%%TITLE%%", "$title", THEME_TOP) ;
 
-    if ($banner !== false) 
+    if ($banner !== false)
     {
         ?>
 <!-- Header - set the background image for the header in the line below -->
@@ -464,7 +478,7 @@ function drawHeader($banner = false)
     font-weight: bolder;
 
     ">
- 
+
     &ldquo;<?= $banner ?>&rdquo;
 </h1>
 </div>
@@ -472,8 +486,8 @@ function drawHeader($banner = false)
 
         <?php
     }
-    
-    echo 
+
+    echo
     '
     <!-- Content section -->
     <section class="py-5">
@@ -502,7 +516,7 @@ function hexToStr($hex){
 function endsWith($haystack, $needle)
 {
     $length = strlen($needle);
- 
+
     if ($length == 0) {
         return true;
     }
@@ -510,24 +524,24 @@ function endsWith($haystack, $needle)
     return (substr($haystack, -$length) === $needle);
 }
 
-function startsWith ($string, $startString) 
-{ 
-    $len = strlen($startString); 
-    return (substr($string, 0, $len) === $startString); 
-} 
+function startsWith ($string, $startString)
+{
+    $len = strlen($startString);
+    return (substr($string, 0, $len) === $startString);
+}
 
 function getDirContents($dir, &$results = array()) {
     $files = scandir($dir);
 
-    foreach ($files as $key => $value) 
+    foreach ($files as $key => $value)
     {
         $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
 
-        if (!is_dir($path)) 
+        if (!is_dir($path))
         {
             $results[] = $path;
-        } 
-        else if ($value != "." && $value != "..") 
+        }
+        else if ($value != "." && $value != "..")
         {
             getDirContents($path, $results);
             $results[] = $path;
@@ -578,7 +592,7 @@ function getButtons($base_path, $current_file) {
                 } else {
                     $prev_file = $path;
                 }
-            }            
+            }
         }
 
     }
@@ -624,11 +638,11 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 
     $base_path = dirname(__FILE__) . $base_path;
 
-    
+
     # generate list of files into this array
 
     $files = getDirContents($base_path);
-    
+
     # setup variables to filter our list for our static html cache page
 
     $matched = 0;
@@ -636,7 +650,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
     $skipped = 0;
     $total = 0;
 
-    foreach($files as $file) 
+    foreach($files as $file)
     {
         $total++;
         $valid = 0;
@@ -647,18 +661,18 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 
             // check for a valid file extension
 
-            foreach($extensions as $ext) 
+            foreach($extensions as $ext)
             {
-                if (endsWith(strtolower($path), strtolower($ext))) 
+                if (endsWith(strtolower($path), strtolower($ext)))
                 {
                     $valid = 1;
                 }
             }
 
             // check if the start of a path matches the whitelist
-            foreach($white_list as $wl) 
+            foreach($white_list as $wl)
             {
-                if (startsWith(strtolower($path), strtolower($wl))) 
+                if (startsWith(strtolower($path), strtolower($wl)))
                 {
                     $valid = 1;
                 }
@@ -673,7 +687,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             }
 
             // check that it's not in an excluded path
-            foreach($excludes as $exclude) 
+            foreach($excludes as $exclude)
             {
                 if (strpos(strtolower($path), strtolower($exclude)) !== false) {
                     $excluded++;
@@ -689,7 +703,7 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
         }
 
 
-        if($valid === 1) 
+        if($valid === 1)
         {
             $matched++;
 
@@ -738,11 +752,11 @@ function refreshList() {
 
     global $extensions, $white_list, $excludes;
 
-    if(isset($_REQUEST["refresh"])) 
+    if(isset($_REQUEST["refresh"]))
     {
         # generate list of files into this array
         $files = getDirContents(dirname(__FILE__));
-        
+
 
         # write this array to list.txt
         file_put_contents('list.txt', implode(PHP_EOL, $files));
@@ -760,7 +774,7 @@ function refreshList() {
 
 
 
-        foreach($files as $file) 
+        foreach($files as $file)
         {
             $total++;
             $valid = 0;
@@ -769,9 +783,9 @@ function refreshList() {
 
             // check for a valid file extension
 
-            foreach($extensions as $ext) 
+            foreach($extensions as $ext)
             {
-                if (endsWith(strtolower($path), strtolower($ext))) 
+                if (endsWith(strtolower($path), strtolower($ext)))
                 {
                     $matched++;
                     $valid = 1;
@@ -781,7 +795,7 @@ function refreshList() {
             // check if it's in a whitelisted path
 
 
-            foreach($white_list as $wl) 
+            foreach($white_list as $wl)
             {
                 if (strpos(strtolower($path), strtolower($wl)) !== false) {
                     $matched++;
@@ -793,7 +807,7 @@ function refreshList() {
             // check that it's not in an excluded path
 
 
-            foreach($excludes as $exclude) 
+            foreach($excludes as $exclude)
             {
                 if (strpos(strtolower($path), strtolower($exclude)) !== false) {
                     $excluded++;
@@ -808,7 +822,7 @@ function refreshList() {
             }
 
 
-            if($valid === 1) 
+            if($valid === 1)
             {
                 fwrite($my_file, '
     <div>
@@ -875,7 +889,7 @@ function getSuggestions($category) {
 
 
     sort($suggestions[$category]);
-    foreach($suggestions[$category] as $q) { 
+    foreach($suggestions[$category] as $q) {
         $sugs .= '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
     }
 
@@ -898,11 +912,11 @@ function pageIndex() {
   <div class="row">
     <div class="col-sm">
       <h4 style="margin-top: 1em;"><a href="?c=m">Music</a></h4>
-      '.getSuggestions("m").'    
+      '.getSuggestions("m").'
     </div>
     <div class="col-sm">
       <h4 style="margin-top: 1em;"><a href="?c=v">Movies+TV</a></h4>
-      '.getSuggestions("v").'    
+      '.getSuggestions("v").'
     </div>
   </div>
 
@@ -949,8 +963,8 @@ function pageM4AAudioQueue() {
         $_REQUEST['file'] =  strToHex(new_extension($original_file, ".aac"));
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
-    }   
-    $search_type = 'm'; 
+    }
+    $search_type = 'm';
     $dump_path = 'Music';
     $feature = 'listen';
 
@@ -959,7 +973,7 @@ function pageM4AAudioQueue() {
     echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
 
     drawSearchBox();
-    drawFooter();     
+    drawFooter();
 
 }
 
@@ -976,8 +990,8 @@ function pageOpusAudioQueue() {
         $_REQUEST['file'] =  strToHex(new_extension($original_file, ".opus"));
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "m");
-    }   
-    $search_type = 'm'; 
+    }
+    $search_type = 'm';
     $dump_path = 'Music';
     $feature = 'listen';
 
@@ -986,7 +1000,7 @@ function pageOpusAudioQueue() {
     echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
 
     drawSearchBox();
-    drawFooter();     
+    drawFooter();
 
 }
 
@@ -1005,8 +1019,8 @@ function pageH265VideoQueue() {
         $_REQUEST['file'] .= strToHex(".h265.mp4");
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
-    }   
-    $search_type = 'v'; 
+    }
+    $search_type = 'v';
     $dump_path = 'Movies+TV';
     $feature = 'watch';
 
@@ -1016,7 +1030,7 @@ function pageH265VideoQueue() {
     echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
 
     drawSearchBox();
-    drawFooter();     
+    drawFooter();
 
 }
 
@@ -1034,8 +1048,8 @@ function pageH264VideoQueue() {
         $_REQUEST['file'] .= strToHex(".h264.mp4");
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
-    }   
-    $search_type = 'v'; 
+    }
+    $search_type = 'v';
     $dump_path = 'Movies+TV';
     $feature = 'watch';
 
@@ -1045,7 +1059,7 @@ function pageH264VideoQueue() {
     echo "Scheduling conversion of<br><br>$original_file<br><br>to<br><br><a href=\"$watch_url\">$new_file</a>";
 
     drawSearchBox();
-    drawFooter();     
+    drawFooter();
 
 }
 
@@ -1065,7 +1079,7 @@ function pageContainerSwap() {
     }
     drawVideoPlayer();
     drawSearchBox();
-    drawFooter();     
+    drawFooter();
 
 }
 
@@ -1089,7 +1103,7 @@ function pageVideoPlayer() {
     }
     drawSearchBox();
     drawSearchResults();
-    drawFooter(); 
+    drawFooter();
 }
 
 function pageAudioBook() {
@@ -1097,8 +1111,8 @@ function pageAudioBook() {
 
     $search_type = 'a';
     $dump_path = 'Audio Books';
-    $feature = 'listen';    
-    $show_prev_next = true;    
+    $feature = 'listen';
+    $show_prev_next = true;
 
     drawHeader($dump_path);
 
@@ -1113,7 +1127,7 @@ function pageAudioBook() {
     }
     drawSearchBox();
     drawSearchResults();
-    drawFooter();  
+    drawFooter();
 }
 
 
@@ -1128,7 +1142,7 @@ function pageShowQueue() {
     echo "\n</pre>\n";
 
 
-    drawFooter();  
+    drawFooter();
 }
 
 function pageMusicPlayer() {
@@ -1136,8 +1150,8 @@ function pageMusicPlayer() {
 
     $search_type = 'm';
     $dump_path = 'Music';
-    $feature = 'listen';   
-    $show_prev_next = true; 
+    $feature = 'listen';
+    $show_prev_next = true;
 
     drawHeader($dump_path);
 
@@ -1164,7 +1178,7 @@ function pageBooks(){
     drawHeader($dump_path);
     drawSearchBox();
     drawSearchResults();
-    drawFooter();    
+    drawFooter();
 }
 
 function pageEmulation(){
@@ -1182,7 +1196,7 @@ function pageEmulation(){
 
 function solveButtons() {
     global $buttons, $next_file_to_play, $dump_path;
-    
+
     if(isset($_REQUEST['file'])) {
         $buttons = getButtons($dump_path, $_REQUEST['file']);
         $next_file_to_play = $buttons['next'];
@@ -1194,7 +1208,7 @@ function addAutoplayJquery() {
     $jquery_code_to_run .= "
 // autoplay binding
 $(\"#player\").bind(
-    'ended', 
+    'ended',
     function() {
          window.location.href = \"".buildPlaybackLink($buttons['next'])."\";
      }
@@ -1210,12 +1224,12 @@ function addPrecacheJquery() {
     $jquery_code_to_run .= '
 
 setTimeout(
-    function() 
+    function()
     {
         $("body").append(
             \'<audio src="/gd/'. $buttons['next_raw'] . '" preload="auto">\'
         );
-    }, 
+    },
     10000
 );
 ';
@@ -1228,7 +1242,7 @@ function drawButtons() {
         echo '
 
 <h3>
-    <a href="'.buildPlaybackLink($buttons['previous']).'">⏮️Previous</a> | 
+    <a href="'.buildPlaybackLink($buttons['previous']).'">⏮️Previous</a> |
     <a href="'.buildPlaybackLink($buttons['next']).'">Next⏭</a>
 </h3>
 
@@ -1284,7 +1298,7 @@ function drawSearchBox() {
     global $search_type, $suggestions;
     echo '
 <hr>
-Search: 
+Search:
 <form method="GET">
 <input type="hidden" name="c" value="'.$search_type.'">
 <input type="text" name="q">
@@ -1313,48 +1327,48 @@ function drawSearchResults() {
         }
 
         if(isset($_REQUEST['all'])) {
-            dumpPath($dump_path, $feature, $search_type);    
+            dumpPath($dump_path, $feature, $search_type);
         }
     }
 }
 
 
-                                                  
-//                          /$$          
-//                         |__/          
-//  /$$$$$$/$$$$   /$$$$$$  /$$ /$$$$$$$ 
+
+//                          /$$
+//                         |__/
+//  /$$$$$$/$$$$   /$$$$$$  /$$ /$$$$$$$
 // | $$_  $$_  $$ |____  $$| $$| $$__  $$
 // | $$ \ $$ \ $$  /$$$$$$$| $$| $$  \ $$
 // | $$ | $$ | $$ /$$__  $$| $$| $$  | $$
 // | $$ | $$ | $$|  $$$$$$$| $$| $$  | $$
 // |__/ |__/ |__/ \_______/|__/|__/  |__/
-//                                          
-//                                          
-//    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$ 
+//
+//
+//    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$
 //   /$$__  $$ |____  $$ /$$__  $$ /$$__  $$
 //  | $$  \ $$  /$$$$$$$| $$  \ $$| $$$$$$$$
 //  | $$  | $$ /$$__  $$| $$  | $$| $$_____/
 //  | $$$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
 //  | $$____/  \_______/ \____  $$ \_______/
-//  | $$                 /$$  \ $$          
-//  | $$                |  $$$$$$/          
-//  |__/                 \______/         
-// 
-//   /$$                           /$$                    
-//  | $$                          |__/                    
+//  | $$                 /$$  \ $$
+//  | $$                |  $$$$$$/
+//  |__/                 \______/
+//
+//   /$$                           /$$
+//  | $$                          |__/
 //  | $$$$$$$   /$$$$$$   /$$$$$$  /$$ /$$$$$$$   /$$$$$$$
 //  | $$__  $$ /$$__  $$ /$$__  $$| $$| $$__  $$ /$$_____/
-//  | $$  \ $$| $$$$$$$$| $$  \ $$| $$| $$  \ $$|  $$$$$$ 
+//  | $$  \ $$| $$$$$$$$| $$  \ $$| $$| $$  \ $$|  $$$$$$
 //  | $$  | $$| $$_____/| $$  | $$| $$| $$  | $$ \____  $$
 //  | $$$$$$$/|  $$$$$$$|  $$$$$$$| $$| $$  | $$ /$$$$$$$/
-//  |_______/  \_______/ \____  $$|__/|__/  |__/|_______/ 
-//                       /$$  \ $$                        
-//                      |  $$$$$$/                        
-//                       \______/                         
+//  |_______/  \_______/ \____  $$|__/|__/  |__/|_______/
+//                       /$$  \ $$
+//                      |  $$$$$$/
+//                       \______/
 
-# our page will begin rendering here. 
-# see if we are on the homepage otherwise 
-# generate a page based on the [c] category                                      
+# our page will begin rendering here.
+# see if we are on the homepage otherwise
+# generate a page based on the [c] category
 
 if(!isset($_REQUEST['c'])) {
     pageIndex();
@@ -1367,7 +1381,7 @@ if(!isset($_REQUEST['c'])) {
 
     switch($_REQUEST['c']){
         case '4': pageM4AAudioQueue();      break;
-        case '5': pageH264VideoQueue();     break;        
+        case '5': pageH264VideoQueue();     break;
         case 'a': pageAudioBook();          break;
         case 'b': pageBooks();              break;
         case 'e': pageEmulation();          break;
@@ -1380,8 +1394,8 @@ if(!isset($_REQUEST['c'])) {
     }
 }
 
-//                                                              
-//                                                              
+//
+//
 //         /$$  /$$$$$$  /$$   /$$  /$$$$$$   /$$$$$$  /$$   /$$
 //        |__/ /$$__  $$| $$  | $$ /$$__  $$ /$$__  $$| $$  | $$
 //         /$$| $$  \ $$| $$  | $$| $$$$$$$$| $$  \__/| $$  | $$
@@ -1390,26 +1404,26 @@ if(!isset($_REQUEST['c'])) {
 //        | $$ \____  $$ \______/  \_______/|__/       \____  $$
 //   /$$  | $$      | $$                               /$$  | $$
 //  |  $$$$$$/      | $$                              |  $$$$$$/
-//   \______/       |__/                               \______/ 
-// 
-//   /$$                           /$$                    
-//  | $$                          |__/                    
+//   \______/       |__/                               \______/
+//
+//   /$$                           /$$
+//  | $$                          |__/
 //  | $$$$$$$   /$$$$$$   /$$$$$$  /$$ /$$$$$$$   /$$$$$$$
 //  | $$__  $$ /$$__  $$ /$$__  $$| $$| $$__  $$ /$$_____/
-//  | $$  \ $$| $$$$$$$$| $$  \ $$| $$| $$  \ $$|  $$$$$$ 
+//  | $$  \ $$| $$$$$$$$| $$  \ $$| $$| $$  \ $$|  $$$$$$
 //  | $$  | $$| $$_____/| $$  | $$| $$| $$  | $$ \____  $$
 //  | $$$$$$$/|  $$$$$$$|  $$$$$$$| $$| $$  | $$ /$$$$$$$/
-//  |_______/  \_______/ \____  $$|__/|__/  |__/|_______/ 
-//                       /$$  \ $$                        
-//                      |  $$$$$$/                        
-//                       \______/                         
+//  |_______/  \_______/ \____  $$|__/|__/  |__/|_______/
+//                       /$$  \ $$
+//                      |  $$$$$$/
+//                       \______/
 ?>
 
 <!-- Our jquery block -->
 <script>
 $( document ).ready
 (
-    function() 
+    function()
     {
 // --------------------------------------------------------------------
 // Begin $jquery_code_to_run
