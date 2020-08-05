@@ -17,7 +17,11 @@
 //                                                      /$$  \ $$
 //                                                     |  $$$$$$/
 //                                                      \______/
+# track runtime
+$start = microtime(true);
+$rustart = getrusage();
 
+# constants
 define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
@@ -26,134 +30,134 @@ define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
 define("PATH_OPUS_QUEUE", "G:\\queue_opus.txt");
 
-# track runtime
-$start = microtime(true);
-$rustart = getrusage();
+# variables
+$title = "Highwind's Stash";
 
 $backgrounds = [
-  "black-pearl.jpg",
-  "motoko.jpg",
-  "daftpunk.jpg",
-  "radiohead.jpg",
-  "pinkfloyd.jpg",
-  "darwin.jpg",
-  "vcr.jpg"
+    "black-pearl.jpg",
+    "motoko.jpg",
+    "daftpunk.jpg",
+    "radiohead.jpg",
+    "pinkfloyd.jpg",
+    "darwin.jpg",
+    "vcr.jpg"
 ];
 
 // audio books
 $suggestions["a"] =  array_map('strtolower', [
-  "bertrand russell",
-  "bill bryson",
-  "carl sagan",
-  "charles darwin",
-  "christopher hitchens",
-  "ernest cline",
-  "george r.r. martin",
-  "jerry a. coyne",
-  "karen armstrong",
-  "lawrence m. krauss",
-  "neal stephenson",
-  "neil degrasse tyson",
-  "paul strathern",
-  "penn jillette",
-  "plato",
-  "richard dawkins",
-  "raymond franz",
-  "sam harris",
-  "steven pinker",
-  "sun tzu",
-  "william gibson",
+    "bertrand russell",
+    "bill bryson",
+    "carl sagan",
+    "charles darwin",
+    "christopher hitchens",
+    "ernest cline",
+    "george r.r. martin",
+    "jerry a. coyne",
+    "karen armstrong",
+    "lawrence m. krauss",
+    "neal stephenson",
+    "neil degrasse tyson",
+    "paul strathern",
+    "penn jillette",
+    "plato",
+    "richard dawkins",
+    "raymond franz",
+    "sam harris",
+    "steven pinker",
+    "sun tzu",
+    "william gibson",
 ]);
 
 // books
 $suggestions["b"] = array_map('strtolower', [
-  "bryson",
-  "dawkins",
-  "harris",
-  "hawking",
-  "huxley",
-  "krauss",
-  "mandela",
-  "martin",
-  "melville",
-  "newton",
-  "rowling",
-  "sagan",
-  "shakespeare",
-  "twain",
-  "watterson",
+    "bryson",
+    "dawkins",
+    "harris",
+    "hawking",
+    "huxley",
+    "krauss",
+    "mandela",
+    "martin",
+    "melville",
+    "newton",
+    "rowling",
+    "sagan",
+    "shakespeare",
+    "twain",
+    "watterson",
 ]);
 
 // emulation
 $suggestions["e"] = array_map('strtolower', [
-  ".iso",
-  "final fantasy",
-  "ogre",
-  "ps2",
+    ".iso",
+    "final fantasy",
+    "ogre",
+    "ps2",
 ]);
 
 // music
 $suggestions["m"] = array_map('strtolower', [
-  ".aac",
-  ".flac",
-  ".m4a",
-  ".mp3",
-  ".opus",
-  "adele",
-  "alan parsons",
-  "beastie",
-  "blue sky black death",
-  "chili",
-  "christopher tin",
-  "daft punk",
-  "depeche mode",
-  "dragonforce",
-  "eagles",
-  "eilish",
-  "eminem",
-  "eric johnson",
-  "final fantasy",
-  "floyd",
-  "foo fighters",
-  "glitch mob",
-  "hendrix",
-  "james taylor",
-  "jared's mixes",
-  "jazz",
-  "jewel",
-  "peter gabriel",
-  "prydz",
-  "queen",
-  "quest",
-  "radiohead",
-  "the cure",
-  "tool",
-  "tyler",
-  "zeppelin",
+    ".aac",
+    ".flac",
+    ".m4a",
+    ".mp3",
+    ".opus",
+    "adele",
+    "alan parsons",
+    "beastie",
+    "blue sky black death",
+    "chili",
+    "christopher tin",
+    "daft punk",
+    "depeche mode",
+    "dragonforce",
+    "eagles",
+    "eilish",
+    "eminem",
+    "eric johnson",
+    "final fantasy",
+    "floyd",
+    "foo fighters",
+    "glitch mob",
+    "hendrix",
+    "james taylor",
+    "jared's mixes",
+    "jazz",
+    "jewel",
+    "peter gabriel",
+    "prydz",
+    "queen",
+    "quest",
+    "radiohead",
+    "the cure",
+    "the offspring",
+    "tool",
+    "tyler",
+    "zeppelin",
 ]);
 
 $suggestions["v"] = array_map('strtolower', [
-  ".h264.mp4",
-  ".h265.mp4",
-  "are you afraid of the dark" ,
-  "ascent of man",
-  "attack on titan",
-  "avenger",
-  "batman",
-  "furious",
-  "game of thrones - season",
-  "hellsing",
-  "his dark materials",
-  "hunter x hunter",
-  "marvel",
-  "no country",
-  "outlander",
-  "ralph",
-  "robot",
-  "shell",
-  "star wars",
-  "thrones",
-  "workaholic",
+    ".h264.mp4",
+    ".h265.mp4",
+    "are you afraid of the dark" ,
+    "ascent of man",
+    "attack on titan",
+    "avenger",
+    "batman",
+    "furious",
+    "game of thrones - season",
+    "hellsing",
+    "his dark materials",
+    "hunter x hunter",
+    "marvel",
+    "no country",
+    "outlander",
+    "ralph",
+    "robot",
+    "shell",
+    "star wars",
+    "thrones",
+    "workaholic",
 ]);
 
 $search_type = '';
@@ -167,22 +171,22 @@ $next_file_to_play = "";
 
 // $path_list_html = "list.html";
 $extensions = [
-  ".aac",
-  ".avi",
-  ".flac",
-  ".iso",
-  ".m4a",
-  ".m4b", // uncommon audio format
-  ".m4v",
-  ".mkv",
-  ".mp3",
-  ".mp4",
-  ".ogg",
-  ".opus",
-  ".smc",
-  ".wma",
+    ".aac",
+    ".avi",
+    ".flac",
+    ".iso",
+    ".m4a",
+    ".m4b", // uncommon audio format
+    ".m4v",
+    ".mkv",
+    ".mp3",
+    ".mp4",
+    ".ogg",
+    ".opus",
+    ".smc",
+    ".wma",
 
-  ".whitelistme" // example
+    ".whitelistme" // example
 ];
 
 $white_list = [
@@ -192,9 +196,9 @@ $white_list = [
 ];
 
 $excludes = [
-  "Backups+Temp",
-  "Software+Utilities",
-  "Dropbox"
+    "Backups+Temp",
+    "Software+Utilities",
+    "Dropbox"
 ];
 
 # default to not show next and prev buttons
@@ -219,7 +223,6 @@ $show_prev_next = false;
 // | $$  | $$ /$$__  $$ \____  $$| $$_____/
 // | $$$$$$$/|  $$$$$$$ /$$$$$$$/|  $$$$$$$
 // |_______/  \_______/|_______/  \_______/
-
 
 define('THEME_TOP' , <<<EOL
 
@@ -445,12 +448,9 @@ function reencodeAudioOpus($src) {
 
 function drawHeader($banner = false)
 {
-    global $backgrounds;
+    global $backgrounds, $title;
+
     // global
-    $title = "Highwind's Stash";
-
-
-
     if(isset($_REQUEST['file'])) {
         $title = pathinfo(hexToStr($_REQUEST['file']))['basename'];
     }
@@ -462,8 +462,6 @@ function drawHeader($banner = false)
         ?>
 <!-- Header - set the background image for the header in the line below -->
 <header class="py-5 bg-image-full" style="background-image: url('/gd/img/<?= $backgrounds[array_rand ($backgrounds)]; ?>');">
-
-
 
 <div class="container">
 <h1 style="
@@ -495,7 +493,6 @@ function drawHeader($banner = false)
     ';
 }
 
-
 function strToHex($string){
     $hex='';
     for ($i=0;
@@ -503,6 +500,9 @@ function strToHex($string){
         $hex .= dechex(ord($string[$i]));
     }
     return $hex;
+
+
+
 }
 
 function hexToStr($hex){
@@ -553,15 +553,14 @@ function getDirContents($dir, &$results = array()) {
 
 function echoCell($str) {
  echo '
-
 <td>
       '.$str.'
-
 </td>
 ';
 }
 
 function getButtons($base_path, $current_file) {
+    global $extensions;
 
     $hit = 0;
     $hit_checks = 0;
@@ -570,20 +569,35 @@ function getButtons($base_path, $current_file) {
 
     $button_array['previous'] = "";
     $button_array['next'] = "";
+    $button_array['previous_raw'] = "";
+    $button_array['next_raw'] = "";
 
+    // $files = getDirContents($base_path, $junk , true);  // using a named argument
     $files = getDirContents($base_path);
 
+    // filter valid file extensions
+    foreach($files as $key => $path) {
+        $valid_extension = 0;
+        foreach($extensions as $ext) {
+            if (endsWith(strtolower($path), strtolower($ext))) {
+                $valid_extension = 1;
+            }
+        }
+        if($valid_extension == 0) {
+            unset($files[$key]);
+        }
+    }
+
+    // generate prev/next button data
     foreach($files as $file) {
         if(!is_dir($file)) {
             $path = substr(trim($file), 3);
             if($hit == 1) {
                 $button_array['previous'] = strToHex($prev_file);
                 $button_array['next'] = strToHex($path);
-
                 $button_array['previous_raw'] = $prev_file;
                 $button_array['next_raw'] = str_replace('\\', '/', $path);
                 return $button_array;
-
             }
             else
             {
@@ -619,7 +633,6 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 ";
     }
 
-
     if($_REQUEST['c'] == 'm') {
         echo "
 <hr>
@@ -631,16 +644,11 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 ";
     }
 
-
-
-
     echo "<table>\n";
 
     $base_path = dirname(__FILE__) . $base_path;
 
-
     # generate list of files into this array
-
     $files = getDirContents($base_path);
 
     # setup variables to filter our list for our static html cache page
@@ -649,9 +657,11 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
     $excluded = 0;
     $skipped = 0;
     $total = 0;
+    $match_reason = '';
 
     foreach($files as $file)
     {
+        $match = '';
         $total++;
         $valid = 0;
 
@@ -660,7 +670,6 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
             $path = substr(trim($file), 3);
 
             // check for a valid file extension
-
             foreach($extensions as $ext)
             {
                 if (endsWith(strtolower($path), strtolower($ext)))
@@ -678,8 +687,8 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
                 }
             }
 
-            // if there is a query set forget everything we just did and check against the query
-            if($query != 'none') {
+            // check against query
+            if($query != 'none' && $valid == 1) {
                 $valid = 0;
                 if (strpos(strtolower($path), strtolower($query)) !== false) {
                     $valid = 1;
@@ -697,11 +706,9 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
 
                     }
                     $valid = 0;
-
                 }
             }
         }
-
 
         if($valid === 1)
         {
@@ -748,106 +755,10 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
     echo "</table><hr><div>$matched matched of $total files searched, $skipped of $excluded excluded</div>";
 }
 
-function refreshList() {
-
-    global $extensions, $white_list, $excludes;
-
-    if(isset($_REQUEST["refresh"]))
-    {
-        # generate list of files into this array
-        $files = getDirContents(dirname(__FILE__));
-
-
-        # write this array to list.txt
-        file_put_contents('list.txt', implode(PHP_EOL, $files));
-
-
-        # setup variables to filter our list for our static html cache page
-
-        $matched = 0;
-        $excluded = 0;
-        $skipped = 0;
-        $total = 0;
-
-        # create a static html cache
-        $my_file = fopen($path_list_html, "w");
-
-
-
-        foreach($files as $file)
-        {
-            $total++;
-            $valid = 0;
-
-            $path = substr(trim($file), 3);
-
-            // check for a valid file extension
-
-            foreach($extensions as $ext)
-            {
-                if (endsWith(strtolower($path), strtolower($ext)))
-                {
-                    $matched++;
-                    $valid = 1;
-                }
-            }
-
-            // check if it's in a whitelisted path
-
-
-            foreach($white_list as $wl)
-            {
-                if (strpos(strtolower($path), strtolower($wl)) !== false) {
-                    $matched++;
-                    $valid = 1;
-                }
-            }
-
-
-            // check that it's not in an excluded path
-
-
-            foreach($excludes as $exclude)
-            {
-                if (strpos(strtolower($path), strtolower($exclude)) !== false) {
-                    $excluded++;
-                    if($valid == 1) {
-                        $matched--;
-                        $skipped++;
-
-                    }
-                    $valid = 0;
-
-                }
-            }
-
-
-            if($valid === 1)
-            {
-                fwrite($my_file, '
-    <div>
-        <a href="'.$path.'">[d]</a>
-        <a href="v.php?file='.$path.'">[v]</a>
-        <a href="a.php?file='.$path.'">[a]</a>
-        <a href="'.$path.'">'.$path.'</a>
-    </div>
-    ');
-            }
-        }
-
-        fwrite($my_file, "<hr><div>$matched matched of $total files searched, $skipped of $excluded excluded</div>");
-
-        fclose($my_file);
-    }
-}
-
-
 function rutime($ru, $rus, $index) {
     return ($ru["ru_$index.tv_sec"]*1000 + intval($ru["ru_$index.tv_usec"]/1000))
      -  ($rus["ru_$index.tv_sec"]*1000 + intval($rus["ru_$index.tv_usec"]/1000));
 }
-
-
 
 function drawFooter() {
     global $start, $rustart;
@@ -856,15 +767,11 @@ function drawFooter() {
     $ru = getrusage();
     $time_elapsed_secs = microtime(true) - $start;
 
-
-
     echo "This process used " . rutime($ru, $rustart, "utime") . " ms for its computations.<br>\n";
     echo "It spent " . rutime($ru, $rustart, "stime") . " ms in system calls.<br>\n";
-    echo '<b>Total Execution Time:</b> '.$time_elapsed_secs.' seconds';
+    echo '<b>Total Execution Time:</b> '.number_format($time_elapsed_secs,4).' seconds';
 
     echo THEME_BOTTOM;
-
-
 }
 
 function buildPlaybackLink($file_in_hex, $type = "") {
@@ -904,10 +811,6 @@ function pageIndex() {
 <h2 style="margin-top: 1em;">Categories &amp; Popular Searches</h2>
 
 <div class="container">
-
-
-
-
 
   <div class="row">
     <div class="col-sm">
@@ -1251,14 +1154,13 @@ function drawButtons() {
 }
 
 function drawAudioPlayer() {
-    global $src;
+    global $src, $title;
 
     echo '
-
-<h2>Attempting to play '.$src.'</h2>
+<h2>Playing '.$title.'</h2>
 For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
 <br>
-<a href="'.$src.'">copy my direct link</a><br>
+<a href="'.$src.'">[direct link]</a><br>
 <br>
 <br>
 <audio autoplay controls id="player" class="player" preload="auto">
@@ -1272,26 +1174,24 @@ Your browser does not support the audio element.
 }
 
 function drawVideoPlayer() {
-    global $src;
+    global $src, $title;
 
     $t = 0;
 
     if(isset($_REQUEST['t'])) $t = (int) $_REQUEST['t'];
 
     echo '
-<h2>Attempting to play '.$src.'</h2>
+<h2>Playing '.$title.'</h2>
 For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
 <br>
-<a href="'.$src.'">copy my direct link</a><br>
+<a href="'.$src.'">[direct link]</a><br>
 <br>
 <br>
 <video controls width=800 autoplay id="player" class="player">
 <source src="'.$src.'#t='.$t.'">
 Your browser does not support the video element.
 </video>
-
 ';
-
 }
 
 function drawSearchBox() {
