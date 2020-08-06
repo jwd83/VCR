@@ -110,6 +110,7 @@ $suggestions["m"] = array_map('strtolower', [
     "beastie",
     "billie eilish",
     "blue sky black death",
+    "bob dylan",
     "bob marley",
     "christina perri",
     "christopher tin",
@@ -154,6 +155,7 @@ $suggestions["m"] = array_map('strtolower', [
     "the beach boys",
     "the beatles",
     "the cure",
+    "the doors",
     "the offspring",
     "the velvet underground",
     "tool",
@@ -1185,15 +1187,18 @@ function drawAudioPlayer() {
 
     echo '
 <h2>Playing '.$title.'</h2>
-For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
-<br>
-<a href="'.$src.'">[direct link]</a><br>
-<br>
+<em>'.$src.'</em><br>
 <br>
 <audio autoplay controls id="player" class="player" preload="auto">
 <source src="'.$src.'">
 Your browser does not support the audio element.
 </audio>
+<br>
+<br>
+For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
+<br>
+<a href="'.$src.'">[direct link]</a><br>
+
 <!-- Preload the next song -->
 ';
 
