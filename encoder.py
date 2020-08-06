@@ -2,24 +2,18 @@
 #
 #
 # h265 software = libx265           # best for offline rendering of files
-# h264 hardware = h264_nvenc        # h264 nvidia hardware encoder - bad for filesize 
-# h265 hardware = hevc_nvenc        # h265 nvidia hardware encoder - bad for filesize 
+# h264 hardware = h264_nvenc        # h264 nvidia hardware encoder - bad for filesize
+# h265 hardware = hevc_nvenc        # h265 nvidia hardware encoder - bad for filesize
 #
 #
 # selecting an h265 encoder, simple answer is software x265 is superior for stored files
 # hardware 265 is only better for realtime livestreaming
 #
 # https://www.reddit.com/r/linux/comments/4wncug/hevc_nvenc_ffmpeg_huge_file_size/
-#
-# command
-# G:\psexec.exe -d C:\Users\jared\Downloads\ffmpeg-4.2.1-win64-static\bin\ffmpeg.exe -i "G:\Movies+TV\workaholics\Season.1\Workaholics.S01E06.HDTV.XviD-ASAP.The.Strike.avi" -vcodec h264 -acodec aac "G:\Movies+TV\workaholics\Season.1\Workaholics.S01E06.HDTV.XviD-ASAP.The.Strike.avi.html.mp4"
 
-# PATH_FFMPEG
-# -i "G:\Movies+TV\workaholics\Season.1\Workaholics.S01E06.HDTV.XviD-ASAP.The.Strike.avi"
-# -vcodec h264 -acodec aac 
-# "G:\Movies+TV\workaholics\Season.1\Workaholics.S01E06.HDTV.XviD-ASAP.The.Strike.avi.html.mp4"
 
 import os
+import sqlite3
 import sys
 import time
 
@@ -49,13 +43,13 @@ def next_file(queue_file):
     if(len(data) > 0):
         return data[0].strip()
     else:
-        return ""    
+        return ""
 
 def process_opus():
     # https://wiki.hydrogenaud.io/index.php?title=Opus#Music_encoding_quality
     input_src = next_file(PATH_QUEUE_OPUS)
     while(input_src != ""):
-        command = PATH_FFMPEG 
+        command = PATH_FFMPEG
 
 
         # specify input file
@@ -64,7 +58,7 @@ def process_opus():
         # specify option: opus audio codec
         command += " -c:a libopus -b:a 96k "
 
-        
+
         command += " -map -0:v? "   # strip video data
         command += " -map -0:s? "   # strip subtitles
         command += " -map -0:d? "   # strip misc data (note: this does not appear to strip metadata)
@@ -91,7 +85,7 @@ def process_opus():
 def process_m4a():
     input_src = next_file(PATH_QUEUE_M4A)
     if(input_src != ""):
-        command = PATH_FFMPEG 
+        command = PATH_FFMPEG
 
 
         # specify input file
@@ -105,9 +99,9 @@ def process_m4a():
         command += " -c:v copy "
 
         # Progressive Download (faststart option)
-        # By default the MP4 muxer writes the 'moov' atom after the audio stream ('mdat' atom) at the 
+        # By default the MP4 muxer writes the 'moov' atom after the audio stream ('mdat' atom) at the
         # end of the file. This results in the user requiring to download the file completely before
-        # playback can occur. Relocating this moov atom to the beginning of the file can facilitate 
+        # playback can occur. Relocating this moov atom to the beginning of the file can facilitate
         # playback before the file is completely downloaded by the client.
         # You can do this with the -movflags +faststart option:
         command += " -movflags +faststart "
@@ -133,7 +127,7 @@ def process_h264():
     if(input_src != ""):
         print("Prepaing command...")
         # specify path to ffmpeg
-        command = PATH_FFMPEG 
+        command = PATH_FFMPEG
 
         # specify input file
         command += " -i \"" + input_src + "\" "
@@ -164,7 +158,7 @@ def process_h265():
     if(input_src != ""):
         # print("Prepaing command...")
         # specify path to ffmpeg
-        command = PATH_FFMPEG 
+        command = PATH_FFMPEG
 
         # specify input file
         command += " -i \"" + input_src + "\" "
@@ -178,7 +172,7 @@ def process_h265():
         # software h265 is much better.
         # command += " -c:v hevc_nvenc -crf 28"
         # command += " -c:v hevc_nvenc "
-        
+
         # setup 128k aac audio
         # command += " -c:a aac -b:a 128k "
 
