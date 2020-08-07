@@ -144,6 +144,7 @@ $suggestions["m"] = array_map('strtolower', [
     "onerepublic",
     "peter frampton",
     "peter gabriel",
+    "phish",
     "pink floyd",
     "queen",
     "radiohead",
