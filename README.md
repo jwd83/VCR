@@ -34,7 +34,9 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 
 ### sshd_config
 
-change "GatewayPorts no" to "GatewayPorts yes", it may need to be uncommented (remove leading # from line)
+If you are using a reverse SSH tunnel to bring your server online make sure 
+change "GatewayPorts no" to "GatewayPorts yes", it may need to be uncommented
+(remove leading # from line)
 
 ### add VCR user
 
