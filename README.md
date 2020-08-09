@@ -8,7 +8,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 
 ## Features
 
-* php front end for WAMP
+* single file PHP front end for viewing and managing your media WAMP
 * python background daemon to handle h264/h265 video and .opus audio reencoding requests
 * re-container video files to mp4 container (may fix playback in some browsers. new files end in .re.mp4)
 * Autoplay your collection of audio and video files where supported by your browser.
@@ -19,16 +19,16 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Link to timestamp in video using t= in URL
 
 ## TODO
+* setup dynamic DNS
+* general SSL certificate 
 * ~~remove aac audio encoding~~ isntead offer 128k opus option? 
+* SQLite/MariaDB backend for faster file searches/queue consolidation
 * look at directly converting to opus on demand
 * Switch to https from http. Lets encrypt or self signed
 * Look into RTMP live streaming/encoding video/audio realtime.
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
 * if the queue files are empty don't rewrite them
-* setup dynamic DNS
-* general SSL certificate 
-
 
 ## Setup Notes
 
