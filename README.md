@@ -19,6 +19,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Link to timestamp in video using t= in URL
 
 ## TODO
+* look at making a config.json to share between PHP/Python
 * setup dynamic DNS
 * general SSL certificate 
 * ~~remove aac audio encoding~~ isntead offer 128k opus option? 
