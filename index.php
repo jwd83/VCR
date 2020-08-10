@@ -35,12 +35,13 @@ $title = "Highwind's Stash";
 
 $backgrounds = [
     "black-pearl.jpg",
-    "motoko.jpg",
+    "dvd.jpg",
     "daftpunk.jpg",
-    "radiohead.jpg",
-    "pinkfloyd.jpg",
     "darwin.jpg",
-    "vcr.jpg"
+    "motoko.jpg",
+    "pinkfloyd.jpg",
+    "radiohead.jpg",
+    "vcr.jpg",
 ];
 
 // audio books
@@ -70,21 +71,42 @@ $suggestions["a"] =  array_map('strtolower', [
 
 // books
 $suggestions["b"] = array_map('strtolower', [
-    "bryson",
-    "dawkins",
-    "harris",
-    "hawking",
-    "huxley",
-    "krauss",
-    "mandela",
-    "martin",
-    "melville",
-    "newton",
-    "rowling",
-    "sagan",
-    "shakespeare",
-    "twain",
-    "watterson",
+    "aldous huxley",
+    "andrzej sapkowski",
+    "arthur c. clarke",
+    "benjamin hoffman",
+    "bill bryson",
+    "bill watterson",
+    "brandon sanderson",
+    "brian w. kernighan",
+    "carl sagan",
+    "charles darwin",
+    "dennis m. ritchie",
+    "douglas adams",
+    "ernest hemingway",
+    "george orwell",
+    "george r. r. martin",
+    "herman melville",
+    "homer",
+    "howard zinn",
+    "j. d. salinger",
+    "j. k. rowling",
+    "j. r. r. tolkien",
+    "jerry a. coyne",
+    "john steinbeck",
+    "lao tse",
+    "leo tolstoy",
+    "mark twain",
+    "miguel de cervantes",
+    "neil degrasse tyson",
+    "nelson mandela",
+    "orson scott card",
+    "richard dawkins",
+    "robert jordan",
+    "sam harris",
+    "sun tzu",
+    "william shakespeare",
+
 ]);
 
 // emulation
@@ -163,17 +185,20 @@ $suggestions["m"] = array_map('strtolower', [
     "tyler",
     "underline entertainment",
     "vince guaraldi trio",
-
 ]);
 
 $suggestions["v"] = array_map('strtolower', [
+    ".avi",
     ".h264.mp4",
     ".h265.mp4",
+    ".mkv",
     "are you afraid of the dark" ,
     "ascent of man",
     "attack on titan",
     "avenger",
     "batman",
+    "cowboy bebop",
+    "demon slayer",
     "furious",
     "game of thrones - season",
     "hellsing",
@@ -222,7 +247,7 @@ $extensions = [
 $white_list = [
     "Emulation + ROMs\\" ,
     // "D&D\\",
-    // "Books\\"
+    "Books\\"
 ];
 
 $excludes = [
@@ -324,9 +349,6 @@ define('THEME_TOP' , <<<EOL
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="./?c=q">q</a>
-          </li>
           <li class="nav-item active">
             <a class="nav-link" href="/gd/">Home
               <span class="sr-only">(current)</span>
@@ -1063,21 +1085,6 @@ function pageAudioBook() {
     drawFooter();
 }
 
-
-function pageShowQueue() {
-    drawHeader("Contents of queue files");
-    echo "<h2>H264</h2>\n<pre>\n";
-    include "queue.txt";
-    echo "\n</pre>\n";
-
-    echo "<h2>H265</h2>\n<pre>\n";
-    include "nqueue.txt";
-    echo "\n</pre>\n";
-
-
-    drawFooter();
-}
-
 function pageMusicPlayer() {
     global $search_type, $dump_path, $feature, $show_prev_next;
 
@@ -1321,7 +1328,6 @@ if(!isset($_REQUEST['c'])) {
         case 'm': pageMusicPlayer();        break;
         case 'n': pageH265VideoQueue();     break;
         case 'o': pageOpusAudioQueue();     break;
-        case 'q': pageShowQueue();          break;
         case 'r': pageContainerSwap();      break;
         case 'v': pageVideoPlayer();        break;
     }
