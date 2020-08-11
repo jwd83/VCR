@@ -24,6 +24,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * general SSL certificate 
 * ~~remove aac audio encoding~~ isntead offer 128k opus option? 
 * SQLite/MariaDB backend for faster file searches/queue consolidation
+  * MEMORY db in maria? rebuild on startup?
 * look at directly converting to opus on demand
 * Switch to https from http. Lets encrypt or self signed
 * Look into RTMP live streaming/encoding video/audio realtime.
