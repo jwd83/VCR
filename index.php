@@ -30,11 +30,22 @@ define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
 define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
 define("PATH_OPUS_QUEUE", "G:\\queue_opus.txt");
-define("USE_DB", FALSE);
+define("USE_DB", TRUE);
 
 # load config file
 $config = json_decode(file_get_contents(CONFIG_JSON_LOCATION));
 // var_dump($config->db->user);
+
+# setup db connection
+$db = NULL;
+if(USE_DB) {
+    $db = new mysqli(
+        $config->db->host,
+        $config->db->user,
+        $config->db->password,
+        $config->db->database
+    );
+}
 
 # variables
 $title = "Highwind's Stash";
@@ -672,9 +683,7 @@ function getButtons($base_path, $current_file) {
     return $button_array;
 }
 
-
-function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
-    global $extensions, $white_list, $excludes;
+function drawResultNotes($base_path) {
 
     echo "<h1>$base_path Results</h1>\n";
 
@@ -703,6 +712,76 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
     }
 
     echo "<table>\n";
+}
+
+function dbResults($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
+    global $extensions, $white_list, $excludes, $db;
+
+    drawResultNotes($base_path);
+
+    $stmt = NULL;
+    $search_str = "%".$query."%";
+
+    if($query != 'none') {
+        $stmt = $db->prepare('SELECT * FROM files WHERE parent = ? AND path like ? ORDER BY path');
+        $stmt->bind_param("ss", $base_path, $search_str);
+    } else {
+        $stmt = $db->prepare('SELECT * FROM files WHERE parent = ? ORDER BY path');
+        $stmt->bind_param("s", $base_path);
+    }
+
+    $stmt->execute();
+
+    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size);
+    while ($stmt->fetch()) {
+        $path = $base_path . "/" . $r_path;
+        echo "<tr>\n";
+        echoCell('<a href="'.$path.'">[direct]</a>');
+        if($optional_feature != 'none') {
+            if($optional_reference == 'v') {
+                if(endsWith($path, "h265.mp4")) {
+                    echocell('-');
+                } else {
+                    echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
+                }
+            } else {
+                echoCell('<a href="?c='.$optional_reference.'&file='.strToHex($path).'">['.$optional_feature.']</a>');
+            }
+        }
+        if($optional_reference == 'v') {
+            if(endsWith($path, "h264.mp4") || endsWith($path, "h265.mp4")) {
+                echocell('-');
+                echocell('-');
+                echocell('-');
+            } else {
+                echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
+                echoCell('<a href="?c=5&file='.strToHex($path).'">[h264]</a>');
+                echoCell('<a href="?c=n&file='.strToHex($path).'">[h265]</a>');
+            }
+        }
+        if($optional_reference == 'm') {
+            if(endsWith($path, ".m4a") || endsWith($path, ".aac") || endsWith($path, ".opus")) {
+                echocell('-');
+                // echocell('-');
+            } else {
+                echoCell('<a href="?c=o&file='.strToHex($path).'">[opus]</a>');
+                // echoCell('<a href="?c=4&file='.strToHex($path).'">[aac]</a>');
+            }
+        }
+        echoCell(human_filesize($r_size));
+        // echoCell(substr($path,  strlen($base_path)-2));
+        echoCell($r_path);
+        echo "</tr>\n";
+    }
+    $stmt->close();
+
+    echo "</table>\n";
+}
+
+function dumpPath($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
+    global $extensions, $white_list, $excludes;
+
+    drawResultNotes($base_path);
 
     $base_path = dirname(__FILE__) . $base_path;
 
@@ -715,7 +794,6 @@ function dumpPath($base_path, $optional_feature = "none", $optional_reference = 
     $excluded = 0;
     $skipped = 0;
     $total = 0;
-    $match_reason = '';
 
     foreach($files as $file)
     {
@@ -1267,13 +1345,25 @@ function drawSearchResults() {
     # if there is a valid dump path list our files
     if(strlen($dump_path) > 1) {
 
-        if(isset($_REQUEST['q'])) {
-            dumpPath($dump_path, $feature, $search_type, $_REQUEST['q']);
+        if(USE_DB) {
+            if(isset($_REQUEST['q'])) {
+                dbResults($dump_path, $feature, $search_type, $_REQUEST['q']);
 
-        }
+            }
 
-        if(isset($_REQUEST['all'])) {
-            dumpPath($dump_path, $feature, $search_type);
+            if(isset($_REQUEST['all'])) {
+                dbResults($dump_path, $feature, $search_type);
+            }
+
+        } else {
+            if(isset($_REQUEST['q'])) {
+                dumpPath($dump_path, $feature, $search_type, $_REQUEST['q']);
+
+            }
+
+            if(isset($_REQUEST['all'])) {
+                dumpPath($dump_path, $feature, $search_type);
+            }
         }
     }
 }
@@ -1325,34 +1415,17 @@ if(!isset($_REQUEST['c'])) {
         $src = '/gd/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
     }
 
-    if(USE_DB) {
-        // use DB lookups
-        switch($_REQUEST['c']){
-            case '4': pageM4AAudioQueue();      break;
-            case '5': pageH264VideoQueue();     break;
-            case 'a': pageAudioBook();          break;
-            case 'b': pageBooks();              break;
-            case 'e': pageEmulation();          break;
-            case 'm': pageMusicPlayer();        break;
-            case 'n': pageH265VideoQueue();     break;
-            case 'o': pageOpusAudioQueue();     break;
-            case 'r': pageContainerSwap();      break;
-            case 'v': pageVideoPlayer();        break;
-        }
-    } else {
-        // use filesystem lookups
-        switch($_REQUEST['c']){
-            case '4': pageM4AAudioQueue();      break;
-            case '5': pageH264VideoQueue();     break;
-            case 'a': pageAudioBook();          break;
-            case 'b': pageBooks();              break;
-            case 'e': pageEmulation();          break;
-            case 'm': pageMusicPlayer();        break;
-            case 'n': pageH265VideoQueue();     break;
-            case 'o': pageOpusAudioQueue();     break;
-            case 'r': pageContainerSwap();      break;
-            case 'v': pageVideoPlayer();        break;
-        }
+    switch($_REQUEST['c']){
+        case '4': pageM4AAudioQueue();      break;
+        case '5': pageH264VideoQueue();     break;
+        case 'a': pageAudioBook();          break;
+        case 'b': pageBooks();              break;
+        case 'e': pageEmulation();          break;
+        case 'm': pageMusicPlayer();        break;
+        case 'n': pageH265VideoQueue();     break;
+        case 'o': pageOpusAudioQueue();     break;
+        case 'r': pageContainerSwap();      break;
+        case 'v': pageVideoPlayer();        break;
     }
 }
 

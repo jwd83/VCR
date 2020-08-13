@@ -1,6 +1,7 @@
 import os
 import mariadb
 import json
+import time
 
 conn = 0
 cur = 0
@@ -87,30 +88,33 @@ def main():
     print(config['root_path'])
     print(config['extensions'])
 
-    build_file_list(
-        path = "Music",
-        filter_extensions = True
-    )
+    while True:
+        print("Rebuilding index...")
+        build_file_list(
+            path = "Music",
+            filter_extensions = True
+        )
 
-    build_file_list(
-        path = "Movies+TV",
-        filter_extensions = True
-    )
+        build_file_list(
+            path = "Movies+TV",
+            filter_extensions = True
+        )
 
-    build_file_list(
-        path = "Books",
-        filter_extensions = False
-    )
+        build_file_list(
+            path = "Books",
+            filter_extensions = False
+        )
 
-    build_file_list(
-        path = "Emulation + ROMs",
-        filter_extensions = False
-    )
+        build_file_list(
+            path = "Emulation + ROMs",
+            filter_extensions = False
+        )
 
-    build_file_list(
-        path = "Audio Books",
-        filter_extensions = False
-    )
+        build_file_list(
+            path = "Audio Books",
+            filter_extensions = False
+        )
+        time.sleep(60)
 
 
 
