@@ -22,6 +22,7 @@ $start = microtime(true);
 $rustart = getrusage();
 
 # constants
+define("CONFIG_JSON_LOCATION", "G:\\config.json");
 define("URL_BASE", "/gd/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
@@ -29,6 +30,11 @@ define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
 define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
 define("PATH_OPUS_QUEUE", "G:\\queue_opus.txt");
+define("USE_DB", FALSE);
+
+# load config file
+$config = json_decode(file_get_contents(CONFIG_JSON_LOCATION));
+// var_dump($config->db->user);
 
 # variables
 $title = "Highwind's Stash";
@@ -1319,17 +1325,34 @@ if(!isset($_REQUEST['c'])) {
         $src = '/gd/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
     }
 
-    switch($_REQUEST['c']){
-        case '4': pageM4AAudioQueue();      break;
-        case '5': pageH264VideoQueue();     break;
-        case 'a': pageAudioBook();          break;
-        case 'b': pageBooks();              break;
-        case 'e': pageEmulation();          break;
-        case 'm': pageMusicPlayer();        break;
-        case 'n': pageH265VideoQueue();     break;
-        case 'o': pageOpusAudioQueue();     break;
-        case 'r': pageContainerSwap();      break;
-        case 'v': pageVideoPlayer();        break;
+    if(USE_DB) {
+        // use DB lookups
+        switch($_REQUEST['c']){
+            case '4': pageM4AAudioQueue();      break;
+            case '5': pageH264VideoQueue();     break;
+            case 'a': pageAudioBook();          break;
+            case 'b': pageBooks();              break;
+            case 'e': pageEmulation();          break;
+            case 'm': pageMusicPlayer();        break;
+            case 'n': pageH265VideoQueue();     break;
+            case 'o': pageOpusAudioQueue();     break;
+            case 'r': pageContainerSwap();      break;
+            case 'v': pageVideoPlayer();        break;
+        }
+    } else {
+        // use filesystem lookups
+        switch($_REQUEST['c']){
+            case '4': pageM4AAudioQueue();      break;
+            case '5': pageH264VideoQueue();     break;
+            case 'a': pageAudioBook();          break;
+            case 'b': pageBooks();              break;
+            case 'e': pageEmulation();          break;
+            case 'm': pageMusicPlayer();        break;
+            case 'n': pageH265VideoQueue();     break;
+            case 'o': pageOpusAudioQueue();     break;
+            case 'r': pageContainerSwap();      break;
+            case 'v': pageVideoPlayer();        break;
+        }
     }
 }
 
