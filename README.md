@@ -19,14 +19,12 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Link to timestamp in video using t= in URL
 
 ## TODO
+* merge python database daemon into encoding daemon
+* move encoding queue to database daemon
 * look at making a config.json to share between PHP/Python
 * setup dynamic DNS
 * general SSL certificate 
-* ~~remove aac audio encoding~~ isntead offer 128k opus option? 
-* SQLite/MariaDB backend for faster file searches/queue consolidation
-  * MEMORY db in maria? rebuild on startup?
-  * maybe just use a normal DB but force RAM cache
-    * see alternative option 2 in https://dba.stackexchange.com/a/1812
+* ~~SQLite/MariaDB backend for faster file searches/queue consolidation~~
   * have daemon check modified time of base paths to see when it's time to rescan?
 * look at directly converting to opus on demand
 * Switch to https from http. Lets encrypt or self signed
@@ -34,6 +32,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
 * if the queue files are empty don't rewrite them
+
 
 ## Setup Notes
 
