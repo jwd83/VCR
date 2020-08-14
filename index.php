@@ -129,6 +129,8 @@ $suggestions["b"] = array_map('strtolower', [
 // emulation
 $suggestions["e"] = array_map('strtolower', [
     ".iso",
+    ".nes",
+    ".smc",
     "final fantasy",
     "ogre",
     "ps2",
@@ -141,8 +143,6 @@ $suggestions["m"] = array_map('strtolower', [
     ".m4a",
     ".mp3",
     ".opus",
-    ".wav",
-    ".wma",
     "a tribe called quest",
     "adele",
     "alan parsons",
@@ -628,8 +628,55 @@ function echoCell($str) {
 ';
 }
 
+function getDbButtons($base_path, $current_file) {
+    global $extensions, $db;
+
+    $path_to_find = substr(hexToStr($current_file), strlen($base_path) + 1);
+    echo $current_file . "<br>\n" . hexToStr($current_file) . "<br>\n$base_path<br>\n$path_to_find";
+
+    $hit = 0;
+    $hit_checks = 0;
+    $prev_file = "";
+    $button_array = array();
+
+    $button_array['previous'] = "";
+    $button_array['next'] = "";
+    $button_array['previous_raw'] = "";
+    $button_array['next_raw'] = "";
+
+    # run query
+    $stmt = $db->prepare('SELECT * FROM files WHERE parent = ? ORDER BY path');
+    $stmt->bind_param("s", $base_path);
+    $stmt->execute();
+    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size);
+
+    # look for our match
+    while($stmt->fetch()) {
+        $path = $base_path . "/" . $r_path;
+        if($hit == 1) {
+            $button_array['previous'] = strToHex($prev_file);
+            $button_array['next'] = strToHex($path);
+            $button_array['previous_raw'] = $prev_file;
+            $button_array['next_raw'] = str_replace('\\', '/', $path);
+            return $button_array;
+        } else {
+            if($path_to_find == $r_path) {
+                $hit = 1;
+            } else {
+                $prev_file = $path;
+            }
+        }
+    }
+
+    return $button_array;
+}
+
 function getButtons($base_path, $current_file) {
     global $extensions;
+
+    if (USE_DB){
+        return getDbButtons($base_path, $current_file);
+    }
 
     $hit = 0;
     $hit_checks = 0;
