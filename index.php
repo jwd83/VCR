@@ -632,7 +632,7 @@ function getDbButtons($base_path, $current_file) {
     global $extensions, $db;
 
     $path_to_find = substr(hexToStr($current_file), strlen($base_path) + 1);
-    echo $current_file . "<br>\n" . hexToStr($current_file) . "<br>\n$base_path<br>\n$path_to_find";
+    // echo $current_file . "<br>\n" . hexToStr($current_file) . "<br>\n$base_path<br>\n$path_to_find";
 
     $hit = 0;
     $hit_checks = 0;
