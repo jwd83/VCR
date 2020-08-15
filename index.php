@@ -133,7 +133,11 @@ $suggestions["e"] = array_map('strtolower', [
     ".smc",
     "final fantasy",
     "ogre",
+    "ps1",
     "ps2",
+    "ps3",
+    "psp",
+    "sega",
 ]);
 
 // music
