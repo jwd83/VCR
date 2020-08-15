@@ -20,6 +20,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Can use realtime filesystem data or MariaDB backend
 
 ## TODO
+* move popular searches to config.json
 * merge python database daemon into encoding daemon
 * move encoding queue to database daemon
 * look at making a config.json to share between PHP/Python
