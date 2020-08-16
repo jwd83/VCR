@@ -22,5 +22,25 @@
     ".opus",
     ".smc",
     ".wma"
+  ],
+  "categories": [
+    {
+      "title": "Music",
+      "type": "m",
+      "searches": [
+        "beethoven",
+        "mozart",
+        "vivaldi"
+      ]
+    },
+    {
+      "title": "Movies+TV",
+      "type": "m",
+      "searches": [
+        "ascent of man",
+        "masterpiece theater",
+        "public domain"
+      ]
+    }
   ]
 }
