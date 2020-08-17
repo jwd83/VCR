@@ -61,181 +61,6 @@ $backgrounds = [
     "vcr.jpg",
 ];
 
-// audio books
-$suggestions["a"] =  array_map('strtolower', [
-    "bertrand russell",
-    "bill bryson",
-    "carl sagan",
-    "charles darwin",
-    "christopher hitchens",
-    "ernest cline",
-    "george r.r. martin",
-    "jerry a. coyne",
-    "karen armstrong",
-    "lawrence m. krauss",
-    "neal stephenson",
-    "neil degrasse tyson",
-    "paul strathern",
-    "penn jillette",
-    "plato",
-    "richard dawkins",
-    "raymond franz",
-    "sam harris",
-    "steven pinker",
-    "sun tzu",
-    "william gibson",
-]);
-
-// books
-$suggestions["b"] = array_map('strtolower', [
-    "aldous huxley",
-    "andrzej sapkowski",
-    "arthur c. clarke",
-    "benjamin hoffman",
-    "bill bryson",
-    "bill watterson",
-    "brandon sanderson",
-    "brian w. kernighan",
-    "carl sagan",
-    "charles darwin",
-    "dennis m. ritchie",
-    "douglas adams",
-    "ernest hemingway",
-    "george orwell",
-    "george r. r. martin",
-    "herman melville",
-    "homer",
-    "howard zinn",
-    "j. d. salinger",
-    "j. k. rowling",
-    "j. r. r. tolkien",
-    "jerry a. coyne",
-    "john steinbeck",
-    "lao tse",
-    "leo tolstoy",
-    "mark twain",
-    "miguel de cervantes",
-    "neil degrasse tyson",
-    "nelson mandela",
-    "orson scott card",
-    "richard dawkins",
-    "robert jordan",
-    "sam harris",
-    "sun tzu",
-    "william shakespeare",
-
-]);
-
-// emulation
-$suggestions["e"] = array_map('strtolower', [
-    ".iso",
-    ".nes",
-    ".smc",
-    "final fantasy",
-    "ogre",
-    "ps1",
-    "ps2",
-    "ps3",
-    "psp",
-    "sega",
-]);
-
-// music
-$suggestions["m"] = array_map('strtolower', [
-    ".aac",
-    ".flac",
-    ".m4a",
-    ".mp3",
-    ".opus",
-    "a tribe called quest",
-    "adele",
-    "alan parsons",
-    "beastie",
-    "billie eilish",
-    "blue sky black death",
-    "bob dylan",
-    "bob marley",
-    "christina perri",
-    "christopher tin",
-    "daft punk",
-    "depeche mode",
-    "dr. dre",
-    "dragonforce",
-    "eagles",
-    "elton john",
-    "eminem",
-    "eric clapton",
-    "eric johnson",
-    "eric prydz",
-    "final fantasy",
-    "foo fighters",
-    "glitch mob",
-    "james taylor",
-    "jared's mixes",
-    "jazz",
-    "jewel",
-    "jimi hendrix",
-    "kansas",
-    "kanye west",
-    "katy perry",
-    "kendrick lamar",
-    "lady gaga",
-    "led zeppelin",
-    "lenny kravitz",
-    "metallica",
-    "nine inch nails",
-    "onerepublic",
-    "peter frampton",
-    "peter gabriel",
-    "phish",
-    "pink floyd",
-    "queen",
-    "radiohead",
-    "rage against the machine",
-    "red hot chili peppers",
-    "skrillex",
-    "snoop dogg",
-    "taylor davis",
-    "the beach boys",
-    "the beatles",
-    "the cure",
-    "the doors",
-    "the offspring",
-    "the velvet underground",
-    "tool",
-    "tyler",
-    "underline entertainment",
-    "vince guaraldi trio",
-]);
-
-$suggestions["v"] = array_map('strtolower', [
-    ".avi",
-    ".h264.mp4",
-    ".h265.mp4",
-    ".mkv",
-    "are you afraid of the dark" ,
-    "ascent of man",
-    "attack on titan",
-    "avenger",
-    "batman",
-    "cowboy bebop",
-    "demon slayer",
-    "furious",
-    "game of thrones - season",
-    "hellsing",
-    "his dark materials",
-    "hunter x hunter",
-    "marvel",
-    "mr. robot",
-    "no country",
-    "outlander",
-    "ralph",
-    "shell",
-    "star wars",
-    "thrones",
-    "workaholic",
-]);
-
 $search_type = '';
 $dump_path = '';
 $feature = "none";
@@ -977,14 +802,15 @@ function buildPlaybackLink($file_in_hex, $type = "") {
 
 
 function getSuggestions($category) {
-    global $suggestions;
+    global $config;
 
     $sugs = '';
 
-
-    sort($suggestions[$category]);
-    foreach($suggestions[$category] as $q) {
-        $sugs .= '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
+    foreach($config->categories as $cat) {
+        if($cat->type == $category) {
+            foreach($cat->searches as $q)
+            $sugs .= '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
+        }
     }
 
     return $sugs;
@@ -1370,7 +1196,7 @@ Your browser does not support the video element.
 }
 
 function drawSearchBox() {
-    global $search_type, $suggestions;
+    global $search_type;
     echo '
 <hr>
 Search:
@@ -1385,10 +1211,8 @@ Search:
 ';
 
 
-    if(isset($suggestions[$search_type])) {
-        echo "<h2>Popular Searches</h2>\n";
-        echo getSuggestions($search_type);
-    }
+    echo "<h2>Popular Searches</h2>\n";
+    echo getSuggestions($search_type);
 }
 
 function drawSearchResults() {
