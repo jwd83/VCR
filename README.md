@@ -35,6 +35,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
 * if the queue files are empty don't rewrite them
+* add link timestamp into audio as well as video
 
 
 ## Setup Notes
