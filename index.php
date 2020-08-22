@@ -979,6 +979,23 @@ function pageH264VideoQueue() {
 
 }
 
+function pageLinks() {
+    global $config;
+    drawHeader("Links");
+
+    echo "\n<ul>\n";
+    foreach ($config->links as $link) {
+        echo '
+<li>
+<a href="'.$link->url.'"><b>'.$link->title.'</b></a><ul><li>'.$link->description.'</li></ul>
+</li>
+';
+
+    }
+    echo "\n</ul>\n";
+    drawFooter();
+}
+
 function pageContainerSwap() {
     global $search_type, $dump_path, $feature, $show_prev_next;
 
@@ -1296,6 +1313,7 @@ if(!isset($_REQUEST['c'])) {
         case 'a': pageAudioBook();          break;
         case 'b': pageBooks();              break;
         case 'e': pageEmulation();          break;
+        case 'l': pageLinks();              break;
         case 'm': pageMusicPlayer();        break;
         case 'n': pageH265VideoQueue();     break;
         case 'o': pageOpusAudioQueue();     break;
