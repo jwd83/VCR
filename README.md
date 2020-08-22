@@ -20,7 +20,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * Can use realtime filesystem data or MariaDB backend
 
 ## TODO
-* create an outbound link/favorites page with categories
+* ~~create an outbound link/favorites page~~ (basic links page working, add categories?)
 * move popular searches to config.json
   * maybe make all categories and generalized config data in config.json. 
 * merge python database daemon into encoding daemon
