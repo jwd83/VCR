@@ -2,7 +2,7 @@
 
 # oǝpᴉɅ ʎʇᴉϽ ɹǝʌᴉꓤ
 
-A PHP script for WAMP to share your local files online along with a Python daemon to manage html video reencode requests.
+A single file PHP script for WAMP to share and encode queue your local files online along with Python daemons to process said reencode requests.
 
 ![VCR](https://cdn.mos.cms.futurecdn.net/w48feV8za6DRPBSuvyvpPB-1200-80.jpg)
 
@@ -37,6 +37,7 @@ A PHP script for WAMP to share your local files online along with a Python daemo
 * cleanup code to use URL_BASE
 * if the queue files are empty don't rewrite them
 * add link timestamp into audio as well as video
+* better tagline(s)
 
 
 ## Setup Notes
