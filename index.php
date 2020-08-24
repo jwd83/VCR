@@ -30,7 +30,6 @@ define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
 define("PATH_H265_QUEUE", "G:\\queue_h265.txt");
 define("PATH_M4A_QUEUE", "G:\\queue_m4a.txt");
 define("PATH_OPUS_QUEUE", "G:\\queue_opus.txt");
-define("USE_DB", TRUE);
 
 # load config file
 $config = json_decode(file_get_contents(CONFIG_JSON_LOCATION));
@@ -38,7 +37,7 @@ $config = json_decode(file_get_contents(CONFIG_JSON_LOCATION));
 
 # setup db connection
 $db = NULL;
-if(USE_DB) {
+if($config->use_db == 1) {
     $db = new mysqli(
         $config->db->host,
         $config->db->user,
@@ -529,7 +528,7 @@ function getDbButtons($base_path, $current_file) {
 function getButtons($base_path, $current_file) {
     global $extensions;
 
-    if (USE_DB){
+    if($GLOBALS['config']->use_db == 1) {
         return getDbButtons($base_path, $current_file);
     }
 
@@ -1262,8 +1261,7 @@ function drawSearchResults() {
     global $dump_path, $feature, $search_type;
     # if there is a valid dump path list our files
     if(strlen($dump_path) > 1) {
-
-        if(USE_DB) {
+        if($GLOBALS['config']->use_db == 1) {
             if(isset($_REQUEST['q'])) {
                 dbResults($dump_path, $feature, $search_type, $_REQUEST['q']);
 
