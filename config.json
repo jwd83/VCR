@@ -1,5 +1,6 @@
 {
   "root_path": "G:\\",
+  "use_db": 1,
   "db": {
     "user": "your_db_username",
     "password": "your_db_password",
