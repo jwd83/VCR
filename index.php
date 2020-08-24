@@ -195,6 +195,9 @@ define('THEME_TOP' , <<<EOL
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="./?c=l">Links</a>
+          </li>
           <li class="nav-item active">
             <a class="nav-link" href="/gd/">Home
               <span class="sr-only">(current)</span>
@@ -253,9 +256,6 @@ define('THEME_BOTTOM', <<<EOL
 
 </html>
 
-
-
-
 EOL );
 
 //   /$$                 /$$
@@ -290,20 +290,46 @@ function human_filesize($bytes, $decimals = 2) {
   return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
 }
 
+function writeFileToDBQueue($src, $type) {
+    global $db;
+
+    // echo "WRITING TO DB QUEUE";
+    # run query
+    $stmt = $db->prepare('INSERT INTO encoder_queue (path, codec) VALUES (?,?)');
+    $stmt->bind_param("ss", $src, $type);
+    $stmt->execute();
+}
+
 function writeFileToQueue($src) {
-    file_put_contents(PATH_H264_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    if($GLOBALS['config']->use_db == 1) {
+        writeFileToDBQueue($src, "h264");
+    } else {
+        file_put_contents(PATH_H264_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    }
 }
 
 function writeFileToHEVCQueue($src) {
-    file_put_contents(PATH_H265_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    if($GLOBALS['config']->use_db == 1) {
+        writeFileToDBQueue($src, "h265");
+    } else {
+        file_put_contents(PATH_H265_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    }
 }
 
 function writeFileToAACQueue($src) {
-    file_put_contents(PATH_M4A_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    if($GLOBALS['config']->use_db == 1) {
+        writeFileToDBQueue($src, "aac");
+    } else {
+        file_put_contents(PATH_M4A_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    }
 }
 
 function writeFileToOpusQueue($src) {
-    file_put_contents(PATH_OPUS_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    if($GLOBALS['config']->use_db == 1) {
+        writeFileToDBQueue($src, "opus");
+    } else {
+        file_put_contents(PATH_OPUS_QUEUE, $src . PHP_EOL, FILE_APPEND);
+    }
 }
 
 function reencodeVideo($src) {
