@@ -21,7 +21,7 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 
 ## TODO
 * ~~create an outbound link/favorites page~~ (basic links page working, add categories?)
-* move popular searches to config.json
+* ~~move popular searches to config.json~~
   * maybe make all categories and generalized config data in config.json. 
 * merge python database daemon into encoding daemon
 * move encoding queue to database daemon
