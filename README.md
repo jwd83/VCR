@@ -19,6 +19,22 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 * Link to timestamp in video using t= in URL
 * Can use realtime filesystem data or MariaDB backend
 
+## Setup Notes
+
+### sshd_config
+
+If you are using a reverse SSH tunnel to bring your server online make sure 
+change "GatewayPorts no" to "GatewayPorts yes", it may need to be uncommented
+(remove leading # from line)
+
+### add VCR user
+
+While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the like)
+
+htpasswd "c:\wamp64\gdlogins" user_name_here
+
+
+
 ## TODO
 * ~~create an outbound link/favorites page~~ (basic links page working, add categories?)
 * ~~move popular searches to config.json~~
@@ -38,20 +54,4 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 * if the queue files are empty don't rewrite them
 * add link timestamp into audio as well as video
 * better tagline(s)
-
-
-## Setup Notes
-
-### sshd_config
-
-If you are using a reverse SSH tunnel to bring your server online make sure 
-change "GatewayPorts no" to "GatewayPorts yes", it may need to be uncommented
-(remove leading # from line)
-
-### add VCR user
-
-While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the like)
-
-htpasswd "c:\wamp64\gdlogins" user_name_here
-
-
+* look into qbt integration. submit magnet -> python daemon feeds to qbt web ?
