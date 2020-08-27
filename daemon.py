@@ -73,6 +73,13 @@ def encode_opus(src):
 #
 
 def main():
+    # 1. does config.json say we are using the DB backend?
+    # 1.a.1. was a command line option specified for rebuilding the file listing DB? if not ask user what to do
+    # 1.a.2. was a command line option specified for processing the encoding queue DB? if not ask user what to do
+    # 2. if we aren't using the DB we must be solely here to do the file based encoding queue. notify the user as such
+
+
+
     pass
 
 
