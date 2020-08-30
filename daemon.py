@@ -34,6 +34,8 @@ import mariadb
 import os
 import sys
 import time
+from multiprocessing import Process
+
 
 #             /$$           /$$                 /$$
 #            | $$          | $$                | $$
@@ -88,6 +90,7 @@ def next_file_from_files(queue_file):
         return data[0].strip()
     else:
         return ""
+
 def show_help():
     print("switches")
     print("-h --help     show help menu (this menu)")
@@ -96,14 +99,152 @@ def show_help():
     print("-f --file     process file based queues")
     sys.exit(0)
 
+def specified(opt):
+    if opt in sys.argv:
+        return True
+    return False
+
+
+def setup_db():
+    global conn, cur
+
+    print("config.json requested database access. connecting to database...")
+
+    # Connect to MariaDB Platform
+    try:
+        conn = mariadb.connect(
+            user =      config['db']['user'],
+            password =  config['db']['password'],
+            host =      config['db']['host'],
+            port =      int(config['db']['port']),
+            database =  config['db']['database']
+        )
+
+        # disable autocommit
+        conn.autocommit = False
+
+        # Get Cursor
+        cur = conn.cursor()
+
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+
+# cur = mariadb connection
+# path = base path to walk
+def build_file_list(path, filter_extensions = False):
+    # clear existing entires
+    try:
+        cur.execute(
+            "DELETE FROM files WHERE parent = ?",
+            (path, )
+        )
+        conn.commit()
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+
+    # track if we will add a file
+    add_file = False
+
+    # solve target path
+    target_path = config['root_path'] + path
+
+    # calcualte the string split position we will use later
+    insert_split_position = len(target_path) + 1
+
+    # get list of all files in each folder
+    for dirpath, dirs, files in os.walk(target_path):
+        # iterate through the files in each folder
+        for file in files:
+
+            full_path = dirpath + "\\" + file
+
+            if not filter_extensions:
+                add_file = True
+
+            else:
+                _, file_ext = os.path.splitext(full_path)
+                file_ext = file_ext.lower()
+                if file_ext in config['extensions']:
+                    add_file = True
+                else:
+                    add_file = False
+
+            if add_file:
+                file_size = os.stat(full_path).st_size
+                cur.execute(
+                    "INSERT INTO files (parent, path, size) VALUES (?,?,?);",
+                    (path, full_path[insert_split_position:], file_size)
+                )
+
+    # write to database
+    conn.commit()
+#
+#
+#    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$$ /$$$$$$$  /$$$$$$   /$$$$$$$
+#   /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$ /$$_____//$$_____/ /$$__  $$ /$$_____/
+#  | $$  \ $$| $$  \__/| $$  \ $$| $$      | $$$$$$$$|  $$$$$$|  $$$$$$ | $$$$$$$$|  $$$$$$
+#  | $$  | $$| $$      | $$  | $$| $$      | $$_____/ \____  $$\____  $$| $$_____/ \____  $$
+#  | $$$$$$$/| $$      |  $$$$$$/|  $$$$$$$|  $$$$$$$ /$$$$$$$//$$$$$$$/|  $$$$$$$ /$$$$$$$/
+#  | $$____/ |__/       \______/  \_______/ \_______/|_______/|_______/  \_______/|_______/
+#  | $$
+#  | $$
+#  |__/
+
 def file_queue():
-    pass
+    try:
+        print("starting file based queue")
+        while True:
+            pass
+    except:
+        print("error in file based queue")
 
 def db_queue():
-    pass
+    # try:
+        print("starting db based queue")
+        setup_db()
+
+        while True:
+            pass
+    # except:
+    #     print("error in db based queue")
 
 def db_filesystem():
-    pass
+    # try:
+        print("starting db based file system monitor")
+        setup_db()
+        while True:
+            print("Rebuilding file index...")
+            build_file_list(
+                path = "Music",
+                filter_extensions = True
+            )
+
+            build_file_list(
+                path = "Movies+TV",
+                filter_extensions = True
+            )
+
+            build_file_list(
+                path = "Books",
+                filter_extensions = False
+            )
+
+            build_file_list(
+                path = "Emulation + ROMs",
+                filter_extensions = False
+            )
+
+            build_file_list(
+                path = "Audio Books",
+                filter_extensions = False
+            )
+            time.sleep(60)
+
+    # except:
+        # print("error in db based file system monitor")
+
 
 #                                                 /$$ /$$
 #                                                | $$|__/
@@ -120,16 +261,56 @@ def db_filesystem():
 def encode_h265(src):
     out = new_extension(src, ".h265.mp4")
 
+    # ffmpeg options
+    command = PATH_FFMPEG                   # path to ffmpeg executable
+    command += " -i \"" + src + "\" "       # specify input file
+    command += " -c:a libopus -b:a 96k "    # specify option: opus audio codec
+    command += " -map -0:v? "               # strip video data
+    command += " -map -0:s? "               # strip subtitles
+    command += " -map -0:d? "               # strip misc data (note: this does not appear to strip metadata)
+    command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
+    command += "\"" + out + "\""            # specify output file
+
+    # print the command that will be executed
+    print(command)
+    # run command
+    os.system(command)
+
 def encode_h264(src):
     out = new_extension(src, ".h264.mp4")
+    # ffmpeg options
+    command = PATH_FFMPEG                   # path to ffmpeg executable
+    command += " -i \"" + src + "\" "       # specify input file
+    command += " -c:a libopus -b:a 96k "    # specify option: opus audio codec
+    command += " -map -0:v? "               # strip video data
+    command += " -map -0:s? "               # strip subtitles
+    command += " -map -0:d? "               # strip misc data (note: this does not appear to strip metadata)
+    command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
+    command += "\"" + out + "\""            # specify output file
+
+    # print the command that will be executed
+    print(command)
+    # run command
+    os.system(command)
 
 def encode_opus(src):
+    # generate output file path
     out = new_extension(src, ".opus")
 
-def specified(opt):
-    if opt in sys.argv:
-        return True
-    return False
+    # ffmpeg options
+    command = PATH_FFMPEG                   # path to ffmpeg executable
+    command += " -i \"" + src + "\" "       # specify input file
+    command += " -c:a libopus -b:a 96k "    # specify option: opus audio codec
+    command += " -map -0:v? "               # strip video data
+    command += " -map -0:s? "               # strip subtitles
+    command += " -map -0:d? "               # strip misc data (note: this does not appear to strip metadata)
+    command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
+    command += "\"" + out + "\""            # specify output file
+
+    # print the command that will be executed
+    print(command)
+    # run command
+    os.system(command)
 
 #                           /$$
 #                          |__/
@@ -162,34 +343,11 @@ def main():
 
     # check if we are using the database backend
     if config['use_db'] == 1:
-        print("config.json requested database access. connecting to database...")
+        setup_db()
 
-        # Connect to MariaDB Platform
-        try:
-            conn = mariadb.connect(
-                user =      config['db']['user'],
-                password =  config['db']['password'],
-                host =      config['db']['host'],
-                port =      int(config['db']['port']),
-                database =  config['db']['database']
-            )
-
-            # disable autocommit
-            conn.autocommit = False
-
-            # Get Cursor
-            cur = conn.cursor()
-
-            # check what we are doing
-            if specified('-s') or specified('--system'):
-                run_db_filesystem = True
-
-            if specified('-q') or specified('--queue'):
-                run_db_queue = True
-
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
+        # check what we are doing with the database
+        if specified('-s') or specified('--system'): run_db_filesystem = True
+        if specified('-q') or specified('--queue'): run_db_queue = True
 
     # if we aren't using the db backend
     else:
@@ -207,13 +365,33 @@ def main():
         print("please review the switches.")
         show_help()
 
+    f = Process(target = file_queue)
+    q = Process(target = db_queue)
+    s = Process(target = db_filesystem)
+
+    if(run_file_queue): print("config: run file queue")
+    if(run_db_queue): print("config: run db queue")
+    if(run_db_filesystem): print("config: run db filesystem monitor")
+
+
     while True:
-        if run_file_queue:
-            file_queue()
-        if run_db_queue:
-            db_queue()
-        if run_db_filesystem:
-            db_filesystem()
+        if run_file_queue and not f.is_alive():
+            f = Process(target = file_queue)
+            f.start()
+            time.sleep(1)
+        if run_db_queue and not q.is_alive():
+            q = Process(target = db_queue)
+            q.start()
+            time.sleep(1)
+        if run_db_filesystem and not s.is_alive():
+            s = Process(target = db_filesystem)
+            s.start()
+            time.sleep(1)
+
+        time.sleep(10)
+
+        sys.stdout.write('.')
+        sys.stdout.flush()
 
 # le boilerplate
 if __name__ == "__main__":
