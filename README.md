@@ -44,7 +44,7 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 * ~~move popular searches to config.json~~
   * maybe make all categories and generalized config data in config.json. 
 * merge python database daemon into encoding daemon
-  * multiprocessing lib to split off encoding and fs update workers
+  * ~~multiprocessing lib to split off encoding and fs update workers~~
 * move encoding queue to database daemon
 * look at making a config.json to share between PHP/Python
 * setup dynamic DNS
