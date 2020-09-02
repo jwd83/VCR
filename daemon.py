@@ -29,6 +29,7 @@
 #
 #
 
+import datetime
 import json
 import mariadb
 import os
@@ -56,6 +57,9 @@ PATH_QUEUE_H265 = "G:\\queue_h265.txt"
 PATH_QUEUE_M4A = "G:\\queue_m4a.txt"
 PATH_QUEUE_OPUS = "G:\\queue_opus.txt"
 MSG_QUEUE = "Reading the queues"
+DB_QUEUE_NEXT = "SELECT * FROM encoder_queue ORDER BY id LIMIT 1"
+DB_QUEUE_DELETE = "DELETE FROM encoder_queue WHERE id = ?"
+
 
 config = 0
 conn = 0
@@ -77,6 +81,10 @@ run_db_filesystem = False
 #                          | $$
 #                          |__/
 
+def timestamp():
+    return "[" + datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + " UTC] "
+
+
 def new_extension(src, new_ext):
     filename, file_extension = os.path.splitext(src)
     return filename + new_ext
@@ -90,6 +98,11 @@ def next_file_from_files(queue_file):
         return data[0].strip()
     else:
         return ""
+
+def next_file_from_db():
+    # get next file by executing DB_QUEUE_NEXT
+    # if we got a file from the queue delete it's position in the queue by running DB_QUEUE_DELETE with the id returned from DB_QUEUE_NEXT
+    pass
 
 def show_help():
     print("switches")
@@ -106,8 +119,7 @@ def specified(opt):
 
 
 def setup_db():
-    global conn, cur
-
+    global conn, cur, config
     print("config.json requested database access. connecting to database...")
 
     # Connect to MariaDB Platform
@@ -139,47 +151,46 @@ def build_file_list(path, filter_extensions = False):
             "DELETE FROM files WHERE parent = ?",
             (path, )
         )
+        # track if we will add a file
+        add_file = False
+
+        # solve target path
+        target_path = config['root_path'] + path
+
+        # calcualte the string split position we will use later
+        insert_split_position = len(target_path) + 1
+
+        # get list of all files in each folder
+        for dirpath, dirs, files in os.walk(target_path):
+            # iterate through the files in each folder
+            for file in files:
+
+                full_path = dirpath + "\\" + file
+
+                if not filter_extensions:
+                    add_file = True
+
+                else:
+                    _, file_ext = os.path.splitext(full_path)
+                    file_ext = file_ext.lower()
+                    if file_ext in config['extensions']:
+                        add_file = True
+                    else:
+                        add_file = False
+
+                if add_file:
+                    file_size = os.stat(full_path).st_size
+                    cur.execute(
+                        "INSERT INTO files (parent, path, size) VALUES (?,?,?);",
+                        (path, full_path[insert_split_position:], file_size)
+                    )
+
+        # write to database
         conn.commit()
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
 
-    # track if we will add a file
-    add_file = False
-
-    # solve target path
-    target_path = config['root_path'] + path
-
-    # calcualte the string split position we will use later
-    insert_split_position = len(target_path) + 1
-
-    # get list of all files in each folder
-    for dirpath, dirs, files in os.walk(target_path):
-        # iterate through the files in each folder
-        for file in files:
-
-            full_path = dirpath + "\\" + file
-
-            if not filter_extensions:
-                add_file = True
-
-            else:
-                _, file_ext = os.path.splitext(full_path)
-                file_ext = file_ext.lower()
-                if file_ext in config['extensions']:
-                    add_file = True
-                else:
-                    add_file = False
-
-            if add_file:
-                file_size = os.stat(full_path).st_size
-                cur.execute(
-                    "INSERT INTO files (parent, path, size) VALUES (?,?,?);",
-                    (path, full_path[insert_split_position:], file_size)
-                )
-
-    # write to database
-    conn.commit()
 #
 #
 #    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$$ /$$$$$$$  /$$$$$$   /$$$$$$$
@@ -201,21 +212,28 @@ def file_queue():
         print("error in file based queue")
 
 def db_queue():
-    # try:
+    try:
         print("starting db based queue")
         setup_db()
 
         while True:
             pass
-    # except:
-    #     print("error in db based queue")
+    except:
+        print("error in db based queue")
 
 def db_filesystem():
-    # try:
+    # config is empty once multiprocessing is called, we must reload it
+    global config
+
+    try:
+        # load config data
+        with open('config.json') as f:
+            config = json.load(f)
+
         print("starting db based file system monitor")
         setup_db()
         while True:
-            print("Rebuilding file index...")
+            print(timestamp() + "dbfs: Rebuilding file index...")
             build_file_list(
                 path = "Music",
                 filter_extensions = True
@@ -240,10 +258,12 @@ def db_filesystem():
                 path = "Audio Books",
                 filter_extensions = False
             )
+            print(timestamp() + "dbfs: Rebuilding complete.")
+
             time.sleep(60)
 
-    # except:
-        # print("error in db based file system monitor")
+    except e:
+        print("error in db based file system monitor")
 
 
 #                                                 /$$ /$$
@@ -390,8 +410,8 @@ def main():
 
         time.sleep(10)
 
-        sys.stdout.write('.')
-        sys.stdout.flush()
+        # sys.stdout.write('.')
+        # sys.stdout.flush()
 
 # le boilerplate
 if __name__ == "__main__":
