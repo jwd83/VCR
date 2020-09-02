@@ -38,6 +38,9 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 ## TODO
 * adjust opus encoder to do 48kbps per channel instead of flat 96kbps. quadrophonic and surround audio is getting set to 96 when it shuold be 192 for quadrophonic or 288 for 5.1
   * https://github.com/beetbox/audioread this looks like an option
+  * https://stackoverflow.com/questions/47905083/how-to-check-number-of-channels-in-my-audio-wav-file-using-ffmpeg-command looks like ffprobe can return this from the command line
+    * ffprobe -i yourFile.mp4 -show_entries stream=channels -select_streams a:0 -of compact=p=0:nk=1 -v 0
+
 * ~~create an outbound link/favorites page~~ (basic links page working, add categories?)
 * ~~move popular searches to config.json~~
   * maybe make all categories and generalized config data in config.json. 
