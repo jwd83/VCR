@@ -10,6 +10,10 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 
 * single file PHP front end for viewing and managing your media WAMP/XAMPP
 * python background daemon to handle h264/h265 video and .opus audio reencoding requests
+  * Opus reencodes to 48kbps per channel with 96k minimum.
+    * 96k stereo audio
+    * 192k quadrophonic
+    * 384k octophonic
 * re-container video files to mp4 container (may fix playback in some browsers. new files end in .re.mp4)
 * Autoplay your collection of audio and video files where supported by your browser.
 * Download shared files remotely. 
