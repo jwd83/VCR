@@ -42,7 +42,6 @@ $rustart = getrusage();
 
 # constants
 define("CONFIG_JSON_LOCATION", "G:\\config.json");
-define("URL_BASE", "/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
 define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
@@ -853,7 +852,7 @@ function getSuggestions($category) {
     foreach($config->categories as $cat) {
         if($cat->type == $category) {
             foreach($cat->searches as $q)
-            $sugs .= '<a href="'.URL_BASE.'?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
+            $sugs .= '<a href="/?c='.$category.'&q='.$q.'">'.$q.'</a>, ';
         }
     }
 
