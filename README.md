@@ -36,6 +36,7 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 
 
 ## TODO
+* adjust opus encoder to do 48kbps per channel instead of flat 96kbps. quadrophonic and surround audio is getting set to 96 when it shuold be 192 for quadrophonic or 288 for 5.1
 * ~~create an outbound link/favorites page~~ (basic links page working, add categories?)
 * ~~move popular searches to config.json~~
   * maybe make all categories and generalized config data in config.json. 
