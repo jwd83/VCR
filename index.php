@@ -86,8 +86,6 @@ $jquery_code_to_run = "";
 $buttons = array();
 $next_file_to_play = "";
 
-
-// $path_list_html = "list.html";
 $extensions = [
     ".aac",
     ".avi",
@@ -103,7 +101,6 @@ $extensions = [
     ".opus",
     ".smc",
     ".wma",
-
     ".whitelistme" // example
 ];
 
