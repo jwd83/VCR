@@ -22,6 +22,7 @@
     ".ogg",
     ".opus",
     ".smc",
+    ".wav",
     ".wma"
   ],
   "categories": [
