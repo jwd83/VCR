@@ -57,6 +57,6 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
 * if the queue files are empty don't rewrite them
-* add link timestamp into audio as well as video
+* add link timestamp into audio as ~~well as video~~
 * better tagline(s)
 * look into qbt integration. submit magnet -> python daemon feeds to qbt web ?
