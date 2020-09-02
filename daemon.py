@@ -37,7 +37,6 @@ import sys
 import time
 from multiprocessing import Process
 
-
 #             /$$           /$$                 /$$
 #            | $$          | $$                | $$
 #    /$$$$$$ | $$  /$$$$$$ | $$$$$$$   /$$$$$$ | $$  /$$$$$$$
@@ -50,16 +49,15 @@ from multiprocessing import Process
 #  |  $$$$$$/
 #   \______/
 
-# setup some globals
+# globals
 PATH_FFMPEG = "C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe"
 PATH_QUEUE_H264 = "G:\\queue_h264.txt"
 PATH_QUEUE_H265 = "G:\\queue_h265.txt"
 PATH_QUEUE_M4A = "G:\\queue_m4a.txt"
 PATH_QUEUE_OPUS = "G:\\queue_opus.txt"
 MSG_QUEUE = "Reading the queues"
-DB_QUEUE_NEXT = "SELECT * FROM encoder_queue ORDER BY id LIMIT 1"
-DB_QUEUE_DELETE = "DELETE FROM encoder_queue WHERE id = ?"
-
+QUERY_QUEUE_NEXT = "SELECT * FROM encoder_queue ORDER BY id LIMIT 1"
+QUERY_DELETE_NEXT = "DELETE FROM encoder_queue WHERE id = ?"
 
 config = 0
 conn = 0
@@ -84,7 +82,6 @@ run_db_filesystem = False
 def timestamp():
     return "[" + datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + " UTC] "
 
-
 def new_extension(src, new_ext):
     filename, file_extension = os.path.splitext(src)
     return filename + new_ext
@@ -99,10 +96,33 @@ def next_file_from_files(queue_file):
     else:
         return ""
 
+
+# return true if an item was found in the queue
 def next_file_from_db():
-    # get next file by executing DB_QUEUE_NEXT
-    # if we got a file from the queue delete it's position in the queue by running DB_QUEUE_DELETE with the id returned from DB_QUEUE_NEXT
-    pass
+    # get next file by executing QUERY_QUEUE_NEXT
+    # if we got a file from the queue delete it's position in the queue by running QUERY_DELETE_NEXT with the id returned from QUERY_QUEUE_NEXT
+    # pass
+
+    cur.execute(QUERY_QUEUE_NEXT)
+
+    res = cur.fetchone()
+
+    # expect 3 fields in a response
+    if(res != None):
+        # position 0: id
+        # position 1: path
+        # position 2: encoding format
+
+        # delete the record returned from the queue
+        cur.execute(QUERY_DELETE_NEXT, (res[0], ))
+
+        # process the record
+        if(res[2] == 'opus'): encode_opus(res[1])
+
+        return True
+    return False
+
+
 
 def show_help():
     print("switches")
@@ -116,7 +136,6 @@ def specified(opt):
     if opt in sys.argv:
         return True
     return False
-
 
 def setup_db():
     global conn, cur, config
@@ -191,8 +210,6 @@ def build_file_list(path, filter_extensions = False):
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
 
-#
-#
 #    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$$ /$$$$$$$  /$$$$$$   /$$$$$$$
 #   /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$ /$$_____//$$_____/ /$$__  $$ /$$_____/
 #  | $$  \ $$| $$  \__/| $$  \ $$| $$      | $$$$$$$$|  $$$$$$|  $$$$$$ | $$$$$$$$|  $$$$$$
@@ -204,22 +221,37 @@ def build_file_list(path, filter_extensions = False):
 #  |__/
 
 def file_queue():
+    # config is empty once multiprocessing is called, we must reload it
+    global config
+
     try:
-        print("starting file based queue")
+        # load config data
+        with open('config.json') as f:
+            config = json.load(f)
+        print(timestamp() + "starting file based queue")
         while True:
             pass
     except:
-        print("error in file based queue")
+        print(timestamp() + "error in file based queue")
 
 def db_queue():
+    # config is empty once multiprocessing is called, we must reload it
+    global config
+
     try:
-        print("starting db based queue")
+        # load config data
+        with open('config.json') as f:
+            config = json.load(f)
+        print(timestamp() + "dbq: starting db based queue")
         setup_db()
 
         while True:
-            pass
+            print(timestamp() + "dbq: checking queue")
+            if not next_file_from_db():
+                time.sleep(5)
+
     except:
-        print("error in db based queue")
+        print(timestamp() + "dbq: error in db based queue")
 
 def db_filesystem():
     # config is empty once multiprocessing is called, we must reload it
@@ -263,8 +295,7 @@ def db_filesystem():
             time.sleep(60)
 
     except e:
-        print("error in db based file system monitor")
-
+        print(timestamp() + "error in db based file system monitor")
 
 #                                                 /$$ /$$
 #                                                | $$|__/
@@ -292,7 +323,7 @@ def encode_h265(src):
     command += "\"" + out + "\""            # specify output file
 
     # print the command that will be executed
-    print(command)
+    print(timestamp() + command)
     # run command
     os.system(command)
 
@@ -309,7 +340,7 @@ def encode_h264(src):
     command += "\"" + out + "\""            # specify output file
 
     # print the command that will be executed
-    print(command)
+    print(timestamp() + command)
     # run command
     os.system(command)
 
@@ -328,7 +359,7 @@ def encode_opus(src):
     command += "\"" + out + "\""            # specify output file
 
     # print the command that will be executed
-    print(command)
+    print(timestamp() + command)
     # run command
     os.system(command)
 
@@ -340,9 +371,6 @@ def encode_opus(src):
 #  | $$ | $$ | $$ /$$__  $$| $$| $$  | $$
 #  | $$ | $$ | $$|  $$$$$$$| $$| $$  | $$
 #  |__/ |__/ |__/ \_______/|__/|__/  |__/
-#
-#
-#
 
 def main():
     # 1. does config.json say we are using the DB backend?
@@ -393,7 +421,6 @@ def main():
     if(run_db_queue): print("config: run db queue")
     if(run_db_filesystem): print("config: run db filesystem monitor")
 
-
     while True:
         if run_file_queue and not f.is_alive():
             f = Process(target = file_queue)
@@ -408,10 +435,8 @@ def main():
             s.start()
             time.sleep(1)
 
+        # periodically check on other processes
         time.sleep(10)
-
-        # sys.stdout.write('.')
-        # sys.stdout.flush()
 
 # le boilerplate
 if __name__ == "__main__":
