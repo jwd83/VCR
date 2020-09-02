@@ -8,7 +8,7 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 
 ## Features
 
-* single file PHP front end for viewing and managing your media WAMP
+* single file PHP front end for viewing and managing your media WAMP/XAMPP
 * python background daemon to handle h264/h265 video and .opus audio reencoding requests
 * re-container video files to mp4 container (may fix playback in some browsers. new files end in .re.mp4)
 * Autoplay your collection of audio and video files where supported by your browser.
