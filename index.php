@@ -42,7 +42,7 @@ $rustart = getrusage();
 
 # constants
 define("CONFIG_JSON_LOCATION", "G:\\config.json");
-define("URL_BASE", "/gd/");
+define("URL_BASE", "/");
 define("FILESYSTEM_BASE", 'G:\\');
 define("PATH_FFMPEG", 'C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe');
 define("PATH_H264_QUEUE", "G:\\queue_h264.txt");
@@ -207,7 +207,7 @@ define('THEME_TOP' , <<<EOL
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="/gd/">Highwind's Stash</a>
+      <a class="navbar-brand" href="/">Highwind's Stash</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -217,7 +217,7 @@ define('THEME_TOP' , <<<EOL
             <a class="nav-link" href="./?c=l">Links</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="/gd/">Home
+            <a class="nav-link" href="/">Home
               <span class="sr-only">(current)</span>
             </a>
           </li>
@@ -403,7 +403,7 @@ function drawHeader($banner = false)
     {
         ?>
 <!-- Header - set the background image for the header in the line below -->
-<header class="py-5 bg-image-full" style="background-image: url('/gd/img/<?= $backgrounds[array_rand ($backgrounds)]; ?>');">
+<header class="py-5 bg-image-full" style="background-image: url('/img/<?= $backgrounds[array_rand ($backgrounds)]; ?>');">
 
 <div class="container">
 <h1 style="
@@ -841,7 +841,7 @@ function buildPlaybackLink($file_in_hex, $type = "") {
     }
 
     # filename must already be in hex format
-    return "/gd/?c=" . $type . "&file=".$file_in_hex;
+    return "/?c=" . $type . "&file=".$file_in_hex;
 }
 
 
@@ -1189,7 +1189,7 @@ setTimeout(
     function()
     {
         $("body").append(
-            \'<audio src="/gd/'. $buttons['next_raw'] . '" preload="auto">\'
+            \'<audio src="/'. addslashes($buttons['next_raw'])  . '" preload="auto">\'
         );
     },
     10000
@@ -1347,7 +1347,7 @@ if(!isset($_REQUEST['c'])) {
     # config switch
 
     if(isset($_REQUEST['file'])) {
-        $src = '/gd/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
+        $src = '/' . str_replace('\\', '/', hexToStr($_REQUEST['file'])); ;
     }
 
     switch($_REQUEST['c']){
