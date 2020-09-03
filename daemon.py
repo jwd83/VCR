@@ -334,7 +334,7 @@ def db_filesystem():
 #  | $$  | $$| $$$$$$$$|  $$$$$$/|  $$$$$$/
 #  |__/  |__/|________/ \______/  \______/
 def encode_h265(src):
-    out = new_extension(src, ".h265.mp4")
+    out = new_extension(src, ".h265.mkv")
 
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
