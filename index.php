@@ -972,7 +972,7 @@ function pageH265VideoQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeVideoHEVC($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".h265.mp4");
+        $_REQUEST['file'] =  strToHex(new_extension($original_file, ".h265.mp4"));
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
     }
@@ -1001,7 +1001,7 @@ function pageH264VideoQueue() {
 
         $original_file = hexToStr($_REQUEST['file']);
         reencodeVideoHTML($_REQUEST['file']);
-        $_REQUEST['file'] .= strToHex(".h264.mp4");
+        $_REQUEST['file'] =  strToHex(new_extension($original_file, ".h264.mp4"));
         $new_file = hexToStr($_REQUEST['file']);
         $watch_url = buildPlaybackLink($_REQUEST['file'], "v");
     }

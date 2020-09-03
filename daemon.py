@@ -339,12 +339,10 @@ def encode_h265(src):
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
     command += " -i \"" + src + "\" "       # specify input file
-    command += " -c:a libopus -b:a 96k "    # specify option: opus audio codec
-    command += " -map -0:v? "               # strip video data
-    command += " -map -0:s? "               # strip subtitles
-    command += " -map -0:d? "               # strip misc data (note: this does not appear to strip metadata)
+    command += " -c:v libx265 -crf 28 "     # video codec: h265 quality factor 28
+    command += " -c:a copy "                # audio codec: losslessy copy audio track (no reencode!)
     command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
-    command += "\"" + out + "\""            # specify output file
+    command += " \"" + out + "\" "          # specify output file
 
     # print the command that will be executed
     print(timestamp() + command)
@@ -364,7 +362,7 @@ def encode_h264(src):
 
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
-    command += " -i \"" + src + "\" "                       # specify input file
+    command += " -i \"" + src + "\" "       # specify input file
     command += " -vcodec h264 "             # video codec: h264
     command += " -acodec aac "              # audio codec: aac
     command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
