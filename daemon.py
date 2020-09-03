@@ -50,14 +50,18 @@ from multiprocessing import Process
 #   \______/
 
 # globals
-PATH_FFMPEG = "C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe"
-PATH_QUEUE_H264 = "G:\\queue_h264.txt"
-PATH_QUEUE_H265 = "G:\\queue_h265.txt"
-PATH_QUEUE_M4A = "G:\\queue_m4a.txt"
-PATH_QUEUE_OPUS = "G:\\queue_opus.txt"
-MSG_QUEUE = "Reading the queues"
-QUERY_QUEUE_NEXT = "SELECT * FROM encoder_queue ORDER BY id LIMIT 1"
-QUERY_DELETE_NEXT = "DELETE FROM encoder_queue WHERE id = ?"
+PATH_FFMPEG =           "C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffmpeg.exe"
+PATH_FFPROBE =          "C:\\Users\\jared\\Downloads\\ffmpeg-4.2.1-win64-static\\bin\\ffprobe.exe"
+
+PATH_QUEUE_H264 =       "G:\\queue_h264.txt"
+PATH_QUEUE_H265 =       "G:\\queue_h265.txt"
+PATH_QUEUE_M4A =        "G:\\queue_m4a.txt"
+PATH_QUEUE_OPUS =       "G:\\queue_opus.txt"
+
+MSG_QUEUE =             "Reading the queues"
+
+QUERY_QUEUE_NEXT =      "SELECT * FROM encoder_queue ORDER BY id LIMIT 1"
+QUERY_DELETE_NEXT =     "DELETE FROM encoder_queue WHERE id = ?"
 
 config = 0
 conn = 0
@@ -118,6 +122,8 @@ def next_file_from_db():
 
         # process the record
         if(res[2] == 'opus'): encode_opus(res[1])
+        if(res[2] == 'h264'): encode_h264(res[1])
+        if(res[2] == 'h265'): encode_h265(res[1])
 
         return True
     return False
@@ -210,12 +216,21 @@ def build_file_list(path, filter_extensions = False):
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
 
-#    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$$ /$$$$$$$  /$$$$$$   /$$$$$$$
-#   /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$ /$$_____//$$_____/ /$$__  $$ /$$_____/
-#  | $$  \ $$| $$  \__/| $$  \ $$| $$      | $$$$$$$$|  $$$$$$|  $$$$$$ | $$$$$$$$|  $$$$$$
-#  | $$  | $$| $$      | $$  | $$| $$      | $$_____/ \____  $$\____  $$| $$_____/ \____  $$
-#  | $$$$$$$/| $$      |  $$$$$$/|  $$$$$$$|  $$$$$$$ /$$$$$$$//$$$$$$$/|  $$$$$$$ /$$$$$$$/
-#  | $$____/ |__/       \______/  \_______/ \_______/|_______/|_______/  \_______/|_______/
+#                           /$$   /$$     /$$
+#                          | $$  | $$    |__/
+#   /$$$$$$/$$$$  /$$   /$$| $$ /$$$$$$   /$$
+#  | $$_  $$_  $$| $$  | $$| $$|_  $$_/  | $$
+#  | $$ \ $$ \ $$| $$  | $$| $$  | $$    | $$
+#  | $$ | $$ | $$| $$  | $$| $$  | $$ /$$| $$
+#  | $$ | $$ | $$|  $$$$$$/| $$  |  $$$$/| $$
+#  |__/ |__/ |__/ \______/ |__/   \___/  |__/
+#
+#    /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$$ /$$$$$$$
+#   /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$ /$$_____//$$_____/
+#  | $$  \ $$| $$  \__/| $$  \ $$| $$      | $$$$$$$$|  $$$$$$|  $$$$$$
+#  | $$  | $$| $$      | $$  | $$| $$      | $$_____/ \____  $$\____  $$
+#  | $$$$$$$/| $$      |  $$$$$$/|  $$$$$$$|  $$$$$$$ /$$$$$$$//$$$$$$$/
+#  | $$____/ |__/       \______/  \_______/ \_______/|_______/|_______/
 #  | $$
 #  | $$
 #  |__/
@@ -308,7 +323,16 @@ def db_filesystem():
 #                                                                   /$$  \ $$
 #                                                                  |  $$$$$$/
 #                                                                   \______/
-
+#
+#
+#   /$$        /$$$$$$   /$$$$$$  /$$$$$$$
+#  | $$       /$$__  $$ /$$__  $$| $$____/
+#  | $$$$$$$ |__/  \ $$| $$  \__/| $$
+#  | $$__  $$  /$$$$$$/| $$$$$$$ | $$$$$$$
+#  | $$  \ $$ /$$____/ | $$__  $$|_____  $$
+#  | $$  | $$| $$      | $$  \ $$ /$$  \ $$
+#  | $$  | $$| $$$$$$$$|  $$$$$$/|  $$$$$$/
+#  |__/  |__/|________/ \______/  \______/
 def encode_h265(src):
     out = new_extension(src, ".h265.mp4")
 
@@ -327,36 +351,67 @@ def encode_h265(src):
     # run command
     os.system(command)
 
+#   /$$        /$$$$$$   /$$$$$$  /$$   /$$
+#  | $$       /$$__  $$ /$$__  $$| $$  | $$
+#  | $$$$$$$ |__/  \ $$| $$  \__/| $$  | $$
+#  | $$__  $$  /$$$$$$/| $$$$$$$ | $$$$$$$$
+#  | $$  \ $$ /$$____/ | $$__  $$|_____  $$
+#  | $$  | $$| $$      | $$  \ $$      | $$
+#  | $$  | $$| $$$$$$$$|  $$$$$$/      | $$
+#  |__/  |__/|________/ \______/       |__/
 def encode_h264(src):
     out = new_extension(src, ".h264.mp4")
+
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
-    command += " -i \"" + src + "\" "       # specify input file
-    command += " -c:a libopus -b:a 96k "    # specify option: opus audio codec
-    command += " -map -0:v? "               # strip video data
-    command += " -map -0:s? "               # strip subtitles
-    command += " -map -0:d? "               # strip misc data (note: this does not appear to strip metadata)
+    command += " -i \"" + src + "\" "                       # specify input file
+    command += " -vcodec h264 "             # video codec: h264
+    command += " -acodec aac "              # audio codec: aac
     command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
     command += "\"" + out + "\""            # specify output file
 
     # print the command that will be executed
     print(timestamp() + command)
+
     # run command
     os.system(command)
 
+#    /$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$$
+#   /$$__  $$ /$$__  $$| $$  | $$ /$$_____/
+#  | $$  \ $$| $$  \ $$| $$  | $$|  $$$$$$
+#  | $$  | $$| $$  | $$| $$  | $$ \____  $$
+#  |  $$$$$$/| $$$$$$$/|  $$$$$$/ /$$$$$$$/
+#   \______/ | $$____/  \______/ |_______/
+#            | $$
+#            | $$
+#            |__/
 def encode_opus(src):
+    # ffprobe -i "FILE_PATH" -show_entries stream=channels -select_streams a:0 -of compact=p=0:nk=1 -v 0
+    # use ffprobe to detect channels
+    channels_command = PATH_FFPROBE                     # path to ffprobe executable
+    channels_command += " -i \"" + src + "\" "          # specify input file
+    # remaining flags
+    channels_command += " -show_entries stream=channels -select_streams a:0 -of compact=p=0:nk=1 -v 0"
+    channel_count = int(os.popen(channels_command).read().strip())
+
+
+    if(channel_count < 2): channel_count = 2
+    if(channel_count > 128): channel_count = 128 # dolby atmos specifies a maximum of 128 channels
+    print("Channels: " + str(channel_count))
+
     # generate output file path
     out = new_extension(src, ".opus")
 
     # ffmpeg options
-    command = PATH_FFMPEG                   # path to ffmpeg executable
-    command += " -i \"" + src + "\" "       # specify input file
-    command += " -c:a libopus -b:a 96k "    # specify option: opus audio codec
-    command += " -map -0:v? "               # strip video data
-    command += " -map -0:s? "               # strip subtitles
-    command += " -map -0:d? "               # strip misc data (note: this does not appear to strip metadata)
-    command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
-    command += "\"" + out + "\""            # specify output file
+    command = PATH_FFMPEG                                   # path to ffmpeg executable
+    command += " -i \"" + src + "\" "                       # specify input file
+    command += " -c:a libopus "                             # specify opus codec
+    command += " -b:a " + str(channel_count*48) + "k "      # bitrate
+    command += " -map -0:v? "                               # strip video data
+    command += " -map -0:s? "                               # strip subtitles
+    command += " -map -0:d? "                               # strip misc data (note: this does not appear to strip metadata)
+    command += " -n "                                       # do not overwrite files, exit immediately if specified output already exists
+    command += "\"" + out + "\""                            # specify output file
 
     # print the command that will be executed
     print(timestamp() + command)
