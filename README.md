@@ -37,26 +37,19 @@ While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the lik
 
 htpasswd "c:\wamp64\gdlogins" user_name_here
 
-
-
 ## TODO
-* adjust opus encoder to do 48kbps per channel instead of flat 96kbps. quadrophonic and surround audio is getting set to 96 when it shuold be 192 for quadrophonic or 288 for 5.1
-  * https://github.com/beetbox/audioread this looks like an option
-  * https://stackoverflow.com/questions/47905083/how-to-check-number-of-channels-in-my-audio-wav-file-using-ffmpeg-command looks like ffprobe can return this from the command line
-    * ffprobe -i yourFile.mp4 -show_entries stream=channels -select_streams a:0 -of compact=p=0:nk=1 -v 0
-* ~~create an outbound link/favorites page~~ (basic links page working, add categories?)
-* ~~move popular searches to config.json~~
-  * maybe make all categories and generalized config data in config.json. 
-* merge python database daemon into encoding daemon
-  * ~~multiprocessing lib to split off encoding and fs update workers~~
-* move encoding queue to database daemon
-* look at making a config.json to share between PHP/Python
+* create advanced video encoding view in index.php to allow more configuration options
+  * target a given resolution, 360, 480, 720, 1080, 2160
+  * specify encoding type, 264, 265, vp9, av1
+* add a view that display ffprobe output about a file
+* add AV1 video encoding support to daemon.y
+* add file-based queue support to daemon.py
+* categories on links page?
+* maybe make all categories and generalized config data in config.json. 
 * setup dynamic DNS
-* general SSL certificate 
-* ~~SQLite/MariaDB backend for faster file searches/queue consolidation~~
-  * have daemon check modified time of base paths to see when it's time to rescan?
-* look at directly converting to opus on demand
 * Switch to https from http. Lets encrypt or self signed
+* look at directly converting to opus on demand
+* look into gapless queueing of audio tracks. precaching and redirect helps but perhaps make the player page more ajaxy
 * Look into RTMP live streaming/encoding video/audio realtime.
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
