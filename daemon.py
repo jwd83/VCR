@@ -122,6 +122,7 @@ def next_file_from_db():
         if(res[2] == 'opus'): encode_opus(res[1])
         if(res[2] == 'h264'): encode_h264(res[1])
         if(res[2] == 'h265'): encode_h265(res[1])
+        if(res[2] == 'vp9'): encode_vp9(res[1])
 
         return True
     return False
@@ -338,28 +339,24 @@ def db_filesystem():
 def encode_vp9(src):
     out = new_extension(src, ".vp9.webm")
 
-    #  C:\Users\jared\Downloads\ffmpeg-4.2.1-win64-static\bin\ffmpeg.exe -i "G:\Movies+TV/Grandma's.Boy.[2006]DVDRip.H264(BINGOWINGZ-UKB-RG)\sample\sample.mp4"  -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null NUL && ^ C:\Users\jared\Downloads\ffmpeg-4.2.1-win64-static\bin\ffmpeg.exe -i "G:\Movies+TV/Grandma's.Boy.[2006]DVDRip.H264(BINGOWINGZ-UKB-RG)\sample\sample.mp4"  -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus  "G:\Movies+TV/Grandma's.Boy.[2006]DVDRip.H264(BINGOWINGZ-UKB-RG)\sample\sample.vp9.webm"
-
-
-
-    # ffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null NUL && ^ ffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus output.webm
-    command = ""
     # pass 1
-    # command += PATH_FFMPEG
-    # command += " -i \"" + src + "\" "       # specify input file
-    # command += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null test"
+    cmd_1 = PATH_FFMPEG
+    cmd_1 += " -i \"" + src + "\" "       # specify input file
+    cmd_1 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null test"
 
-    # command += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null NUL && ^ "
-    # # pass 2
-    command += PATH_FFMPEG
-    command += " -i \"" + src + "\" "       # specify input file
-    command += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus "
-    command += " \"" + out + "\" "          # specify output file
+    # pass 2
+    cmd_2 = PATH_FFMPEG
+    cmd_2 += " -i \"" + src + "\" "       # specify input file
+    cmd_2 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus "
+    cmd_2 += " \"" + out + "\" "          # specify output file
 
-    # print the command that will be executed
-    print(timestamp() + command)
+    # print the commands that will be executed
+    print(timestamp() + "pass 1: " + cmd_1)
+    print(timestamp() + "pass 2: " + cmd_2)
+
     # run command
-    os.system(command)
+    os.system(cmd_1)
+    os.system(cmd_2)
 
 
 #   /$$        /$$$$$$   /$$$$$$  /$$$$$$$
@@ -371,9 +368,6 @@ def encode_vp9(src):
 #  | $$  | $$| $$$$$$$$|  $$$$$$/|  $$$$$$/
 #  |__/  |__/|________/ \______/  \______/
 def encode_h265(src):
-    encode_vp9(src)
-    return
-
     out = new_extension(src, ".h265.mkv")
 
     # ffmpeg options
