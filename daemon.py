@@ -25,9 +25,7 @@
 # SOFTWARE.
 #
 # ASCII ART FROM
-# http://patorjk.com/software/taag/#p=display&c=bash&f=Big%20Money-ne&t=encoding
-#
-#
+# http://patorjk.com/software/taag/#p=display&c=bash&f=Big%20Money-ne&t=sample
 
 import datetime
 import json
@@ -325,6 +323,45 @@ def db_filesystem():
 #                                                                   \______/
 #
 #
+#
+#                        /$$$$$$
+#                       /$$__  $$
+#   /$$    /$$ /$$$$$$ | $$  \ $$
+#  |  $$  /$$//$$__  $$|  $$$$$$$
+#   \  $$/$$/| $$  \ $$ \____  $$
+#    \  $$$/ | $$  | $$ /$$  \ $$
+#     \  $/  | $$$$$$$/|  $$$$$$/
+#      \_/   | $$____/  \______/
+#            | $$
+#            | $$
+#            |__/
+def encode_vp9(src):
+    out = new_extension(src, ".vp9.webm")
+
+    #  C:\Users\jared\Downloads\ffmpeg-4.2.1-win64-static\bin\ffmpeg.exe -i "G:\Movies+TV/Grandma's.Boy.[2006]DVDRip.H264(BINGOWINGZ-UKB-RG)\sample\sample.mp4"  -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null NUL && ^ C:\Users\jared\Downloads\ffmpeg-4.2.1-win64-static\bin\ffmpeg.exe -i "G:\Movies+TV/Grandma's.Boy.[2006]DVDRip.H264(BINGOWINGZ-UKB-RG)\sample\sample.mp4"  -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus  "G:\Movies+TV/Grandma's.Boy.[2006]DVDRip.H264(BINGOWINGZ-UKB-RG)\sample\sample.vp9.webm"
+
+
+
+    # ffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null NUL && ^ ffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus output.webm
+    command = ""
+    # pass 1
+    # command += PATH_FFMPEG
+    # command += " -i \"" + src + "\" "       # specify input file
+    # command += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null test"
+
+    # command += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null NUL && ^ "
+    # # pass 2
+    command += PATH_FFMPEG
+    command += " -i \"" + src + "\" "       # specify input file
+    command += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus "
+    command += " \"" + out + "\" "          # specify output file
+
+    # print the command that will be executed
+    print(timestamp() + command)
+    # run command
+    os.system(command)
+
+
 #   /$$        /$$$$$$   /$$$$$$  /$$$$$$$
 #  | $$       /$$__  $$ /$$__  $$| $$____/
 #  | $$$$$$$ |__/  \ $$| $$  \__/| $$
@@ -334,12 +371,17 @@ def db_filesystem():
 #  | $$  | $$| $$$$$$$$|  $$$$$$/|  $$$$$$/
 #  |__/  |__/|________/ \______/  \______/
 def encode_h265(src):
+    encode_vp9(src)
+    return
+
     out = new_extension(src, ".h265.mkv")
 
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
     command += " -i \"" + src + "\" "       # specify input file
-    command += " -c:v libx265 -crf 28 "     # video codec: h265 quality factor 28
+    command += " -c:v libx265 "             # video codec: h265
+    command += " -crf 23 "                  # quality factor
+    # command += " -preset veryslow  "        # encoding speed
     command += " -c:a copy "                # audio codec: losslessy copy audio track (no reencode!)
     command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
     command += " \"" + out + "\" "          # specify output file
@@ -348,6 +390,8 @@ def encode_h265(src):
     print(timestamp() + command)
     # run command
     os.system(command)
+
+
 
 #   /$$        /$$$$$$   /$$$$$$  /$$   /$$
 #  | $$       /$$__  $$ /$$__  $$| $$  | $$

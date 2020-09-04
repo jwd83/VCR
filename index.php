@@ -92,7 +92,7 @@ $extensions = [
     ".flac",
     ".iso",
     ".m4a",
-    ".m4b", // uncommon audio format
+    ".m4b",             // uncommon audio format
     ".m4v",
     ".mkv",
     ".mp3",
@@ -101,7 +101,8 @@ $extensions = [
     ".opus",
     ".smc",
     ".wma",
-    ".whitelistme" // example
+    ".webm",            // used for VP9
+    ".whitelistme"      // example
 ];
 
 $white_list = [
