@@ -30,6 +30,9 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 * FFmpeg
   * https://ffmpeg.zeranoe.com/builds/
   * Sadly ffmpeg.zeranoe.com will close on Sep 18, 2020, and all builds will be removed
+  * going forward eugeneware provides static builds at https://github.com/eugeneware/ffmpeg-static
+  * You may be able to build it yourself by using the tools over at https://github.com/m-ab-s/media-autobuild_suite
+
 
 ## Setup Notes
 
