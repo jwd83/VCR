@@ -455,6 +455,7 @@ def encode_h264(src, resolution = 0):
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
     command += " -i \"" + src + "\" "       # specify input file
+    command += " -movflags +faststart "     # allow fast browser viewing
     command += " -vcodec h264 "             # video codec: h264
     command += " -acodec aac "              # audio codec: aac
     if(resolution != 0):

@@ -981,7 +981,7 @@ Configure transcoding options for...<br><br> <?=  hexToStr($_REQUEST['file']) ?>
 <input type="radio" name="codec" value="h264" checked> h264 - <em>recommended</em>, widely supported, fast to encode, html5 video compatible<br>
 <input type="radio" name="codec" value="h265"> h265 - slow to encode, smaller filesizes, most noticable at higher resolution<br>
 <input type="radio" name="codec" value="vp9"> vp9 - very slow, runs in 2 pass mode, generates .webm, reasonly html5 video compatible<br>
-<input type="radio" name="codec" value="av1"> av1 - slow <b>AF</b>, "state of the art". convert about a minute of 1080p video per minute, generates .webm, somewhat html5 video compatible<br>
+<input type="radio" name="codec" value="av1"> av1 - slow <b>AF</b>, "state of the art". convert about a minute of 1080p video per hour, generates .webm, somewhat html5 video compatible<br>
 <h3>Vertical Resolution</h3>
 <input type="radio" name="resolution" value="0" checked> original - ignore<br>
 <input type="radio" name="resolution" value="2160"> 2160 - aka 4K, Ultra HD or UHD<br>
