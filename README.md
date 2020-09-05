@@ -23,6 +23,14 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 * Link to timestamp in video using t= in URL
 * Can use realtime filesystem data for simple setup or MariaDB/MySQL backend for enhanced performance
 
+## Requirements
+* Python 3
+  * Mariadb/Mysql driver
+* XAMPP or WAMP
+* FFmpeg
+  * https://ffmpeg.zeranoe.com/builds/
+  * Sadly ffmpeg.zeranoe.com will close on Sep 18, 2020, and all builds will be removed
+
 ## Setup Notes
 
 ### sshd_config
