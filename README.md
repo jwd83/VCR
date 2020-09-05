@@ -49,6 +49,7 @@ While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the lik
 htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
+* export new db structure for resolution options
 * create advanced video encoding view in index.php to allow more configuration options
   * target a given resolution, 360, 480, 720, 1080, 2160
   * specify encoding type, 264, 265, vp9, av1
