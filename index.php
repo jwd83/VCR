@@ -69,6 +69,7 @@ $title = "Highwind's Stash";
 
 $backgrounds = [
     "black-pearl.jpg",
+    "camera.jpg",
     "dvd.jpg",
     "daftpunk.jpg",
     "darwin.jpg",
@@ -102,7 +103,7 @@ $extensions = [
     ".smc",
     ".wma",
     ".webm",            // used for VP9
-    ".whitelistme"      // example
+    ".y4m"              // uncompressed video
 ];
 
 $white_list = [
