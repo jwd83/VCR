@@ -84,9 +84,14 @@ run_db_filesystem = False
 def timestamp():
     return "[" + datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') + " UTC] "
 
-def new_extension(src, new_ext):
+def new_extension(src, new_ext, resolution = 0):
+
     filename, file_extension = os.path.splitext(src)
-    return filename + new_ext
+    new_name = filename
+    if(resolution != 0):
+        new_name += "." + resolution
+    new_name += new_ext
+    return  new_name
 
 def next_file_from_files(queue_file):
     with open(queue_file, 'r') as fin:
@@ -119,11 +124,11 @@ def next_file_from_db():
         cur.execute(QUERY_DELETE_NEXT, (res[0], ))
 
         # process the record
-        if(res[2] == 'opus'): encode_opus(res[1])
-        if(res[2] == 'h264'): encode_h264(res[1])
-        if(res[2] == 'h265'): encode_h265(res[1])
-        if(res[2] == 'vp9'): encode_vp9(res[1])
-        if(res[2] == 'av1'): encode_av1(res[1])
+        if(res[2] == 'opus'): encode_opus(res[1], res[3])
+        if(res[2] == 'h264'): encode_h264(res[1], res[3])
+        if(res[2] == 'h265'): encode_h265(res[1], res[3])
+        if(res[2] == 'vp9'): encode_vp9(res[1], res[3])
+        if(res[2] == 'av1'): encode_av1(res[1], res[3])
 
         return True
     return False
@@ -331,8 +336,8 @@ def db_filesystem():
 #  | $$  | $$  \  $$$/    | $$
 #  | $$  | $$   \  $/    /$$$$$$
 #  |__/  |__/    \_/    |______/
-def encode_av1(src):
-    out = new_extension(src, ".av1.webm")
+def encode_av1(src, resolution = 0):
+    out = new_extension(src, ".av1.webm", resolution)
 
     # AV1 notes from https://trac.ffmpeg.org/wiki/Encode/AV1 as of September 2020
     #
@@ -354,6 +359,8 @@ def encode_av1(src):
     command += " -b:v 0 "                               # required to use crf constant quality mode
     command += " -strict experimental "                 # experimental mode (required as of 9/2020)
     command += "-af \"channelmap=channel_layout=5.1\""  # 5.1 fix... https://trac.ffmpeg.org/ticket/5718 yikes 4 years running bug in libopus
+    if(resolution != 0):
+        command += " -vf scale=-1:" + resolution + " "
     command += " -n "                                   # do not overwrite files, exit immediately if specified output already exists
     command += " \"" + out + "\" "                      # specify output file
 
@@ -373,18 +380,26 @@ def encode_av1(src):
 #            | $$
 #            | $$
 #            |__/
-def encode_vp9(src):
-    out = new_extension(src, ".vp9.webm")
+def encode_vp9(src, resolution = 0):
+    out = new_extension(src, ".vp9.webm", resolution)
 
     # pass 1
+    print("generating pass 1 command")
     cmd_pass_1 = PATH_FFMPEG
     cmd_pass_1 += " -i \"" + src + "\" "       # specify input file
-    cmd_pass_1 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null test"
+    cmd_pass_1 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null "
+    if(resolution != 0):
+        cmd_pass_1 += " -vf scale=-1:" + resolution + " "
+    cmd_pass_1 += " test"
+
 
     # pass 2
+    print("generating pass 2 command")
     cmd_pass_2 = PATH_FFMPEG
     cmd_pass_2 += " -i \"" + src + "\" "       # specify input file
     cmd_pass_2 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus "
+    if(resolution != 0):
+        cmd_pass_2 += " -vf scale=-1:" + resolution + " "
     cmd_pass_2 += " \"" + out + "\" "          # specify output file
 
     # print the commands that will be executed
@@ -404,8 +419,8 @@ def encode_vp9(src):
 #  | $$  | $$| $$      | $$  \ $$ /$$  \ $$
 #  | $$  | $$| $$$$$$$$|  $$$$$$/|  $$$$$$/
 #  |__/  |__/|________/ \______/  \______/
-def encode_h265(src):
-    out = new_extension(src, ".h265.mkv")
+def encode_h265(src, resolution = 0):
+    out = new_extension(src, ".h265.mkv", resolution)
 
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
@@ -414,6 +429,8 @@ def encode_h265(src):
     command += " -crf 23 "                  # quality factor
     # command += " -preset veryslow  "        # encoding speed
     command += " -c:a copy "                # audio codec: losslessy copy audio track (no reencode!)
+    if(resolution != 0):
+        command += " -vf scale=-2:" + resolution + " "
     command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
     command += " \"" + out + "\" "          # specify output file
 
@@ -432,14 +449,16 @@ def encode_h265(src):
 #  | $$  | $$| $$      | $$  \ $$      | $$
 #  | $$  | $$| $$$$$$$$|  $$$$$$/      | $$
 #  |__/  |__/|________/ \______/       |__/
-def encode_h264(src):
-    out = new_extension(src, ".h264.mp4")
+def encode_h264(src, resolution = 0):
+    out = new_extension(src, ".h264.mp4", resolution)
 
     # ffmpeg options
     command = PATH_FFMPEG                   # path to ffmpeg executable
     command += " -i \"" + src + "\" "       # specify input file
     command += " -vcodec h264 "             # video codec: h264
     command += " -acodec aac "              # audio codec: aac
+    if(resolution != 0):
+        command += " -vf scale=-2:" + resolution + " " # rescale, h264 requires an even number of pixels. -2 corrects this
     command += " -n "                       # do not overwrite files, exit immediately if specified output already exists
     command += "\"" + out + "\""            # specify output file
 
