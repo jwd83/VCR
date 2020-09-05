@@ -123,6 +123,7 @@ def next_file_from_db():
         if(res[2] == 'h264'): encode_h264(res[1])
         if(res[2] == 'h265'): encode_h265(res[1])
         if(res[2] == 'vp9'): encode_vp9(res[1])
+        if(res[2] == 'av1'): encode_av1(res[1])
 
         return True
     return False
@@ -322,9 +323,45 @@ def db_filesystem():
 #                                                                   /$$  \ $$
 #                                                                  |  $$$$$$/
 #                                                                   \______/
-#
-#
-#
+#    /$$$$$$  /$$    /$$   /$$
+#   /$$__  $$| $$   | $$ /$$$$
+#  | $$  \ $$| $$   | $$|_  $$
+#  | $$$$$$$$|  $$ / $$/  | $$
+#  | $$__  $$ \  $$ $$/   | $$
+#  | $$  | $$  \  $$$/    | $$
+#  | $$  | $$   \  $/    /$$$$$$
+#  |__/  |__/    \_/    |______/
+def encode_av1(src):
+    out = new_extension(src, ".av1.webm")
+
+    # AV1 notes from https://trac.ffmpeg.org/wiki/Encode/AV1 as of September 2020
+    #
+    # Constant Quality
+    #
+    # libaom-av1 has a constant quality (CQ) mode (like CRF in x264 and x265) which will
+    # ensure that every frame gets the number of bits it deserves to achieve a certain
+    # (perceptual) quality level, rather than encoding each frame to meet a bit rate target.
+    # This results in better overall quality. If you do not need to achieve a fixed target
+    # file size, this should be your method of choice.
+    #
+    # To trigger this mode, you must use a combination of -crf and -b:v 0. -b:v MUST be 0.
+
+    # ffmpeg options
+    command = PATH_FFMPEG                               # path to ffmpeg executable
+    command += " -i \"" + src + "\" "                   # specify input file
+    command += " -c:v libaom-av1 "                      # video codec: AV1
+    command += " -crf 30 "                              # quality factor
+    command += " -b:v 0 "                               # required to use crf constant quality mode
+    command += " -strict experimental "                 # experimental mode (required as of 9/2020)
+    command += "-af \"channelmap=channel_layout=5.1\""  # 5.1 fix... https://trac.ffmpeg.org/ticket/5718 yikes 4 years running bug in libopus
+    command += " -n "                                   # do not overwrite files, exit immediately if specified output already exists
+    command += " \"" + out + "\" "                      # specify output file
+
+    # print the command that will be executed
+    print(timestamp() + command)
+    # run command
+    os.system(command)
+
 #                        /$$$$$$
 #                       /$$__  $$
 #   /$$    /$$ /$$$$$$ | $$  \ $$
@@ -340,23 +377,23 @@ def encode_vp9(src):
     out = new_extension(src, ".vp9.webm")
 
     # pass 1
-    cmd_1 = PATH_FFMPEG
-    cmd_1 += " -i \"" + src + "\" "       # specify input file
-    cmd_1 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null test"
+    cmd_pass_1 = PATH_FFMPEG
+    cmd_pass_1 += " -i \"" + src + "\" "       # specify input file
+    cmd_pass_1 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null test"
 
     # pass 2
-    cmd_2 = PATH_FFMPEG
-    cmd_2 += " -i \"" + src + "\" "       # specify input file
-    cmd_2 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus "
-    cmd_2 += " \"" + out + "\" "          # specify output file
+    cmd_pass_2 = PATH_FFMPEG
+    cmd_pass_2 += " -i \"" + src + "\" "       # specify input file
+    cmd_pass_2 += " -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus "
+    cmd_pass_2 += " \"" + out + "\" "          # specify output file
 
     # print the commands that will be executed
-    print(timestamp() + "pass 1: " + cmd_1)
-    print(timestamp() + "pass 2: " + cmd_2)
+    print(timestamp() + "pass 1: " + cmd_pass_1)
+    print(timestamp() + "pass 2: " + cmd_pass_2)
 
     # run command
-    os.system(cmd_1)
-    os.system(cmd_2)
+    os.system(cmd_pass_1)
+    os.system(cmd_pass_2)
 
 
 #   /$$        /$$$$$$   /$$$$$$  /$$$$$$$

@@ -305,13 +305,13 @@ function human_filesize($bytes, $decimals = 2) {
   return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
 }
 
-function writeFileToDBQueue($src, $type) {
+function writeFileToDBQueue($src, $type, $res = '0') {
     global $db;
 
     // echo "WRITING TO DB QUEUE";
     # run query
-    $stmt = $db->prepare('INSERT INTO encoder_queue (path, codec) VALUES (?,?)');
-    $stmt->bind_param("ss", $src, $type);
+    $stmt = $db->prepare('INSERT INTO encoder_queue (path, codec, resolution) VALUES (?,?,?)');
+    $stmt->bind_param("sss", $src, $type, $res);
     $stmt->execute();
 }
 
@@ -666,14 +666,20 @@ function dbResults($base_path, $optional_feature = "none", $optional_reference =
             }
         }
         if($optional_reference == 'v') {
-            if(endsWith($path, "h264.mp4") || endsWith($path, "h265.mkv")) {
+            if(
+                endsWith($path, "h264.mp4") ||
+                endsWith($path, "h265.mkv") ||
+                endsWith($path, "vp9.webm") ||
+                endsWith($path, "av1.webm")
+            ) {
                 echocell('-');
-                echocell('-');
-                echocell('-');
+                // echocell('-');
+                // echocell('-');
             } else {
-                echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
-                echoCell('<a href="?c=5&file='.strToHex($path).'">[h264]</a>');
-                echoCell('<a href="?c=n&file='.strToHex($path).'">[h265]</a>');
+                // echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
+                // echoCell('<a href="?c=5&file='.strToHex($path).'">[h264]</a>');
+                // echoCell('<a href="?c=n&file='.strToHex($path).'">[h265]</a>');
+                echoCell('<a href="?c=t&file='.strToHex($path).'">[transcode]</a>');
             }
         }
         if($optional_reference == 'm') {
@@ -961,6 +967,53 @@ function pageOpusAudioQueue() {
 
 }
 
+function pageVideoTranscodeSetup()
+{
+    drawHeader("Transcode");
+
+?>
+<h2>Transcode Options</h2>
+Configure transcoding options for...<br><br> <?=  hexToStr($_REQUEST['file']) ?>
+<hr>
+<form method="POST" action="/?c=u">
+<input type="hidden" name="file" value="<?= $_REQUEST['file'] ?>">
+<h3>Encoder</h3>
+<input type="radio" name="codec" value="h264" checked> h264 - <em>recommended</em>, widely supported, fast to encode, html5 video compatible<br>
+<input type="radio" name="codec" value="h265"> h265 - slow to encode, smaller filesizes, most noticable at higher resolution<br>
+<input type="radio" name="codec" value="vp9"> vp9 - very slow, runs in 2 pass mode, generates .webm, reasonly html5 video compatible<br>
+<input type="radio" name="codec" value="av1"> av1 - slow <b>AF</b>, "state of the art". convert about a minute of 1080p video per minute, generates .webm, somewhat html5 video compatible<br>
+<h3>Vertical Resolution</h3>
+<input type="radio" name="resolution" value="0" checked> original - ignore<br>
+<input type="radio" name="resolution" value="2160"> 2160 - aka 4K, Ultra HD or UHD<br>
+<input type="radio" name="resolution" value="1440"> 1440 - aka 2K, Quad HD or QHD<br>
+<input type="radio" name="resolution" value="1080"> 1080 - aka FHD or Full HD<br>
+<input type="radio" name="resolution" value="720"> 720 - aka HD<br>
+<input type="radio" name="resolution" value="480"> 480 - aka DVD<br>
+<input type="radio" name="resolution" value="360"> 360 - aka SD<br>
+<input type="radio" name="resolution" value="240"> 240 - yikes...<br>
+<br>
+<input type="submit">
+</form>
+<?php
+    drawFooter();
+}
+
+function pageVideoTranscodeQueue() {
+    drawHeader("Transcode");
+?>
+Scheduling transcode of...<br><br> <?=  hexToStr($_REQUEST['file']) ?>
+
+<br>
+<br>
+Check back soon!
+
+
+<?php
+
+    writeFileToDBQueue(hexToStr($_REQUEST['file']), $_REQUEST['codec'], $_REQUEST['resolution']);
+    // var_dump($_REQUEST);
+    drawFooter();
+}
 
 function pageH265VideoQueue() {
     global $search_type, $dump_path, $feature, $show_prev_next;
@@ -1348,17 +1401,19 @@ if(!isset($_REQUEST['c'])) {
     }
 
     switch($_REQUEST['c']){
-        case '4': pageM4AAudioQueue();      break;
-        case '5': pageH264VideoQueue();     break;
-        case 'a': pageAudioBook();          break;
-        case 'b': pageBooks();              break;
-        case 'e': pageEmulation();          break;
-        case 'l': pageLinks();              break;
-        case 'm': pageMusicPlayer();        break;
-        case 'n': pageH265VideoQueue();     break;
-        case 'o': pageOpusAudioQueue();     break;
-        case 'r': pageContainerSwap();      break;
-        case 'v': pageVideoPlayer();        break;
+        case '4': pageM4AAudioQueue();          break;
+        case '5': pageH264VideoQueue();         break;
+        case 'a': pageAudioBook();              break;
+        case 'b': pageBooks();                  break;
+        case 'e': pageEmulation();              break;
+        case 'l': pageLinks();                  break;
+        case 'm': pageMusicPlayer();            break;
+        case 'n': pageH265VideoQueue();         break;
+        case 'o': pageOpusAudioQueue();         break;
+        case 'r': pageContainerSwap();          break;
+        case 't': pageVideoTranscodeSetup();    break;
+        case 'u': pageVideoTranscodeQueue();    break;
+        case 'v': pageVideoPlayer();            break;
     }
 }
 
