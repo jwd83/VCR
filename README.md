@@ -50,6 +50,8 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
 * support intel SVT encoder
+* add advanced encoding toggles (like the 5.1 remap)
+* log encoding result if possible?
 * detect 5.1 and change encoding options when necessary (libopus/av1/vp9 i'm looking at you)
   * command += "-af \"channelmap=channel_layout=5.1\""  # 5.1 fix... https://trac.ffmpeg.org/ticket/5718 yikes 4 years running bug in libopus
 * add a view that display ffprobe output about a file
