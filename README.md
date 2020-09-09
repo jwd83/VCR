@@ -50,6 +50,7 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
 * support intel SVT encoder
+  * h265, av1, vp9?
 * add advanced encoding toggles (like the 5.1 remap)
 * log encoding result if possible?
 * detect 5.1 and change encoding options when necessary (libopus/av1/vp9 i'm looking at you)
