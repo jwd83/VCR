@@ -1,6 +1,5 @@
-# V C R
-
-# oǝpᴉɅ ʎʇᴉϽ ɹǝʌᴉꓤ
+# VCR
+## oǝpᴉɅ ʎʇᴉϽ ɹǝʌᴉꓤ
 
 A single file PHP script for WAMP to share and encode queue your local files online along with Python daemons to process said reencode requests.
 
