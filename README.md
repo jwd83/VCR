@@ -48,6 +48,7 @@ While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the lik
 htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
+* search across all types
 * support intel SVT encoder
   * h265, av1, vp9?
 * add advanced encoding toggles (like the 5.1 remap)
