@@ -212,6 +212,9 @@ define('THEME_TOP' , <<<EOL
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
+            <a class="nav-link" href="./?c=n">NEW</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="./?c=l">Links</a>
           </li>
           <li class="nav-item active">
@@ -491,12 +494,20 @@ function getDirContents($dir, &$results = array()) {
     return $results;
 }
 
-function echoCell($str) {
- echo '
-<td>
-      '.$str.'
-</td>
-';
+function echoCell($str, $italic = FALSE) {
+    if ($str == '-') {
+        echo "\n<td style=\"text-align: center;\">\n";
+    } else {
+        echo "\n<td>\n";
+    }
+
+    if($italic) {
+        echo "<em>$str</em>";
+    } else {
+        echo "$str";
+    }
+
+    echo "\n</td>\n";
 }
 
 function getDbButtons($base_path, $current_file) {
@@ -629,7 +640,82 @@ function drawResultNotes($base_path) {
 ";
     }
 
-    echo "<table>\n";
+}
+
+function dbShowEverything($stmt) {
+
+    $stmt->execute();
+
+    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size, $r_modified);
+
+    // todo better content type detection based on category flags to be added to config.json
+
+    echo '<table>';
+    while ($stmt->fetch()) {
+        $path = $r_parent . "\\" . $r_path;
+
+        echo '<tr>';
+        echoCell('<a href="'.$path.'">[direct]</a>');
+
+        switch($r_parent) {
+            case 'Movies+TV':
+                // if the file was previously transcoded by this tool don't re-encode it again
+                // to prevent generation loss
+                if(endsWith($path, ".mp4") || endsWith($path, ".webm")) {
+                    echoCell('<a href="?c=v&file='.strToHex($path).'">[watch]</a>');
+                } else {
+                    echocell('-');
+                }
+
+                if(
+                    endsWith($path, "h264.mp4") ||
+                    endsWith($path, "h265.mkv") ||
+                    endsWith($path, "vp9.webm") ||
+                    endsWith($path, "av1.webm")
+                ) {
+                    echocell('-');
+                } else {
+                    echoCell('<a href="?c=t&file='.strToHex($path).'">[transcode]</a>');
+                }
+                break;
+            case 'Music':
+                echoCell('<a href="?c=m&file='.strToHex($path).'">[listen]</a>');
+                echoCell('<a href="?c=o&file='.strToHex($path).'">[opus]</a>');
+                break;
+            case 'Emulation + ROMs':
+                echocell('-');
+                echocell('-');
+                break;
+            case 'Books':
+                echocell('-');
+                echocell('-');
+                break;
+            case 'Audio Books':
+                echoCell('<a href="?c=a&file='.strToHex($path).'">[listen]</a>');
+                echocell('-');
+                break;
+            default:
+                echocell('-');
+                echocell('-');
+                break;
+
+        }
+        echoCell(human_filesize($r_size), TRUE);
+        echoCell($path);
+        echo '<tr>';
+    }
+    echo '</table>';
+}
+
+function dbResultsEverything($query) {
+    global $db;
+
+    $search_str = "%".$query."%";
+
+    $stmt = $db->prepare('SELECT * FROM files WHERE path like ? ORDER BY parent DESC, path');
+    $stmt->bind_param("s",  $search_str);
+
+    dbShowEverything($stmt);
 }
 
 function dbResults($base_path, $optional_feature = "none", $optional_reference = "none", $query = "none") {
@@ -650,7 +736,8 @@ function dbResults($base_path, $optional_feature = "none", $optional_reference =
 
     $stmt->execute();
 
-    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size);
+    echo "<table>\n";
+    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size, $r_modified);
     while ($stmt->fetch()) {
         $path = $base_path . "/" . $r_path;
         echo "<tr>\n";
@@ -674,12 +761,7 @@ function dbResults($base_path, $optional_feature = "none", $optional_reference =
                 endsWith($path, "av1.webm")
             ) {
                 echocell('-');
-                // echocell('-');
-                // echocell('-');
             } else {
-                // echoCell('<a href="?c=r&file='.strToHex($path).'">[r]</a>');
-                // echoCell('<a href="?c=5&file='.strToHex($path).'">[h264]</a>');
-                // echoCell('<a href="?c=n&file='.strToHex($path).'">[h265]</a>');
                 echoCell('<a href="?c=t&file='.strToHex($path).'">[transcode]</a>');
             }
         }
@@ -692,7 +774,7 @@ function dbResults($base_path, $optional_feature = "none", $optional_reference =
                 // echoCell('<a href="?c=4&file='.strToHex($path).'">[aac]</a>');
             }
         }
-        echoCell(human_filesize($r_size));
+        echoCell(human_filesize($r_size), TRUE);
         // echoCell(substr($path,  strlen($base_path)-2));
         echoCell($r_path);
         echo "</tr>\n";
@@ -868,7 +950,22 @@ function pageIndex() {
     drawHeader("Stay Awhile and Listen");
     echo '
 
-<h1>Please enjoy your stay and DM requests</h1>
+<h2>Please enjoy your stay and DM requests</h2>
+<hr>
+<h2>See <a href="/?c=n">what\'s new</a></h2>
+Search:
+<form method="GET">
+<input type="text" name="q">
+<select name="c">
+  <option value="z" selected>Everything</option>
+  <option value="a">Audio Books</option>
+  <option value="b">Books</option>
+  <option value="e">Emulation</option>
+  <option value="v">Movies+TV</option>
+  <option value="m">Music</option>
+</select>
+<input type="submit" value="Search">
+</form>
 <h2 style="margin-top: 1em;">Categories &amp; Popular Searches</h2>
 
 <div class="container">
@@ -1074,6 +1171,16 @@ function pageH264VideoQueue() {
 
 }
 
+function pageWhatsNew() {
+    global $db;
+    $stmt = $db->prepare('SELECT * FROM files ORDER BY modified DESC LIMIT 100');
+
+    drawHeader("What's New");
+    dbShowEverything($stmt);
+    drawSearchEverythingBox();
+    drawFooter();
+}
+
 function pageLinks() {
     global $config;
     drawHeader("Links");
@@ -1131,6 +1238,13 @@ function pageVideoPlayer() {
     }
     drawSearchBox();
     drawSearchResults();
+    drawFooter();
+}
+
+function pageSearchAll() {
+    drawHeader('Everything');
+    drawSearchEverythingBox();
+    drawSearchEverythingResults();
     drawFooter();
 }
 
@@ -1307,6 +1421,23 @@ Your browser does not support the video element.
 ';
 }
 
+function drawSearchEverythingBox() {
+    echo '
+<form method="GET">
+<input type="text" name="q">
+<select name="c">
+  <option value="z" selected>Everything</option>
+  <option value="a">Audio Books</option>
+  <option value="b">Books</option>
+  <option value="e">Emulation</option>
+  <option value="v">Movies+TV</option>
+  <option value="m">Music</option>
+</select>
+<input type="submit" value="Search">
+</form>
+';
+}
+
 function drawSearchBox() {
     global $search_type;
     echo '
@@ -1325,6 +1456,12 @@ Search:
 
     echo "<h2>Popular Searches</h2>\n";
     echo getSuggestions($search_type);
+}
+
+function drawSearchEverythingResults() {
+    if(isset($_REQUEST['q'])) {
+        dbResultsEverything($_REQUEST['q']);
+    }
 }
 
 function drawSearchResults() {
@@ -1409,12 +1546,14 @@ if(!isset($_REQUEST['c'])) {
         case 'e': pageEmulation();              break;
         case 'l': pageLinks();                  break;
         case 'm': pageMusicPlayer();            break;
+        case 'n': pageWhatsNew();               break;
         case 'n': pageH265VideoQueue();         break;
         case 'o': pageOpusAudioQueue();         break;
         case 'r': pageContainerSwap();          break;
         case 't': pageVideoTranscodeSetup();    break;
         case 'u': pageVideoTranscodeQueue();    break;
         case 'v': pageVideoPlayer();            break;
+        case 'z': pageSearchAll();              break;
     }
 }
 

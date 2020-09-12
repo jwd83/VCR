@@ -209,10 +209,12 @@ def build_file_list(path, filter_extensions = False):
                         add_file = False
 
                 if add_file:
-                    file_size = os.stat(full_path).st_size
+                    stats = os.stat(full_path)
+                    file_size = stats.st_size
+                    file_modified = stats.st_mtime
                     cur.execute(
-                        "INSERT INTO files (parent, path, size) VALUES (?,?,?);",
-                        (path, full_path[insert_split_position:], file_size)
+                        "INSERT INTO files (parent, path, size, modified) VALUES (?,?,?,?);",
+                        (path, full_path[insert_split_position:], file_size, file_modified)
                     )
 
         # write to database
@@ -358,7 +360,7 @@ def encode_av1(src, resolution = 0):
     command += " -crf 30 "                              # quality factor
     command += " -b:v 0 "                               # required to use crf constant quality mode
     command += " -strict experimental "                 # experimental mode (required as of 9/2020)
-    command += "-af \"channelmap=channel_layout=5.1\""  # 5.1 fix... https://trac.ffmpeg.org/ticket/5718 yikes 4 years running bug in libopus
+    # command += "-af \"channelmap=channel_layout=5.1\""  # 5.1 fix... https://trac.ffmpeg.org/ticket/5718 yikes 4 years running bug in libopus
     if(resolution != 0):
         command += " -vf scale=-1:" + resolution + " "
     command += " -n "                                   # do not overwrite files, exit immediately if specified output already exists
