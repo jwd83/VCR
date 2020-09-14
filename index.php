@@ -650,7 +650,7 @@ function dbShowEverything($stmt) {
 
     // todo better content type detection based on category flags to be added to config.json
 
-    echo '<table>';
+    echo '<hr><table>';
     while ($stmt->fetch()) {
         $path = $r_parent . "\\" . $r_path;
 
@@ -1176,8 +1176,9 @@ function pageWhatsNew() {
     $stmt = $db->prepare('SELECT * FROM files ORDER BY modified DESC LIMIT 250');
 
     drawHeader("What's New");
-    dbShowEverything($stmt);
+    echo '<h1>The 250 newest additions...</h1>';
     drawSearchEverythingBox();
+    dbShowEverything($stmt);
     drawFooter();
 }
 
@@ -1433,7 +1434,7 @@ function drawSearchEverythingBox($default = 'z') {
 <hr>
 <h2>Search</h2>
 <form method="GET">
-<input type="text" name="q">
+<input type="text" name="q" autofocus>
 <select name="c">
   <option value="z"'.$selected['z'].'>Everything</option>
   <option value="a"'.$selected['a'].'>Audio Books</option>
