@@ -530,7 +530,7 @@ function getDbButtons($base_path, $current_file) {
     $stmt = $db->prepare('SELECT * FROM files WHERE parent = ? ORDER BY path');
     $stmt->bind_param("s", $base_path);
     $stmt->execute();
-    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size);
+    $stmt->bind_result($r_id, $r_parent, $r_path, $r_size, $r_modified);
 
     # look for our match
     while($stmt->fetch()) {
@@ -1173,7 +1173,7 @@ function pageH264VideoQueue() {
 
 function pageWhatsNew() {
     global $db;
-    $stmt = $db->prepare('SELECT * FROM files ORDER BY modified DESC LIMIT 100');
+    $stmt = $db->prepare('SELECT * FROM files ORDER BY modified DESC LIMIT 250');
 
     drawHeader("What's New");
     dbShowEverything($stmt);
@@ -1390,7 +1390,7 @@ Your browser does not support the audio element.
 </audio>
 <br>
 <br>
-For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
+For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this direct link into VLC:<br>
 <br>
 <a href="'.$src.'">[direct link]</a><br>
 
@@ -1409,7 +1409,7 @@ function drawVideoPlayer() {
 
     echo '
 <h2>Playing '.$title.'</h2>
-For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this link into VLC:<br>
+For best results view in Chrome. If your browser is unable to play this file you may need to download the file or copy this direct link into VLC:<br>
 <br>
 <a href="'.$src.'">[direct link]</a><br>
 <br>
@@ -1421,41 +1421,42 @@ Your browser does not support the video element.
 ';
 }
 
-function drawSearchEverythingBox() {
+function drawSearchEverythingBox($default = 'z') {
+    $selected['a'] = ($default == 'a' ? " selected" : "");
+    $selected['b'] = ($default == 'b' ? " selected" : "");
+    $selected['e'] = ($default == 'e' ? " selected" : "");
+    $selected['m'] = ($default == 'm' ? " selected" : "");
+    $selected['v'] = ($default == 'v' ? " selected" : "");
+    $selected['z'] = ($default == 'z' ? " selected" : "");
+
     echo '
+<hr>
+<h2>Search</h2>
 <form method="GET">
 <input type="text" name="q">
 <select name="c">
-  <option value="z" selected>Everything</option>
-  <option value="a">Audio Books</option>
-  <option value="b">Books</option>
-  <option value="e">Emulation</option>
-  <option value="v">Movies+TV</option>
-  <option value="m">Music</option>
+  <option value="z"'.$selected['z'].'>Everything</option>
+  <option value="a"'.$selected['a'].'>Audio Books</option>
+  <option value="b"'.$selected['b'].'>Books</option>
+  <option value="e"'.$selected['e'].'>Emulation</option>
+  <option value="v"'.$selected['v'].'>Movies+TV</option>
+  <option value="m"'.$selected['m'].'>Music</option>
 </select>
 <input type="submit" value="Search">
 </form>
 ';
+
+    if($default != 'z') {
+        echo '<a href="./?c='.$default.'&all=1">[All Files]</a>';
+    }
 }
 
 function drawSearchBox() {
+
     global $search_type;
-    echo '
-<hr>
-Search:
-<form method="GET">
-<input type="hidden" name="c" value="'.$search_type.'">
-<input type="text" name="q">
-<input type="submit">
-</form>
-<br>
-<a href="./?c='.$search_type.'&all=1">[All Files]</a>
-<hr>
-';
 
+    drawSearchEverythingBox($search_type);
 
-    echo "<h2>Popular Searches</h2>\n";
-    echo getSuggestions($search_type);
 }
 
 function drawSearchEverythingResults() {
