@@ -1171,6 +1171,30 @@ function pageH264VideoQueue() {
 
 }
 
+function drawRecentCategoryAdditions() {
+    global $db;
+
+    // only draw this if no file is requested nor a search query performed
+    if(!isset($_REQUEST['file']) && !isset($_REQUEST['q'])) {
+        // blank query by default
+        $qry = '';
+
+        // generate query based on the category we are in
+        if($_REQUEST['c'] == 'a') $qry = 'SELECT * FROM files WHERE parent = "Audio Books" ORDER BY modified DESC LIMIT 250';
+        if($_REQUEST['c'] == 'b') $qry = 'SELECT * FROM files WHERE parent = "Books" ORDER BY modified DESC LIMIT 250';
+        if($_REQUEST['c'] == 'e') $qry = 'SELECT * FROM files WHERE parent = "Emulation + ROMs" ORDER BY modified DESC LIMIT 250';
+        if($_REQUEST['c'] == 'm') $qry = 'SELECT * FROM files WHERE parent = "Music" ORDER BY modified DESC LIMIT 250';
+        if($_REQUEST['c'] == 'v') $qry = 'SELECT * FROM files WHERE parent = "Movies+TV" ORDER BY modified DESC LIMIT 250';
+
+        // no query generated don't bother
+        if($qry != '') {
+            echo '<hr><h2>Recent additions...</h2>'; //. $qry;
+            $stmt = $db->prepare($qry);
+            dbShowEverything($stmt);
+        }
+    }
+}
+
 function pageWhatsNew() {
     global $db;
     $stmt = $db->prepare('SELECT * FROM files ORDER BY modified DESC LIMIT 250');
@@ -1238,6 +1262,7 @@ function pageVideoPlayer() {
 
     }
     drawSearchBox();
+    drawRecentCategoryAdditions();
     drawSearchResults();
     drawFooter();
 }
@@ -1269,6 +1294,7 @@ function pageAudioBook() {
 
     }
     drawSearchBox();
+    drawRecentCategoryAdditions();
     drawSearchResults();
     drawFooter();
 }
@@ -1292,6 +1318,7 @@ function pageMusicPlayer() {
         addPrecacheJquery();
     }
     drawSearchBox();
+    drawRecentCategoryAdditions();
     drawSearchResults();
     drawFooter();
 }
@@ -1305,6 +1332,7 @@ function pageBooks(){
 
     drawHeader($dump_path);
     drawSearchBox();
+    drawRecentCategoryAdditions();
     drawSearchResults();
     drawFooter();
 }
@@ -1317,6 +1345,7 @@ function pageEmulation(){
 
     drawHeader($dump_path);
     drawSearchBox();
+    drawRecentCategoryAdditions();
     drawSearchResults();
     drawFooter();
 
