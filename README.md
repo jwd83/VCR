@@ -49,6 +49,7 @@ While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the lik
 htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
+* update .conf notes based on new XAMPP setup
 * show popular searches in the landing page for each category
 * add support for encoding audiobooks
 * support intel SVT encoder
