@@ -23,8 +23,9 @@ CREATE TABLE `files` (
   `size` bigint(20) NOT NULL,
   `modified` double NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `path` (`path`) USING HASH,
   KEY `files_parent_IDX` (`parent`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
--- 2020-09-18 09:33:04
+-- 2020-09-18 09:34:49
