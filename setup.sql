@@ -10,6 +10,7 @@ CREATE TABLE `encoder_queue` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `path` text NOT NULL,
   `codec` text NOT NULL,
+  `resolution` varchar(255) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -20,9 +21,10 @@ CREATE TABLE `files` (
   `parent` varchar(100) NOT NULL,
   `path` text NOT NULL,
   `size` bigint(20) NOT NULL,
+  `modified` double NOT NULL,
   PRIMARY KEY (`id`),
   KEY `files_parent_IDX` (`parent`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
--- 2020-08-23 20:23:42
+-- 2020-09-18 09:33:04
