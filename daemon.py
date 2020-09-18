@@ -59,7 +59,9 @@ PATH_QUEUE_OPUS =       "G:\\queue_opus.txt"
 MSG_QUEUE =             "Reading the queues"
 
 QUERY_QUEUE_NEXT =      "SELECT * FROM encoder_queue ORDER BY id LIMIT 1"
+QUERY_SELECT_FILES =    "SELECT * FROM files"
 QUERY_DELETE_NEXT =     "DELETE FROM encoder_queue WHERE id = ?"
+QUERY_DELETE_FILE =     "DELETE FROM files WHERE id = ?"
 
 config = 0
 conn = 0
@@ -68,6 +70,7 @@ cur = 0
 run_file_queue = False
 run_db_queue = False
 run_db_filesystem = False
+run_db_scrub_files = False
 
 #   /$$                 /$$                                      /$$$$$$
 #  | $$                | $$                                     /$$__  $$
@@ -122,6 +125,7 @@ def next_file_from_db():
 
         # delete the record returned from the queue
         cur.execute(QUERY_DELETE_NEXT, (res[0], ))
+        conn.commit()
 
         # process the record
         if(res[2] == 'opus'): encode_opus(res[1], res[3])
@@ -141,6 +145,7 @@ def show_help():
     print("-s --system   update filesystem in database")
     print("-q --queue    process queue in database")
     print("-f --file     process file based queues")
+    print("-u --scrub    remove missing files in database")
     sys.exit(0)
 
 def specified(opt):
@@ -177,10 +182,10 @@ def setup_db():
 def build_file_list(path, filter_extensions = False):
     # clear existing entires
     try:
-        cur.execute(
-            "DELETE FROM files WHERE parent = ?",
-            (path, )
-        )
+        # cur.execute(
+        #     "DELETE FROM files WHERE parent = ?",
+        #     (path, )
+        # )
         # track if we will add a file
         add_file = False
 
@@ -213,7 +218,7 @@ def build_file_list(path, filter_extensions = False):
                     file_size = stats.st_size
                     file_modified = stats.st_mtime
                     cur.execute(
-                        "INSERT INTO files (parent, path, size, modified) VALUES (?,?,?,?);",
+                        "INSERT IGNORE INTO files (parent, path, size, modified) VALUES (?,?,?,?) ;",
                         (path, full_path[insert_split_position:], file_size, file_modified)
                     )
 
@@ -318,6 +323,35 @@ def db_filesystem():
 
     except e:
         print(timestamp() + "error in db based file system monitor")
+
+def db_scrub_missing_files():
+    # config is empty once multiprocessing is called, we must reload it
+    global config
+
+    try:
+        # load config data
+        with open('config.json') as f:
+            config = json.load(f)
+
+        print("starting db based file scrubber")
+        setup_db()
+        while True:
+            print(timestamp() + "dbsc: Looking for missing file paths...")
+            cur.execute(QUERY_SELECT_FILES)
+            results = cur.fetchall()
+            for res in results:
+                path = config['root_path'] + res[1] + "\\" + res[2]
+                if not os.path.exists(path):
+                    print("missing: " + path)
+                    cur.execute(QUERY_DELETE_FILE, (res[0], ))
+
+            # write changes
+            conn.commit()
+            print(timestamp() + "dbsc: Search complete.")
+            time.sleep(60)
+
+    except e:
+        print(timestamp() + "error in db based file scrubber")
 
 #                                                 /$$ /$$
 #                                                | $$|__/
@@ -529,7 +563,7 @@ def main():
     # 2. if we aren't using the DB we must be solely here to do the file based encoding queue. notify the user as such
 
     # get write access to our globals
-    global config, conn, cur, run_file_queue, run_db_queue, run_db_filesystem
+    global config, conn, cur, run_file_queue, run_db_queue, run_db_filesystem, run_db_scrub_files
 
     # check if a request for help was specified
     if specified('-h') or specified('--help'):
@@ -546,6 +580,7 @@ def main():
         # check what we are doing with the database
         if specified('-s') or specified('--system'): run_db_filesystem = True
         if specified('-q') or specified('--queue'): run_db_queue = True
+        if specified('-u') or specified('--scrub'): run_db_scrub_files = True
 
     # if we aren't using the db backend
     else:
@@ -558,7 +593,7 @@ def main():
     if specified('-f') or specified('--file'):
         run_file_queue = True
 
-    if not(run_file_queue or run_db_queue or run_db_filesystem):
+    if not(run_file_queue or run_db_queue or run_db_filesystem or run_db_scrub_files):
         print("db was specified but no db action was specified.")
         print("please review the switches.")
         show_help()
@@ -566,10 +601,12 @@ def main():
     f = Process(target = file_queue)
     q = Process(target = db_queue)
     s = Process(target = db_filesystem)
+    u = Process(target = db_scrub_missing_files)
 
     if(run_file_queue): print("config: run file queue")
     if(run_db_queue): print("config: run db queue")
     if(run_db_filesystem): print("config: run db filesystem monitor")
+    if(run_db_scrub_files): print("config: run db missing file scrubber")
 
     while True:
         if run_file_queue and not f.is_alive():
@@ -583,6 +620,10 @@ def main():
         if run_db_filesystem and not s.is_alive():
             s = Process(target = db_filesystem)
             s.start()
+            time.sleep(1)
+        if run_db_scrub_files and not u.is_alive():
+            u = Process(target = db_scrub_missing_files)
+            u.start()
             time.sleep(1)
 
         # periodically check on other processes
