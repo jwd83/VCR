@@ -1522,7 +1522,26 @@ function drawSearchResults() {
     }
 }
 
+function streamTranscodeDirect() {
+    global $config;
 
+    $src = $config->root_path . hexToStr($_REQUEST['file']);
+
+    $command = PATH_FFMPEG;                                   # path to ffmpeg executable
+    $command .= " -i \"" . $src . "\" ";                       # specify input file
+    $command .= " -c:a libopus ";                             # specify opus codec
+    $command .= " -b:a 96k ";                                 # bitrate
+    $command .= " -map -0:v? ";                               # strip video data
+    $command .= " -map -0:s? ";                               # strip subtitles
+    $command .= " -map -0:d? ";                               # strip misc data (note: this does not appear to strip metadata)
+    $command .= " - ";
+
+    header('Content-type: audio/opus');
+    header("Content-Type: application/octet-stream");
+    // header("Content-Disposition: attachment; filename=\"". md5(microtime()) .".opus\"");
+    passthru($command);
+    exit();
+}
 
 //                          /$$
 //                         |__/
@@ -1581,6 +1600,7 @@ if(!isset($_REQUEST['c'])) {
         case 'n': pageH265VideoQueue();         break;
         case 'o': pageOpusAudioQueue();         break;
         case 'r': pageContainerSwap();          break;
+        case 's': streamTranscodeDirect();      break;
         case 't': pageVideoTranscodeSetup();    break;
         case 'u': pageVideoTranscodeQueue();    break;
         case 'v': pageVideoPlayer();            break;

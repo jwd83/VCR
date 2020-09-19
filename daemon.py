@@ -119,6 +119,7 @@ def next_file_from_db():
 
     # expect 3 fields in a response
     if(res != None):
+        print("Queue item found")
         # position 0: id
         # position 1: path
         # position 2: encoding format
@@ -126,6 +127,8 @@ def next_file_from_db():
         # delete the record returned from the queue
         cur.execute(QUERY_DELETE_NEXT, (res[0], ))
         conn.commit()
+        print("Starting conversion")
+
 
         # process the record
         if(res[2] == 'opus'): encode_opus(res[1], res[3])
@@ -514,9 +517,10 @@ def encode_h264(src, resolution = 0):
 #            | $$
 #            | $$
 #            |__/
-def encode_opus(src):
+def encode_opus(src, resolution):
     # ffprobe -i "FILE_PATH" -show_entries stream=channels -select_streams a:0 -of compact=p=0:nk=1 -v 0
     # use ffprobe to detect channels
+    print ("Checking channel count")
     channels_command = PATH_FFPROBE                     # path to ffprobe executable
     channels_command += " -i \"" + src + "\" "          # specify input file
     # remaining flags
