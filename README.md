@@ -70,6 +70,7 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 * Switch to https from http. Lets encrypt or self signed
 * look at directly converting to opus on demand
 * look into gapless queueing of audio tracks. precaching and redirect helps but perhaps make the player page more ajaxy
+* custom playlists/ search while playing
 * Look into RTMP live streaming/encoding video/audio realtime.
 * Pick random jpg file from /img/ to use as header image
 * cleanup code to use URL_BASE
