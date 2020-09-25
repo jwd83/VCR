@@ -50,6 +50,7 @@ htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
 * perhaps depricate filesystem operation. 
+  * this woudl save a decent amount of codespace and cleanup the php and python a bit
 * ~~change daemon to replace into/delete instead of dumping/recreating the table~~
 * improve the performance of the new filesystem monitor
 * update .conf notes based on new XAMPP setup
