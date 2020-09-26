@@ -49,6 +49,7 @@ While at a command prompt at "C:\wamp64\bin\apache\apache2.4.41\bin" (or the lik
 htpasswd "c:\wamp64\gdlogins" user_name_here
 
 ## TODO
+* look into quicksync realtime video encoding/streaming
 * perhaps depricate filesystem operation. 
   * this woudl save a decent amount of codespace and cleanup the php and python a bit
 * ~~change daemon to replace into/delete instead of dumping/recreating the table~~
