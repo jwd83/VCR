@@ -36,6 +36,16 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 
 ## Setup Notes
 
+### running the python daemon on 1 or more machines
+
+On machine that will watch the filesystem:
+
+python daemon.py -s -u
+
+On the machine that will perform encoding:
+
+python daemon.py -q
+
 ### sshd_config
 
 If you are using a reverse SSH tunnel to bring your server online make sure 
