@@ -38,6 +38,10 @@ A single file PHP script for WAMP to share and encode queue your local files onl
 
 ### running the python daemon on 1 or more machines
 
+On one machine that will do everything:
+
+python daemon.py -s -u -q
+
 On machine that will watch the filesystem:
 
 python daemon.py -s -u
