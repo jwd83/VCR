@@ -22,8 +22,11 @@
     ".ogg",
     ".opus",
     ".smc",
-    ".wav",
-    ".wma"
+    ".srt",
+    ".wma",
+    ".webm",
+    ".y4m",
+    ".zip"
   ],
   "categories": [
     {
